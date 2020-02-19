@@ -83,7 +83,10 @@ class MainActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ADDRESS_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            data?.getStringExtra(SAFE_ADDRESS)?.let { viewModel.address = it.asEthereumAddress() }
+            data?.getStringExtra(SAFE_ADDRESS)?.let {
+                viewModel.address = it.asEthereumAddress()
+                invalidateOptionsMenu()
+            }
                 ?: snackbar(binding.root, "Error capturing the address")
         }
     }

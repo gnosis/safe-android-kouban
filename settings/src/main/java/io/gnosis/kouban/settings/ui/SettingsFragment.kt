@@ -23,7 +23,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.withArgs
-import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 
@@ -34,15 +33,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
     private val adapter by currentScope.inject<BaseAdapter<Solidity.Address, ItemSafeOwnerBinding, SafeOwnerViewHolder>>()
     private val addressHelper by inject<AddressHelper>()
 
-    private lateinit var safeAddress: Solidity.Address
-
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsBinding =
         FragmentSettingsBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        safeAddress = mainViewModel.address!!
 
         with(binding) {
 
@@ -51,11 +46,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
             ownerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
 
             swipeToRefresh.setOnRefreshListener {
-                load(safeAddress)
+                load(mainViewModel.address!!)
             }
         }
 
-        load(safeAddress)
+        load(mainViewModel.address!!)
     }
 
     private fun load(address: Solidity.Address) {
