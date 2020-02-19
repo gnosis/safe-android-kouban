@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="pressedShade">#33000000</color>
+    <color name="divider">#19252223</color>
+    <color name="toolbar_action">@color/blue</color>
+
+    <color name="white">#ffffff</color>
+    <color name="blue">#001e3b</color>
+    <color name="medium_grey">#b2b5b2</color>
+    <color name="dark_grey">#5d6d74</color>
+    <color name="tomato">#ff3b30</color>
+    <color name="safe_green">#008c73</color>
+
+</resources>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/safe_input_background"
+        style="@style/LightText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="24dp"
+        android:background="@color/white"
+        android:drawableEnd="@drawable/ic_more_vert"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:padding="16dp"
+        android:text="@string/address_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/safe_image"
+        android:layout_width="@dimen/info_blockies"
+        android:layout_height="@dimen/info_blockies"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/safe_input_background"
+        app:layout_constraintStart_toStartOf="@id/safe_input_background"
+        app:layout_constraintTop_toTopOf="@id/safe_input_background" />
+
+    <TextView
+        android:id="@+id/safe_name"
+        style="@style/DarkText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toTopOf="@+id/safe_address"
+        app:layout_constraintStart_toEndOf="@+id/safe_image"
+        app:layout_constraintTop_toTopOf="@+id/safe_image"
+        tools:text="My Safe" />
+
+    <TextView
+        android:id="@+id/safe_address"
+        style="@style/LightText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="@+id/safe_image"
+        app:layout_constraintStart_toEndOf="@+id/safe_image"
+        app:layout_constraintTop_toBottomOf="@+id/safe_name"
+        tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+    <TextView
+        android:id="@+id/safe_address_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:textColor="@color/tomato"
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@+id/safe_address"
+        tools:text="@string/invalid_ethereum_address" />
+</merge>

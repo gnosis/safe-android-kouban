@@ -1,0 +1,8 @@
+include ':app'
+rootProject.name = 'Kouban'
+include ':data'
+include ':core'
+include ':contracts'
+include ':settings'
+include ':qrscanner'
+include ':onboarding'

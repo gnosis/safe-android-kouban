@@ -1,0 +1,34 @@
+apply from: '../buildsystem/android_library.gradle'
+apply from: '../buildsystem/constants.gradle'
+apply from: '../buildsystem/helpers.gradle'
+apply from: '../buildsystem/test_dependencies.gradle'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 29
+
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+    }
+
+    viewBinding {
+        enabled true
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(":core")
+    
+    implementation "androidx.appcompat:appcompat:${versions.androidx_app_compat}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
+
+    implementation "com.google.android.material:material:${versions.material}"
+
+}
+

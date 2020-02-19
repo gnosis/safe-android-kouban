@@ -1,0 +1,6 @@
+apply from: '../buildsystem/android_library.gradle'
+apply plugin: 'bivrost'
+
+dependencies {
+    implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
+}

@@ -1,0 +1,55 @@
+apply from: '../buildsystem/android_library.gradle'
+apply from: '../buildsystem/constants.gradle'
+apply from: '../buildsystem/helpers.gradle'
+apply from: '../buildsystem/test_dependencies.gradle'
+apply plugin: 'kotlin-kapt'
+
+
+android {
+    viewBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    api "androidx.appcompat:appcompat:$versions.androidx_app_compat"
+    api "androidx.core:core-ktx:${versions.androidx_core_ktx}"
+    api "androidx.constraintlayout:constraintlayout:${versions.androidx_constraint_layout}"
+    api "androidx.swiperefreshlayout:swiperefreshlayout:${versions.androidx_swipe_refresh}"
+    api "androidx.viewpager2:viewpager2:1.0.0"
+
+    api "com.google.android.material:material:${versions.material}"
+
+    api "androidx.navigation:navigation-fragment-ktx:${versions.androidx_navigation}"
+    api "androidx.navigation:navigation-ui-ktx:${versions.androidx_navigation}"
+
+    api "androidx.lifecycle:lifecycle-viewmodel:${versions.androidx_lifecycle}"
+    api "androidx.lifecycle:lifecycle-livedata-ktx:${versions.androidx_lifecycle}"
+    api "androidx.lifecycle:lifecycle-extensions:${versions.androidx_lifecycle}"
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.androidx_lifecycle}"
+
+    api "org.koin:koin-android:$versions.koin"
+    api "org.koin:koin-androidx-scope:$versions.koin"
+    api "org.koin:koin-androidx-viewmodel:$versions.koin"
+    api "org.koin:koin-androidx-ext:$versions.koin"
+
+    api "com.squareup.picasso:picasso:$versions.picasso"
+
+    api "com.jakewharton.timber:timber:$versions.timber"
+
+    api "com.github.gnosis.svalinn-kotlin:blockies:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:crypto:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:models:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:utils-ethereum:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:android-common:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:security:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:mnemonic:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:mnemonic-android:$versions.svalinn"
+
+    api "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
+
+    implementation "com.google.android.play:core:1.6.4"
+
+    api project(":data")
+}

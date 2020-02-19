@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+
+    <style name="Text" parent="TextAppearance.AppCompat">
+        <!--
+        Only use this to set font.
+        All other attributes will overwrite default values for EVERY view
+        -->
+    </style>
+
+    <style name="LightText" parent="Text">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/medium_grey</item>
+    </style>
+
+    <style name="DarkText" parent="Text">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+</resources>

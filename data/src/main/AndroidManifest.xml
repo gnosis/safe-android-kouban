@@ -1,0 +1,14 @@
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.gnosis.kouban.data">
+
+    <application>
+        <provider
+            android:authorities="${applicationId}.io.gnosis.kouban.data.di.DataContentProvider"
+            android:name="io.gnosis.kouban.data.di.DataContentProvider"
+            android:exported="false"
+            android:enabled="true"/>
+    </application>
+
+
+</manifest>

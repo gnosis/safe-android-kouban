@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/balancesFragment"
+        android:icon="@drawable/ic_wallet"
+        android:title="@string/menu_label_balances" />
+
+    <item
+        android:id="@+id/transactionsFragment"
+        android:icon="@drawable/ic_transactions"
+        android:title="@string/menu_label_transactions" />
+</menu>

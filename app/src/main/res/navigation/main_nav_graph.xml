@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph.xml"
+    app:startDestination="@id/balancesFragment">
+
+    <fragment
+        android:id="@+id/balancesFragment"
+        android:name="io.gnosis.kouban.core.ui.safe.balance.BalancesFragment"
+        android:label="Balances"
+        tools:layout="@layout/fragment_balances">
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="https://android-prototype.gnosis.io/balances/{safeAddress}" />
+        <argument
+            android:name="safeAddress"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/transactionsFragment"
+        android:name="io.gnosis.kouban.core.ui.safe.transaction.TransactionsFragment"
+        android:label="Transactions"
+        tools:layout="@layout/fragment_transactions">
+        <deepLink
+            android:id="@+id/deepLink2"
+            app:uri="https://android-prototype.gnosis.io/transactions/{safeAddress}" />
+        <argument
+            android:name="safeAddress"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+</navigation>

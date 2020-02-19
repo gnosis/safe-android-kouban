@@ -1,0 +1,60 @@
+apply from: '../buildsystem/android_library.gradle'
+apply from: '../buildsystem/constants.gradle'
+apply from: '../buildsystem/helpers.gradle'
+apply from: '../buildsystem/test_dependencies.gradle'
+apply plugin: 'kotlin-kapt'
+
+
+android {
+
+    defaultConfig {
+
+        buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
+        buildConfigField javaTypes.LONG, "BLOCKCHAIN_CHAIN_ID", getKey("BLOCKCHAIN_CHAIN_ID", "4")
+        buildConfigField javaTypes.STRING, "BLOCK_EXPLORER_TX", asString(getKey("BLOCK_EXPLORER_TX", "https://rinkeby.etherscan.io/tx/%s"))
+        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
+
+        buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.rinkeby.gnosis.pm/api/"))
+        buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.rinkeby.gnosis.io/api/"))
+    }
+}
+
+dependencies {
+
+    implementation "com.github.gnosis.svalinn-kotlin:blockies:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:crypto:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:models:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:android-common:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:security:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:mnemonic:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:mnemonic-android:$versions.svalinn"
+
+    implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
+
+    kapt "androidx.room:room-compiler:$versions.androidx_room"
+    implementation "androidx.room:room-runtime:$versions.androidx_room"
+    implementation "androidx.room:room-ktx:$versions.androidx_room"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.kotlinx_coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.kotlinx_coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$versions.kotlinx_coroutines"
+
+    // Koin for Kotlin apps
+    implementation "org.koin:koin-core:$versions.koin"
+
+    implementation "com.jakewharton.timber:timber:$versions.timber"
+
+    api "com.squareup.retrofit2:retrofit:$versions.retrofit"
+    api("com.squareup.retrofit2:converter-moshi:$versions.retrofit") {
+        exclude group: "com.squareup.moshi", module: "moshi"
+    }
+
+    api "com.squareup.moshi:moshi:$versions.moshi"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi"
+
+    api "com.squareup.okhttp3:okhttp:$versions.okhttp"
+    api "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
+
+    implementation project(":contracts")
+}
