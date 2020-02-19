@@ -1,2 +1,2 @@
-# android-prototype1
-Android instant safe prototype
+# safe-android-kouban
+Android prototype 2
