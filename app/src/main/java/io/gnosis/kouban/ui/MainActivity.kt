@@ -57,6 +57,7 @@ class MainActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.settings -> {
+                findNavController(R.id.main_container).navigate(R.id.action_global_settingsFragment)
                 true
             }
             else -> super.onOptionsItemSelected(item)

@@ -7,17 +7,18 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.gnosis.instantsafe.core.ui.adapter.BaseAdapter
-import io.gnosis.instantsafe.core.ui.base.BaseFragment
-import io.gnosis.instantsafe.core.ui.base.Error
-import io.gnosis.instantsafe.core.ui.base.Loading
-import io.gnosis.instantsafe.core.ui.helper.AddressHelper
-import io.gnosis.instantsafe.settings.R
-import io.gnosis.instantsafe.settings.databinding.FragmentSettingsBinding
-import io.gnosis.instantsafe.settings.databinding.ItemSafeOwnerBinding
-import kotlinx.android.synthetic.main.fragment_settings.view.*
+import io.gnosis.kouban.core.ui.MainViewModel
+import io.gnosis.kouban.core.ui.adapter.BaseAdapter
+import io.gnosis.kouban.core.ui.base.BaseFragment
+import io.gnosis.kouban.core.ui.base.Error
+import io.gnosis.kouban.core.ui.base.Loading
+import io.gnosis.kouban.core.ui.helper.AddressHelper
+import io.gnosis.kouban.settings.R
+import io.gnosis.kouban.settings.databinding.FragmentSettingsBinding
+import io.gnosis.kouban.settings.databinding.ItemSafeOwnerBinding
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.currentScope
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -29,6 +30,7 @@ import timber.log.Timber
 class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
     private val viewModel: SettingsViewModel by currentScope.viewModel(this)
+    private val mainViewModel: MainViewModel by sharedViewModel()
     private val adapter by currentScope.inject<BaseAdapter<Solidity.Address, ItemSafeOwnerBinding, SafeOwnerViewHolder>>()
     private val addressHelper by inject<AddressHelper>()
 
@@ -40,7 +42,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        safeAddress = arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!!
+        safeAddress = mainViewModel.address!!
 
         with(binding) {
 

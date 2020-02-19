@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import io.gnosis.instantsafe.core.ui.base.Error
-import io.gnosis.instantsafe.core.ui.base.Loading
-import io.gnosis.instantsafe.core.ui.base.ViewState
-import io.gnosis.instantsafe.data.repositories.SafeRepository
-import io.gnosis.instantsafe.data.repositories.TokenRepository
+import io.gnosis.kouban.core.ui.base.Error
+import io.gnosis.kouban.core.ui.base.Loading
+import io.gnosis.kouban.core.ui.base.ViewState
+import io.gnosis.kouban.data.repositories.SafeRepository
+import io.gnosis.kouban.data.repositories.TokenRepository
 import kotlinx.coroutines.Dispatchers
 import pm.gnosis.model.Solidity
 

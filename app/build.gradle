@@ -69,6 +69,7 @@ dependencies {
 
     implementation project(":core")
     implementation project(":onboarding")
+    implementation project(":settings")
 }
 
 apply plugin: 'com.google.gms.google-services'

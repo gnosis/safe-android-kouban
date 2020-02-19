@@ -3,9 +3,9 @@ package io.gnosis.kouban.settings.ui
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.squareup.picasso.Picasso
-import io.gnosis.instantsafe.core.ui.adapter.BaseFactory
-import io.gnosis.instantsafe.core.ui.adapter.BaseViewHolder
-import io.gnosis.instantsafe.settings.databinding.ItemSafeOwnerBinding
+import io.gnosis.kouban.core.ui.adapter.BaseFactory
+import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
+import io.gnosis.kouban.settings.databinding.ItemSafeOwnerBinding
 import pm.gnosis.model.Solidity
 
 class SafeOwnerFactory(private val picasso: Picasso) : BaseFactory<ItemSafeOwnerBinding, SafeOwnerViewHolder>() {

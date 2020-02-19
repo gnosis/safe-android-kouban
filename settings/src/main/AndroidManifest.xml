@@ -3,9 +3,10 @@
     package="io.gnosis.kouban.settings">
 
     <application>
-        <activity
-            android:name="io.gnosis.kouban.settings.ui.SettingsActivity"
-            android:screenOrientation="portrait" />
+        <provider
+            android:name=".di.SettingsContentProvider"
+            android:authorities="${applicationId}.io.gnosis.kouban.settings.di.SettingsContentProvider"
+            android:enabled="true"
+            android:exported="false" />
     </application>
-
 </manifest>
