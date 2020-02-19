@@ -1,5 +1,8 @@
 package io.gnosis.kouban.ui
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,7 +12,14 @@ import io.gnosis.kouban.R
 import io.gnosis.kouban.core.ui.MainViewModel
 import io.gnosis.kouban.core.ui.base.BaseActivity
 import io.gnosis.kouban.databinding.ActivityMainBinding
+import io.gnosis.kouban.onboarding.OnboardingActivity
+import io.gnosis.kouban.onboarding.OnboardingActivity.Companion.ADDRESS_REQUEST_CODE
+import io.gnosis.kouban.onboarding.OnboardingActivity.Companion.ONBOARDING
+import io.gnosis.kouban.onboarding.OnboardingActivity.Companion.QR_SCAN_REQUEST_CODE
+import io.gnosis.kouban.onboarding.OnboardingActivity.Companion.SAFE_ADDRESS
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.utils.asEthereumAddress
 
 class MainActivity : BaseActivity() {
 
@@ -24,34 +34,14 @@ class MainActivity : BaseActivity() {
 
         setSupportActionBar(binding.toolbar)
 
-        with(findNavController(R.id.main_container)) {
-            binding.bottomNavigationBar.setupWithNavController(this)
-            addOnDestinationChangedListener { _, destination, _ ->
-                binding.toolbar.title = destination.label
-            }
-        }
-
-//        binding.addressInputContainer.apply {
-//            onAddressChanged = {
-//                viewModel.address = it
-//                invalidateOptionsMenu()
-//            }
-//            requestQRScanner = {
-//                dynamicFeatureManager.loadModule(
-//                    this@MainActivity,
-//                    DynamicFeatureManager.QRSCANNER,
-//                    DynamicFeatureManager.Request.QRScanner("DESCRIPTION!")
-//                ) {
-//                    startActivityForResult(it, QR_SCAN_REQUEST_CODE)
-//                }
+//        with(findNavController(R.id.main_container)) {
+//            binding.bottomNavigationBar.setupWithNavController(this)
+//            addOnDestinationChangedListener { _, destination, _ ->
+//                binding.toolbar.title = destination.label
 //            }
 //        }
-        binding.addressInputContainer.setupInputHandler(true)
-
-        viewModel.addListener {
-            binding.addressInputContainer.updateAddress(it, false)
-        }
-//        showOnboarding()
+        binding.toolbar.title = getString(R.string.app_name)
+        loadAddress()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -73,31 +63,29 @@ class MainActivity : BaseActivity() {
         }
     }
 
-//    private fun showOnboarding() {
-//        if (shouldShowOnboarding()) {
-//            dynamicFeatureManager.loadModule(this, DynamicFeatureManager.ONBOARDING) {
-//                startActivity(it)
-//            }
-//        }
-//}
-
-//    private fun shouldShowOnboarding(): Boolean {
-//        return getSharedPreferences(DynamicFeatureManager.ONBOARDING, Context.MODE_PRIVATE)
-//            ?.getBoolean(SHOULD_SHOW_ONBOARDING, true) ?: true
-//    }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (requestCode == QR_SCAN_REQUEST_CODE) {
-//            (dynamicFeatureManager.getResult(DynamicFeatureManager.QRSCANNER, data) as? DynamicFeatureManager.Results.QRScanner)?.code?.let {
-//                binding.addressInputContainer.updateAddress(it.asEthereumAddress()!!)
-//            }
-//        }
-//    }
-
-    companion object {
-        private const val QR_SCAN_REQUEST_CODE = 0
-        const val SHOULD_SHOW_ONBOARDING = "SHOULD_SHOW_ONBOARDING"
-
+    private fun loadAddress() {
+        if (isAddressDefined()) {
+            getSharedPreferences(ONBOARDING, Context.MODE_PRIVATE)
+                .getString(SAFE_ADDRESS, "")?.asEthereumAddress()?.let { address ->
+                    viewModel.address = address
+                } ?: error("Address must not be null")
+        } else {
+            startActivityForResult(OnboardingActivity.createIntent(this), ADDRESS_REQUEST_CODE)
+        }
     }
+
+    private fun isAddressDefined(): Boolean {
+        return !getSharedPreferences(ONBOARDING, Context.MODE_PRIVATE)
+            ?.getString(SAFE_ADDRESS, "").isNullOrEmpty()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ADDRESS_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            data?.getStringExtra(SAFE_ADDRESS)?.let { viewModel.address = it.asEthereumAddress() }
+                ?: snackbar(binding.root, "Error capturing the address")
+        }
+    }
+
+
 }

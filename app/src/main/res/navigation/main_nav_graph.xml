@@ -4,21 +4,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph.xml"
-    app:startDestination="@id/balancesFragment">
+    app:startDestination="@id/transactionsFragment">
 
-    <fragment
-        android:id="@+id/balancesFragment"
-        android:name="io.gnosis.kouban.core.ui.safe.balance.BalancesFragment"
-        android:label="Balances"
-        tools:layout="@layout/fragment_balances">
-        <deepLink
-            android:id="@+id/deepLink"
-            app:uri="https://android-prototype.gnosis.io/balances/{safeAddress}" />
-        <argument
-            android:name="safeAddress"
-            app:argType="string"
-            app:nullable="true" />
-    </fragment>
+    <!--    <fragment-->
+    <!--        android:id="@+id/balancesFragment"-->
+    <!--        android:name="io.gnosis.kouban.core.ui.safe.balance.BalancesFragment"-->
+    <!--        android:label="Balances"-->
+    <!--        tools:layout="@layout/fragment_balances">-->
+    <!--        <deepLink-->
+    <!--            android:id="@+id/deepLink"-->
+    <!--            app:uri="https://android-prototype.gnosis.io/balances/{safeAddress}" />-->
+    <!--        <argument-->
+    <!--            android:name="safeAddress"-->
+    <!--            app:argType="string"-->
+    <!--            app:nullable="true" />-->
+    <!--    </fragment>-->
     <fragment
         android:id="@+id/transactionsFragment"
         android:name="io.gnosis.kouban.core.ui.safe.transaction.TransactionsFragment"

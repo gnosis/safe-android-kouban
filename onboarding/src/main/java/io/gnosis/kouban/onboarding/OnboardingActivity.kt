@@ -1,14 +1,24 @@
 package io.gnosis.kouban.onboarding
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
+import io.gnosis.kouban.core.ui.MainViewModel
 import io.gnosis.kouban.onboarding.databinding.ActivityOnboardingBinding
 import io.gnosis.kouban.core.ui.base.BaseActivity
+import io.gnosis.kouban.core.utils.asMiddleEllipsized
+import io.gnosis.kouban.qrscanner.QRCodeScanActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.edit
+import pm.gnosis.utils.asEthereumAddressString
 
 class OnboardingActivity : BaseActivity() {
 
@@ -16,61 +26,57 @@ class OnboardingActivity : BaseActivity() {
         ActivityOnboardingBinding.inflate(layoutInflater)
     }
 
+    private var address: Solidity.Address? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         with(binding) {
-            val pagerAdapter = PagerAdapter(
-                listOf(R.layout.onboarding_page1, R.layout.onboarding_page2, R.layout.onboarding_page3),
-                this@OnboardingActivity
-            )
-            pages.adapter = pagerAdapter
-            TabLayoutMediator(indicator, pages, true) { _, _ -> }.attach()
-            pages.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    navigationButton.text = if (position == pagerAdapter.itemCount - 1) {
-                        getString(R.string.button_label_get_started)
-                    } else {
-                        getString(R.string.button_label_next)
+            addressInput.apply {
+                setupInputHandler(true)
+                onAddressChanged = { selectedAddress ->
+                    address = selectedAddress
+                    completeButton.visibility = if (selectedAddress != null) VISIBLE else GONE
+                    confirmationText.apply {
+                        if (selectedAddress != null) {
+                            visibility = VISIBLE
+                            text = getString(R.string.label_confirmation, selectedAddress.asEthereumAddressString().asMiddleEllipsized(4))
+                        } else {
+                            visibility = GONE
+                        }
                     }
                 }
-            })
-            navigationButton.setOnClickListener {
-                val nextPage = pages.currentItem + 1 % pagerAdapter.itemCount
-                if (nextPage == pagerAdapter.itemCount) {
-                    setShouldShow()
-                    finish()
-                } else {
-                    pages.setCurrentItem(nextPage, true)
+                requestQRScanner = {
+                    startActivityForResult(
+                        QRCodeScanActivity.createIntent(this@OnboardingActivity, "Provide the address to observe"),
+                        QR_SCAN_REQUEST_CODE
+                    )
                 }
+            }
+            completeButton.setOnClickListener {
+                completeAndSubmit()
             }
         }
     }
 
-    override fun onBackPressed() {
-        setShouldShow()
-        super.onBackPressed()
-    }
-
-    private fun setShouldShow() {
-//        getSharedPreferences(DynamicFeatureManager.ONBOARDING, Context.MODE_PRIVATE).let { sharedPreferences ->
-//            sharedPreferences.edit {
-//                putBoolean(MainActivity.SHOULD_SHOW_ONBOARDING, false)
-//                commit()
-//            }
-//        }
-//        dynamicFeatureManager.uninstallModule(DynamicFeatureManager.ONBOARDING)
+    private fun completeAndSubmit() {
+        address?.asEthereumAddressString()?.let { stringAddress ->
+            getSharedPreferences(ONBOARDING, Context.MODE_PRIVATE).let { sharedPreferences ->
+                sharedPreferences.edit {
+                    putString(SAFE_ADDRESS, stringAddress)
+                    commit()
+                }
+            }
+            setResult(Activity.RESULT_OK, Intent().putExtra(SAFE_ADDRESS, stringAddress))
+        }
+        finish()
     }
 
     companion object {
+        const val ONBOARDING = "ONBOARDING"
+        const val SAFE_ADDRESS = "SAFE_ADDRESS"
+        const val QR_SCAN_REQUEST_CODE = 1
+        const val ADDRESS_REQUEST_CODE = 2
         fun createIntent(context: Context?) = Intent(context, OnboardingActivity::class.java)
     }
-}
-
-
-class PagerAdapter(private val layouts: List<Int>, activity: OnboardingActivity) : FragmentStateAdapter(activity) {
-
-    override fun getItemCount(): Int = layouts.size
-
-    override fun createFragment(position: Int): Fragment = HollowFragment.newInstance(layouts[position])
 }

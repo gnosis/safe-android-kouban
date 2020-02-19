@@ -1,6 +1,6 @@
 package io.gnosis.kouban.settings.di
 
-import io.gnosis.instantsafe.core.di.CoreContentProvider
+import io.gnosis.kouban.core.di.CoreContentProvider
 import org.koin.core.context.loadKoinModules
 
 class SettingsContentProvider : CoreContentProvider() {
