@@ -42,7 +42,7 @@
         <action
             android:id="@+id/action_onboardingFragment_to_transactionsFragment"
             app:destination="@id/transactionsFragment"
-            app:popUpTo="@id/splashFragment"
+            app:popUpTo="@id/onboardingFragment"
             app:popUpToInclusive="true" />
     </fragment>
 </navigation>
