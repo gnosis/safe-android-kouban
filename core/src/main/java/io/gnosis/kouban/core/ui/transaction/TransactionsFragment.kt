@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.*
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.kouban.core.ui.base.BaseFragment
@@ -25,6 +26,7 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
 
     private val viewModel by currentScope.viewModel<TransactionsViewModel>(this)
     private val adapter by currentScope.inject<BaseAdapter<ServiceSafeTx, ItemTransactionBinding, BaseTransactionViewHolder>>()
+    private val navArgs by navArgs<TransactionsFragmentArgs>()
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionsBinding =
         FragmentTransactionsBinding.inflate(inflater, container, false)
@@ -40,12 +42,7 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
             swipeToRefresh.setOnRefreshListener {
             }
         }
-
-        if (arguments?.containsKey("safeAddress") == true) {
-            load(arguments!!.getString("safeAddress", "").asEthereumAddress()!!)
-        } else {
-            error { "Safe Address must be defined" }
-        }
+        load(navArgs.safeAddress.asEthereumAddress()!!)
     }
 
     private fun load(address: Solidity.Address) {

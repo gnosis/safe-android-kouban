@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import io.gnosis.kouban.core.R
 import io.gnosis.kouban.core.databinding.FragmentOnboardingBinding
@@ -57,10 +58,13 @@ class OnboardingFragment : BaseFragment<FragmentOnboardingBinding>() {
     private fun consumeViewStates() {
         viewModel.safeAddressEvents.observe(viewLifecycleOwner, Observer { viewState ->
             when (viewState) {
-                is SafeAddressStored -> findNavController().navigate(
-                    R.id.action_onboardingFragment_to_transactionsFragment,
-                    bundleOf("safeAddress" to viewState.safeAddress.asEthereumAddressString())
-                )
+                is SafeAddressStored ->
+                    findNavController().navigate(
+                        OnboardingFragmentDirections
+                            .actionOnboardingFragmentToTransactionsFragment(
+                                viewState.safeAddress.asEthereumAddressString()
+                            )
+                    )
                 is SafeAddressUpdated -> {
                     //update UI
                 }
@@ -73,6 +77,9 @@ class OnboardingFragment : BaseFragment<FragmentOnboardingBinding>() {
                 }
             }
         })
+    }
+
+    private fun getAction() {
     }
 
     private companion object {

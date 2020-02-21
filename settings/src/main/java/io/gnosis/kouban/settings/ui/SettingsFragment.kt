@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.gnosis.kouban.core.ui.MainViewModel
 import io.gnosis.kouban.core.ui.adapter.BaseAdapter
 import io.gnosis.kouban.core.ui.base.BaseFragment
 import io.gnosis.kouban.core.ui.base.Error
@@ -29,7 +28,6 @@ import timber.log.Timber
 class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
     private val viewModel: SettingsViewModel by currentScope.viewModel(this)
-    private val mainViewModel: MainViewModel by sharedViewModel()
     private val adapter by currentScope.inject<BaseAdapter<Solidity.Address, ItemSafeOwnerBinding, SafeOwnerViewHolder>>()
     private val addressHelper by inject<AddressHelper>()
 
@@ -46,11 +44,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
             ownerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
 
             swipeToRefresh.setOnRefreshListener {
-                load(mainViewModel.address!!)
+//                load(mainViewModel.address!!)
             }
         }
 
-        load(mainViewModel.address!!)
+//        load(mainViewModel.address!!)
     }
 
     private fun load(address: Solidity.Address) {
