@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.gnosis.kouban.core.R
 import io.gnosis.kouban.core.databinding.FragmentOnboardingBinding
@@ -18,6 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import io.gnosis.kouban.core.ui.base.Error
 
 class OnboardingFragment : BaseFragment<FragmentOnboardingBinding>() {
 
@@ -39,16 +41,8 @@ class OnboardingFragment : BaseFragment<FragmentOnboardingBinding>() {
                 startActivityForResult(QRCodeScanActivity.createIntent(context), QR_SCAN_REQUEST_CODE)
             }
         }
-        binding.navigationButton.setOnClickListener {
-            kotlin.runCatching { viewModel.submitAddress() }
-                .onSuccess {
-                    findNavController().navigate(
-                        R.id.action_onboardingFragment_to_transactionsFragment,
-                        bundleOf("safeAddress" to it.asEthereumAddressString())
-                    )
-                }
-                .onFailure { snackbar(view, "Address not set") }
-        }
+        binding.navigationButton.setOnClickListener { viewModel.submitAddress() }
+        consumeViewStates()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -58,6 +52,27 @@ class OnboardingFragment : BaseFragment<FragmentOnboardingBinding>() {
                 viewModel.handleSafeAddress(safeAddressString.asEthereumAddress()!!)
             }
         }
+    }
+
+    private fun consumeViewStates() {
+        viewModel.safeAddressEvents.observe(viewLifecycleOwner, Observer { viewState ->
+            when (viewState) {
+                is SafeAddressStored -> findNavController().navigate(
+                    R.id.action_onboardingFragment_to_transactionsFragment,
+                    bundleOf("safeAddress" to viewState.safeAddress.asEthereumAddressString())
+                )
+                is SafeAddressUpdated -> {
+                    //update UI
+                }
+                is Error -> {
+                    val stringId = when (viewState.throwable) {
+                        is AddressNotSet -> R.string.error_address_not_set
+                        else -> R.string.error_unknown
+                    }
+                    view?.let { view -> snackbar(view, stringId) }
+                }
+            }
+        })
     }
 
     private companion object {
