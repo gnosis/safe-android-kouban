@@ -2,4 +2,19 @@
 <resources>
 
     <string name="threshold">Threshold: %1$d</string>
+
+    <string name="safe_status">Safe status</string>
+    <string name="safe_address">Safe address</string>
+    <string name="contract_version">Contract version</string>
+    <string name="version">Version %1$s</string>
+    <string name="ens_name">ENS name</string>
+    <string name="ens_name_none_set">Not set yet</string>
+    <string name="owners">Owners</string>
+    <string name="required_confirmations">Required confirmations</string>
+    <string name="required_confirmations_value">%1$d of the %2$d owners need to confirm</string>
+    <string name="modules">Modules</string>
+    <string name="modules_none_specified">No modules enabled yet</string>
+    <string name="deployment_parameters">Deployment parameters</string>
+    <string name="click_for_details">Click to see details</string>
+    <string name="num_transactions">Number of Transactions</string>
 </resources>
