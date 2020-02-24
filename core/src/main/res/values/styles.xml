@@ -2,7 +2,6 @@
 <resources>
 
 
-
     <style name="Text" parent="TextAppearance.AppCompat">
         <!--
         Only use this to set font.
@@ -18,6 +17,30 @@
     <style name="DarkText" parent="Text">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="PrimaryButton">
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">@drawable/primary_button</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:minWidth">224dp</item>
+    </style>
+
+    <style name="BackButton">
+        <item name="android:layout_width">56dp</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:background">@drawable/selectable_background</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:tint">@color/colorPrimary</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+        <item name="srcCompat">@drawable/ic_arrow_back_24dp</item>
     </style>
 
 </resources>

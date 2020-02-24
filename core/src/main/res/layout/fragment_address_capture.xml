@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/connect_safe_back_btn"
+        style="@style/BackButton"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/connect_safe_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="96dp"
+        android:gravity="center"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:text="@string/connect_title"
+        android:textColor="@color/secondaryText"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/connect_safe_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:paddingStart="48dp"
+        android:paddingEnd="48dp"
+        android:text="@string/connect_description"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@id/address_input"
+        app:layout_constraintTop_toBottomOf="@id/connect_safe_title"
+        app:lineHeight="20sp" />
+
+    <io.gnosis.kouban.core.ui.views.AddressInput
+        android:id="@+id/address_input"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/connect_safe_status_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/connect_safe_description" />
+
+    <LinearLayout
+        android:id="@+id/connect_safe_status_container"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/connect_safe_submit_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/address_input">
+
+        <ImageView
+            android:id="@+id/connect_safe_address_status_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/selectable_background"
+            android:tint="@color/valid"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_check_circle_24dp"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/connect_safe_address_status_text"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:gravity="top|center_horizontal"
+            android:text="@string/valid_safe_address_label"
+            android:textSize="16sp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <ProgressBar
+            android:id="@+id/connect_safe_progress"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/connect_safe_submit_btn"
+        style="@style/PrimaryButton"
+        android:layout_width="wrap_content"
+        android:layout_marginBottom="64dp"
+        android:text="@string/action_confirm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

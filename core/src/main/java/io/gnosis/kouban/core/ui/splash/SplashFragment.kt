@@ -28,8 +28,9 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
                 when (it) {
                     is SafeAddressUnavailable -> navigate(R.id.action_splashFragment_to_onboardingFragment)
                     is SafeAddressAvailable -> navigate(
-                        R.id.action_splashFragment_to_transactionsFragment,
-                        bundleOf("safeAddress" to it.safeAddress.asEthereumAddressString())
+                        SplashFragmentDirections.actionSplashFragmentToTransactionsFragment(
+                            it.safeAddress.asEthereumAddressString()
+                        )
                     )
                     else -> {
                     }

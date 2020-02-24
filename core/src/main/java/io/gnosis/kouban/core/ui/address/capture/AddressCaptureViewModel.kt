@@ -1,4 +1,4 @@
-package io.gnosis.kouban.core.ui.onboarding
+package io.gnosis.kouban.core.ui.address.capture
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 
-class OnboardingViewModel(private val safeAddressManager: SafeAddressManager) : ViewModel() {
+class AddressCaptureViewModel(private val safeAddressManager: SafeAddressManager) : ViewModel() {
 
     val safeAddressEvents = MutableLiveData<ViewState>()
 

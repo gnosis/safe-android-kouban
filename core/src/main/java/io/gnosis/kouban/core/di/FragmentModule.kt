@@ -1,8 +1,10 @@
 package io.gnosis.kouban.core.di
 
 import io.gnosis.kouban.core.ui.adapter.BaseAdapter
-import io.gnosis.kouban.core.ui.onboarding.OnboardingFragment
-import io.gnosis.kouban.core.ui.onboarding.OnboardingViewModel
+import io.gnosis.kouban.core.ui.address.capture.AddressCaptureFragment
+import io.gnosis.kouban.core.ui.address.capture.AddressCaptureViewModel
+import io.gnosis.kouban.core.ui.address.complete.AddressCompleteFragment
+import io.gnosis.kouban.core.ui.address.complete.AddressCompleteViewModel
 import io.gnosis.kouban.core.ui.splash.SplashFragment
 import io.gnosis.kouban.core.ui.splash.SplashViewModel
 import io.gnosis.kouban.core.ui.transaction.TransactionsFactory
@@ -23,7 +25,11 @@ val fragmentModule = module {
         viewModel { SplashViewModel(get()) }
     }
 
-    scope(named<OnboardingFragment>()) {
-        viewModel { OnboardingViewModel(get()) }
+    scope(named<AddressCaptureFragment>()) {
+        viewModel { AddressCaptureViewModel(get()) }
+    }
+
+    scope(named<AddressCompleteFragment>()) {
+        viewModel { AddressCompleteViewModel(get()) }
     }
 }
