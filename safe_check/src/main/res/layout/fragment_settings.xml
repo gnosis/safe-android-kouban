@@ -60,8 +60,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
                     app:layout_constraintBottom_toBottomOf="@+id/safe_address_image"
                     app:layout_constraintStart_toEndOf="@+id/safe_address_image"
                     app:layout_constraintTop_toTopOf="@+id/safe_address_image"

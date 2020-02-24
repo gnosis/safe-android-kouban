@@ -1,6 +1,9 @@
 package io.gnosis.kouban.safe_check.ui
 
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +12,14 @@ import io.gnosis.kouban.core.ui.base.BaseFragment
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.helper.AddressHelper
+import io.gnosis.kouban.safe_check.R
 import io.gnosis.kouban.safe_check.databinding.FragmentSettingsBinding
 import io.gnosis.kouban.safe_check.databinding.ItemSafeOwnerBinding
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.currentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
@@ -41,7 +46,7 @@ class SafeCheckFragment : BaseFragment<FragmentSettingsBinding>() {
         address = "0x83eC7B0506556a7749306D69681aDbDbd08f0769".asEthereumAddress()!!
         with(binding) {
 
-            safeAddress.text = address.asEthereumAddressString()
+            safeAddress.text = formatEthAddress(address)
             safeAddressImage.setAddress(address)
 
             swipeToRefresh.setOnRefreshListener {
@@ -79,7 +84,7 @@ class SafeCheckFragment : BaseFragment<FragmentSettingsBinding>() {
         binding.ownersList.removeAllViews()
         owners.forEach {
             val ownerItem = ItemSafeOwnerBinding.inflate(layoutInflater)
-            ownerItem.ownerAddress.text = it.asEthereumAddressString()
+            ownerItem.ownerAddress.text = formatEthAddress(it)
             ownerItem.ownerAddressImage.setAddress(it)
             binding.ownersList.addView(ownerItem.root)
         }
@@ -91,7 +96,7 @@ class SafeCheckFragment : BaseFragment<FragmentSettingsBinding>() {
         if (modules.isNotEmpty()) {
             modules.forEach {
                 val moduleItem = ItemSafeOwnerBinding.inflate(layoutInflater)
-                moduleItem.ownerAddress.text = it.asEthereumAddressString()
+                moduleItem.ownerAddress.text = formatEthAddress(it)
                 moduleItem.ownerAddressImage.setAddress(it)
                 binding.modulesList.addView(moduleItem.root)
             }
@@ -100,6 +105,15 @@ class SafeCheckFragment : BaseFragment<FragmentSettingsBinding>() {
             binding.modulesData.displayedChild = 0
         }
     }
+
+    fun formatEthAddress(address: Solidity.Address): Spannable {
+        //make first & last 4 characters black
+        val addressString = SpannableStringBuilder(address.asEthereumAddressString()).insert(21, "\n")
+        addressString.setSpan(ForegroundColorSpan(context!!.getColorCompat(R.color.address_boundaries)), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        addressString.setSpan(ForegroundColorSpan(context!!.getColorCompat(R.color.address_boundaries)), addressString.length - 4, addressString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return addressString
+    }
+
 
     companion object {
 
@@ -113,6 +127,7 @@ class SafeCheckFragment : BaseFragment<FragmentSettingsBinding>() {
             )
     }
 }
+
 
 
 
