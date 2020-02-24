@@ -3,6 +3,7 @@
     package="io.gnosis.kouban.safe_check">
 
     <application>
+
         <provider
             android:name="io.gnosis.kouban.safe_check.di.SafeCheckContentProvider"
             android:authorities="${applicationId}.io.gnosis.kouban.safe_check.di.SafeCheckContentProvider"
@@ -11,5 +12,7 @@
 
         <activity android:name=".ui.SafeCheckActivity"
             android:screenOrientation="portrait"/>
+
     </application>
+
 </manifest>
