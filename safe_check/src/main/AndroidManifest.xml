@@ -8,5 +8,8 @@
             android:authorities="${applicationId}.io.gnosis.kouban.safe_check.di.SafeCheckContentProvider"
             android:enabled="true"
             android:exported="false" />
+
+        <activity android:name=".ui.SafeCheckActivity"
+            android:screenOrientation="portrait"/>
     </application>
 </manifest>
