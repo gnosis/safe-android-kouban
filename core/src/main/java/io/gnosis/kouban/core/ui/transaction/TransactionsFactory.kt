@@ -1,4 +1,4 @@
-package io.gnosis.kouban.core.ui.safe.transaction
+package io.gnosis.kouban.core.ui.transaction
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

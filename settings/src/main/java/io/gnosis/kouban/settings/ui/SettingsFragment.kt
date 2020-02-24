@@ -7,22 +7,21 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.gnosis.instantsafe.core.ui.adapter.BaseAdapter
-import io.gnosis.instantsafe.core.ui.base.BaseFragment
-import io.gnosis.instantsafe.core.ui.base.Error
-import io.gnosis.instantsafe.core.ui.base.Loading
-import io.gnosis.instantsafe.core.ui.helper.AddressHelper
-import io.gnosis.instantsafe.settings.R
-import io.gnosis.instantsafe.settings.databinding.FragmentSettingsBinding
-import io.gnosis.instantsafe.settings.databinding.ItemSafeOwnerBinding
-import kotlinx.android.synthetic.main.fragment_settings.view.*
+import io.gnosis.kouban.core.ui.adapter.BaseAdapter
+import io.gnosis.kouban.core.ui.base.BaseFragment
+import io.gnosis.kouban.core.ui.base.Error
+import io.gnosis.kouban.core.ui.base.Loading
+import io.gnosis.kouban.core.ui.helper.AddressHelper
+import io.gnosis.kouban.settings.R
+import io.gnosis.kouban.settings.databinding.FragmentSettingsBinding
+import io.gnosis.kouban.settings.databinding.ItemSafeOwnerBinding
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.currentScope
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.withArgs
-import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 
@@ -32,15 +31,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
     private val adapter by currentScope.inject<BaseAdapter<Solidity.Address, ItemSafeOwnerBinding, SafeOwnerViewHolder>>()
     private val addressHelper by inject<AddressHelper>()
 
-    private lateinit var safeAddress: Solidity.Address
-
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsBinding =
         FragmentSettingsBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        safeAddress = arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!!
 
         with(binding) {
 
@@ -49,11 +44,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
             ownerList.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
 
             swipeToRefresh.setOnRefreshListener {
-                load(safeAddress)
+//                load(mainViewModel.address!!)
             }
         }
 
-        load(safeAddress)
+//        load(mainViewModel.address!!)
     }
 
     private fun load(address: Solidity.Address) {

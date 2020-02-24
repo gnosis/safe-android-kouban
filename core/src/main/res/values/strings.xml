@@ -23,4 +23,11 @@
     <string name="address_input_clipboard">Paste from clipboard</string>
 
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
+
+    <string name="button_label_get_started">Get started</string>
+    <string name="button_label_next">Next</string>
+    <string name="button_label_complete">Proceed with this Address</string>
+
+    <string name="error_address_not_set">There was a problem setting the address</string>
+    <string name="error_unknown">Unknown error occurred</string>
 </resources>

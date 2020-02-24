@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/transactionsFragment"
+        android:name="io.gnosis.kouban.core.ui.transaction.TransactionsFragment"
+        android:label="Transactions"
+        tools:layout="@layout/fragment_transactions">
+        <deepLink
+            android:id="@+id/deepLink2"
+            app:uri="https://android-prototype.gnosis.io/transactions/{safeAddress}" />
+        <argument
+            android:name="safeAddress"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="io.gnosis.kouban.core.ui.splash.SplashFragment"
+        android:label="SplashFragment"
+        tools:layout="@layout/fragment_splash">
+        <action
+            android:id="@+id/action_splashFragment_to_transactionsFragment"
+            app:destination="@id/transactionsFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_onboardingFragment"
+            app:destination="@id/onboardingFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="io.gnosis.kouban.core.ui.onboarding.OnboardingFragment"
+        android:label="OnboardingFragment"
+        tools:layout="@layout/fragment_onboarding">
+        <action
+            android:id="@+id/action_onboardingFragment_to_transactionsFragment"
+            app:destination="@id/transactionsFragment"
+            app:popUpTo="@id/main_nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>
