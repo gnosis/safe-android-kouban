@@ -31,7 +31,7 @@ class SafeCheckViewModel(
                 }
                 .onSuccess {
                     emit(Loading(false))
-                    emit(SafeSettings(it.owners, it.threshold.toInt()))
+                    emit(SafeSettings(it.owners, it.threshold.toInt(), it.txCount.toInt(), it.modules))
                 }
         }
 
@@ -39,4 +39,7 @@ class SafeCheckViewModel(
 
 data class SafeSettings(
     val owners: List<Solidity.Address>,
-    val threshold: Int) : ViewState()
+    val threshold: Int,
+    val txCount: Int,
+    val modules: List<Solidity.Address>) : ViewState()
+

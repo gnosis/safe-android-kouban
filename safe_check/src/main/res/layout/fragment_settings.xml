@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ProgressBar
-        android:id="@+id/safe_check_progress"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:layout_anchorGravity="center" />
+<!--    <ProgressBar-->
+<!--        android:id="@+id/safe_check_progress"-->
+<!--        style="?android:attr/progressBarStyle"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="center"-->
+<!--        app:layout_anchorGravity="center" />-->
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/layout_safe_details_appbar"
@@ -149,6 +149,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/owners_list" />
 
+
                     <TextView
                         android:id="@+id/modules_label"
                         style="@style/SectionLabel"
@@ -160,6 +161,34 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/threshold" />
 
+
+                    <ViewSwitcher
+                        android:id="@+id/modules_data"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/modules_label">
+
+                        <TextView
+                            android:id="@+id/modules_empty"
+                            style="@style/SectionValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:text="@string/modules_none_specified" />
+
+                        <LinearLayout
+                            android:id="@+id/modules_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" />
+
+                    </ViewSwitcher>
+
+
                     <TextView
                         android:id="@+id/deployment_param_label"
                         style="@style/SectionLabel"
@@ -169,18 +198,8 @@
                         android:layout_marginTop="24dp"
                         android:text="@string/deployment_parameters"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/modules" />
+                        app:layout_constraintTop_toBottomOf="@+id/modules_data" />
 
-                    <TextView
-                        android:id="@+id/modules"
-                        style="@style/SectionValue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/modules_label"
-                        tools:text="@string/modules_none_specified" />
 
                     <TextView
                         android:id="@+id/deployment_param"
@@ -189,6 +208,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
+                        android:layout_marginBottom="24dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/deployment_param_label"
                         tools:text="@string/click_for_details" />
@@ -226,20 +247,16 @@
                         app:layout_constraintTop_toBottomOf="@+id/ens_name_label"
                         tools:text="@string/ens_name_none_set" />
 
-
                     <LinearLayout
                         android:id="@+id/owners_list"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
-                        android:layout_marginEnd="16dp"
                         android:orientation="vertical"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/owners_label">
+                        app:layout_constraintTop_toBottomOf="@+id/owners_label"/>
 
-                    </LinearLayout>
 
                     <ImageView
                         android:id="@+id/contract_check"

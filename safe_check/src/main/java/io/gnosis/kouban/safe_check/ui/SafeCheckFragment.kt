@@ -48,6 +48,7 @@ class SafeCheckFragment : BaseFragment<FragmentSettingsBinding>() {
                 load(address)
             }
         }
+        binding.safeCheckData.visibility = View.GONE
 
         load(address)
     }
@@ -59,9 +60,12 @@ class SafeCheckFragment : BaseFragment<FragmentSettingsBinding>() {
                     binding.swipeToRefresh.isRefreshing = it.isLoading
                 }
                 is SafeSettings -> {
+                    binding.safeCheckData.visibility = View.VISIBLE
                     //adapter.setItemsUnsafe(it.owners)
                     addOwners(it.owners)
                     binding.threshold.text = it.threshold.toString()
+                    binding.numTx.text = it.txCount.toString()
+                    addModules(it.modules)
                 }
                 is Error -> {
                     Timber.e(it.throwable)
@@ -78,6 +82,22 @@ class SafeCheckFragment : BaseFragment<FragmentSettingsBinding>() {
             ownerItem.ownerAddress.text = it.asEthereumAddressString()
             ownerItem.ownerAddressImage.setAddress(it)
             binding.ownersList.addView(ownerItem.root)
+        }
+    }
+
+    private fun addModules(modules: List<Solidity.Address>) {
+        binding.modulesList.removeAllViews()
+        binding.modulesData.reset()
+        if (modules.isNotEmpty()) {
+            modules.forEach {
+                val moduleItem = ItemSafeOwnerBinding.inflate(layoutInflater)
+                moduleItem.ownerAddress.text = it.asEthereumAddressString()
+                moduleItem.ownerAddressImage.setAddress(it)
+                binding.modulesList.addView(moduleItem.root)
+            }
+            binding.modulesData.displayedChild = 1
+        } else {
+            binding.modulesData.displayedChild = 0
         }
     }
 
