@@ -40,4 +40,11 @@
     <string name="action_start">Start</string>
     <string name="setup_complete_description">You are now able to view and filter your safe transactions</string>
 
+    <string name="onboarding_slide1_title">Always see all the details</string>
+    <string name="onboarding_slide1_description">For every transaction all details will be provided to give the full insight on what is happening</string>
+    <string name="onboarding_slide2_title">Always stay up to date</string>
+    <string name="onboarding_slide2_description">You will be notified of any interaction with your Safe</string>
+    <string name="onboarding_slide3_title">Check your Safe health</string>
+    <string name="onboarding_slide3_description">Get an easy overview if your Safe is properly setup and secure</string>
+
 </resources>
