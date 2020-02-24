@@ -22,6 +22,6 @@ class SafeOwnerViewHolder(private val binding: ItemSafeOwnerBinding, private val
     BaseViewHolder<Solidity.Address, ItemSafeOwnerBinding>(binding) {
 
     override fun bind(owner: Solidity.Address) {
-        binding.address.updateAddress(owner)
+        //binding.address.updateAddress(owner)
     }
 }

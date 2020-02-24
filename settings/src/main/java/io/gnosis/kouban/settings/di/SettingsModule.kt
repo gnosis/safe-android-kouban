@@ -10,9 +10,9 @@ import org.koin.dsl.module
 
 val settingsModule = module {
 
-    scope(named<SettingsFragment>()) {
-        factory { BaseAdapter(SafeOwnerFactory(get())) }
-    }
+//    scope(named<SettingsFragment>()) {
+//        factory { BaseAdapter(SafeOwnerFactory(get())) }
+//    }
 
     viewModel {
         SettingsViewModel(get(), get())
