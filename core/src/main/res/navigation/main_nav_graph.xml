@@ -40,7 +40,25 @@
         android:label="OnboardingFragment"
         tools:layout="@layout/fragment_onboarding">
         <action
-            android:id="@+id/action_onboardingFragment_to_transactionsFragment"
+            android:id="@+id/action_onboardingFragment_to_addressCaptureFragment"
+            app:destination="@id/addressCaptureFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addressCaptureFragment"
+        android:name="io.gnosis.kouban.core.ui.address.capture.AddressCaptureFragment"
+        android:label="AddressCaptureFragment"
+        tools:layout="@layout/fragment_address_capture">
+        <action
+            android:id="@+id/action_addressCaptureFragment_to_addressCompleteFragment"
+            app:destination="@id/addressCompleteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addressCompleteFragment"
+        android:name="io.gnosis.kouban.core.ui.address.complete.AddressCompleteFragment"
+        android:label="AddressCompleteFragment"
+        tools:layout="@layout/fragment_address_complete">
+        <action
+            android:id="@+id/action_addressCompleteFragment_to_transactionsFragment"
             app:destination="@id/transactionsFragment"
             app:popUpTo="@id/main_nav_graph"
             app:popUpToInclusive="true" />

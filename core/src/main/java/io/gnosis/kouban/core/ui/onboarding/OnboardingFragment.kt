@@ -31,58 +31,17 @@ class OnboardingFragment : BaseFragment<FragmentOnboardingBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(binding.addressInput) {
-            setupInputHandler(true)
-            onAddressChanged = { safeAddress ->
-                if (safeAddress != null) {
-                    viewModel.handleSafeAddress(safeAddress)
-                }
-            }
-            requestQRScanner = {
-                startActivityForResult(QRCodeScanActivity.createIntent(context), QR_SCAN_REQUEST_CODE)
-            }
+        binding.navigationButton.setOnClickListener {
+            findNavController().navigate(OnboardingFragmentDirections.actionOnboardingFragmentToAddressCaptureFragment())
         }
-        binding.navigationButton.setOnClickListener { viewModel.submitAddress() }
-        consumeViewStates()
+//        consumeViewStates()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == QR_SCAN_REQUEST_CODE && requestCode == RESULT_OK) {
-            QRCodeScanActivity.handleResult(QR_SCAN_REQUEST_CODE, resultCode, data) { safeAddressString ->
-                viewModel.handleSafeAddress(safeAddressString.asEthereumAddress()!!)
-            }
-        }
-    }
+//    private fun consumeViewStates() {
+//        viewModel.safeAddressEvents.observe(viewLifecycleOwner, Observer { viewState ->
+//            when (viewState) {
+//            }
+//        })
+//    }
 
-    private fun consumeViewStates() {
-        viewModel.safeAddressEvents.observe(viewLifecycleOwner, Observer { viewState ->
-            when (viewState) {
-                is SafeAddressStored ->
-                    findNavController().navigate(
-                        OnboardingFragmentDirections
-                            .actionOnboardingFragmentToTransactionsFragment(
-                                viewState.safeAddress.asEthereumAddressString()
-                            )
-                    )
-                is SafeAddressUpdated -> {
-                    //update UI
-                }
-                is Error -> {
-                    val stringId = when (viewState.throwable) {
-                        is AddressNotSet -> R.string.error_address_not_set
-                        else -> R.string.error_unknown
-                    }
-                    view?.let { view -> snackbar(view, stringId) }
-                }
-            }
-        })
-    }
-
-    private fun getAction() {
-    }
-
-    private companion object {
-        const val QR_SCAN_REQUEST_CODE = 0
-    }
 }

@@ -30,4 +30,14 @@
 
     <string name="error_address_not_set">There was a problem setting the address</string>
     <string name="error_unknown">Unknown error occurred</string>
+
+    <string name="connect_title">Connect to a Safe</string>
+    <string name="connect_description">Copy-paste the Safe address or click on “Receive” in the web interface to scan the code with your phone</string>
+    <string name="valid_safe_address_label">Valid Safe address</string>
+    <string name="action_confirm">Confirm</string>
+
+    <string name="setup_completed_title">Setup Completed</string>
+    <string name="action_start">Start</string>
+    <string name="setup_complete_description">You are now able to view and filter your safe transactions</string>
+
 </resources>
