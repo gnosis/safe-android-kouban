@@ -30,8 +30,8 @@ import timber.log.Timber
 
 class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
-    private val viewModel: SettingsViewModel by currentScope.viewModel(this)
 
+//    private val viewModel: SettingsViewModel by currentScope.viewModel(this)
     //private val adapter by currentScope.inject<BaseAdapter<Solidity.Address, ItemSafeOwnerBinding, SafeOwnerViewHolder>>()
     private val addressHelper by inject<AddressHelper>()
 
@@ -55,25 +55,25 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 //            }
         }
 
-        load(safeAddress)
+        //load(safeAddress)
     }
 
     private fun load(address: Solidity.Address) {
-        viewModel.loadOwners(address).observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is Loading -> {
-                    //binding.swipeToRefresh.isRefreshing = it.isLoading
-                }
-                is SafeSettings -> {
-                    //adapter.setItemsUnsafe(it.owners)
-                    binding.threshold.text = getString(R.string.threshold, it.threshold)
-                }
-                is Error -> {
-                    Timber.e(it.throwable)
-                    snackbar(binding.root, "SOME ERRROR")
-                }
-            }
-        })
+//        viewModel.loadOwners(address).observe(viewLifecycleOwner, Observer {
+//            when (it) {
+//                is Loading -> {
+//                    //binding.swipeToRefresh.isRefreshing = it.isLoading
+//                }
+//                is SafeSettings -> {
+//                    //adapter.setItemsUnsafe(it.owners)
+//                    binding.threshold.text = getString(R.string.threshold, it.threshold)
+//                }
+//                is Error -> {
+//                    Timber.e(it.throwable)
+//                    snackbar(binding.root, "SOME ERRROR")
+//                }
+//            }
+//        })
     }
 
     companion object {
