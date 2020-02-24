@@ -12,7 +12,7 @@ import io.gnosis.kouban.data.repositories.TokenRepository
 import kotlinx.coroutines.Dispatchers
 import pm.gnosis.model.Solidity
 
-class SettingsViewModel(
+class SafeCheckViewModel(
     private val safeRepository: SafeRepository,
     private val tokenRepository: TokenRepository
 ) : ViewModel() {
@@ -20,7 +20,11 @@ class SettingsViewModel(
     fun loadOwners(address: Solidity.Address): LiveData<ViewState> =
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
             emit(Loading(true))
-            kotlin.runCatching { safeRepository.loadSafeInfo(address) }
+            kotlin.runCatching {
+
+                val safeInfo = safeRepository.loadSafeInfo(address)
+                safeInfo
+            }
                 .onFailure {
                     emit(Loading(false))
                     emit(Error(it))
