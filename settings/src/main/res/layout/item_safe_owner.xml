@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.gnosis.kouban.core.ui.views.AddressInput
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/address"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
+    android:layout_height="wrap_content">
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/owner_address_image"
+        android:layout_width="@dimen/info_blockies"
+        android:layout_height="@dimen/info_blockies"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/owner_address"
+        style="@style/LightText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="@+id/owner_address_image"
+        app:layout_constraintStart_toEndOf="@+id/owner_address_image"
+        app:layout_constraintTop_toTopOf="@+id/owner_address_image"
+        tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
