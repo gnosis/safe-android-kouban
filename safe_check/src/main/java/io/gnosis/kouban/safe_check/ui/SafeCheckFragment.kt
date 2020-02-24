@@ -13,8 +13,8 @@ import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.helper.AddressHelper
 import io.gnosis.kouban.safe_check.R
-import io.gnosis.kouban.safe_check.databinding.FragmentSettingsBinding
-import io.gnosis.kouban.safe_check.databinding.ItemSafeOwnerBinding
+import io.gnosis.kouban.safe_check.databinding.FragmentSafeCheckBinding
+import io.gnosis.kouban.safe_check.databinding.ItemEthAddressBinding
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.currentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -26,34 +26,31 @@ import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 
-class SafeCheckFragment : BaseFragment<FragmentSettingsBinding>() {
-
+class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
 
     private val viewModel: SafeCheckViewModel by currentScope.viewModel(this)
-    //private val adapter by currentScope.inject<BaseAdapter<Solidity.Address, ItemSafeOwnerBinding, SafeOwnerViewHolder>>()
     private val addressHelper by inject<AddressHelper>()
 
     private lateinit var address: Solidity.Address
 
-    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsBinding =
-        FragmentSettingsBinding.inflate(inflater, container, false)
+    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSafeCheckBinding =
+        FragmentSafeCheckBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        address = arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!!
 
-        //safeAddress = SafeAddressManager(context).getSafeAddress()!!//arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!!
-        address = "0x83eC7B0506556a7749306D69681aDbDbd08f0769".asEthereumAddress()!!
         with(binding) {
 
             safeAddress.text = formatEthAddress(address)
             safeAddressImage.setAddress(address)
+            safeCheckData.visibility = View.GONE
 
             swipeToRefresh.setOnRefreshListener {
                 load(address)
             }
         }
-        binding.safeCheckData.visibility = View.GONE
 
         load(address)
     }
@@ -66,7 +63,6 @@ class SafeCheckFragment : BaseFragment<FragmentSettingsBinding>() {
                 }
                 is SafeSettings -> {
                     binding.safeCheckData.visibility = View.VISIBLE
-                    //adapter.setItemsUnsafe(it.owners)
                     addOwners(it.owners)
                     binding.threshold.text = it.threshold.toString()
                     binding.numTx.text = it.txCount.toString()
@@ -83,7 +79,7 @@ class SafeCheckFragment : BaseFragment<FragmentSettingsBinding>() {
     private fun addOwners(owners: List<Solidity.Address>) {
         binding.ownersList.removeAllViews()
         owners.forEach {
-            val ownerItem = ItemSafeOwnerBinding.inflate(layoutInflater)
+            val ownerItem = ItemEthAddressBinding.inflate(layoutInflater)
             ownerItem.ownerAddress.text = formatEthAddress(it)
             ownerItem.ownerAddressImage.setAddress(it)
             binding.ownersList.addView(ownerItem.root)
@@ -95,7 +91,7 @@ class SafeCheckFragment : BaseFragment<FragmentSettingsBinding>() {
         binding.modulesData.reset()
         if (modules.isNotEmpty()) {
             modules.forEach {
-                val moduleItem = ItemSafeOwnerBinding.inflate(layoutInflater)
+                val moduleItem = ItemEthAddressBinding.inflate(layoutInflater)
                 moduleItem.ownerAddress.text = formatEthAddress(it)
                 moduleItem.ownerAddressImage.setAddress(it)
                 binding.modulesList.addView(moduleItem.root)
