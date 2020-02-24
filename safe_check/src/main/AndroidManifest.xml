@@ -1,0 +1,12 @@
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.gnosis.kouban.safe_check">
+
+    <application>
+        <provider
+            android:name="io.gnosis.kouban.safe_check.di.SafeCheckContentProvider"
+            android:authorities="${applicationId}.io.gnosis.kouban.safe_check.di.SafeCheckContentProvider"
+            android:enabled="true"
+            android:exported="false" />
+    </application>
+</manifest>

@@ -1,4 +1,4 @@
-package io.gnosis.kouban.settings.ui
+package io.gnosis.kouban.safe_check.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

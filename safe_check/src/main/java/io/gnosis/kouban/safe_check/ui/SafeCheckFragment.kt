@@ -1,34 +1,19 @@
-package io.gnosis.kouban.settings.ui
+package io.gnosis.kouban.safe_check.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import io.gnosis.kouban.core.ui.adapter.BaseAdapter
 import io.gnosis.kouban.core.ui.base.BaseFragment
-import io.gnosis.kouban.core.ui.base.Error
-import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.helper.AddressHelper
-import io.gnosis.kouban.settings.R
-import io.gnosis.kouban.settings.databinding.FragmentSettingsBinding
-import io.gnosis.kouban.settings.databinding.ItemSafeOwnerBinding
-
-import kotlinx.android.synthetic.main.fragment_settings.view.*
+import io.gnosis.kouban.safe_check.databinding.FragmentSettingsBinding
 import org.koin.android.ext.android.inject
-import org.koin.androidx.scope.currentScope
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.withArgs
-
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import timber.log.Timber
 
-class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
+class SafeCheckFragment : BaseFragment<FragmentSettingsBinding>() {
 
 
 //    private val viewModel: SettingsViewModel by currentScope.viewModel(this)
@@ -81,7 +66,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
 
         fun newInstance(safeAddress: Solidity.Address) =
-            SettingsFragment().withArgs(
+            SafeCheckFragment().withArgs(
                 Bundle().apply {
                     putString(EXTRA_SAFE_ADDRESS, safeAddress.asEthereumAddressString())
                 }

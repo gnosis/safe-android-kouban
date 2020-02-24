@@ -1,9 +1,9 @@
-package io.gnosis.kouban.settings.di
+package io.gnosis.kouban.safe_check.di
 
 import io.gnosis.kouban.core.di.CoreContentProvider
 import org.koin.core.context.loadKoinModules
 
-class SettingsContentProvider : CoreContentProvider() {
+class SafeCheckContentProvider : CoreContentProvider() {
 
     override fun onCreate(): Boolean {
         loadKoinModules(settingsModule)
