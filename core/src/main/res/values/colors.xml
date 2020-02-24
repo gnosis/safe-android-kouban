@@ -15,5 +15,5 @@
     <color name="colorSecondary">#5D6D74</color>
     <color name="secondaryText">@color/colorSecondary</color>
     <color name="valid">#00C672</color>
-
+    <color name="warning">#f2994a</color>
 </resources>
