@@ -1,4 +1,4 @@
-package io.gnosis.kouban.core.ui.address.complete
+package io.gnosis.kouban.ui.address.complete
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

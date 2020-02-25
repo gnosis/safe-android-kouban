@@ -1,31 +1,17 @@
-package io.gnosis.kouban.core.ui.onboarding
+package io.gnosis.kouban.ui.onboarding
 
-import android.app.Activity.RESULT_OK
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
-import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import io.gnosis.kouban.R
 import com.google.android.material.tabs.TabLayoutMediator
-import io.gnosis.kouban.core.R
-import io.gnosis.kouban.core.databinding.FragmentOnboardingBinding
+import io.gnosis.kouban.databinding.FragmentOnboardingBinding
 import io.gnosis.kouban.core.ui.base.BaseFragment
-import io.gnosis.kouban.qrscanner.QRCodeScanActivity
-import kotlinx.android.synthetic.main.address_input.*
-import org.koin.androidx.scope.currentScope
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import pm.gnosis.svalinn.common.utils.snackbar
-import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
-import io.gnosis.kouban.core.ui.base.Error
 
 class OnboardingFragment : BaseFragment<FragmentOnboardingBinding>() {
 
@@ -71,5 +57,6 @@ class PagerAdapter(private val layouts: List<Int>, fragment: BaseFragment<*>) : 
 
     override fun getItemCount(): Int = layouts.size
 
-    override fun createFragment(position: Int): Fragment = OnboardingSlideFragment.newInstance(layouts[position])
+    override fun createFragment(position: Int): Fragment =
+        OnboardingSlideFragment.newInstance(layouts[position])
 }

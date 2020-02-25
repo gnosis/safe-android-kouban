@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/transactionsFragment"
-        android:name="io.gnosis.kouban.core.ui.transaction.TransactionsFragment"
+        android:name="io.gnosis.kouban.ui.transaction.TransactionsFragment"
         android:label="Transactions"
         tools:layout="@layout/fragment_transactions">
         <deepLink
@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/splashFragment"
-        android:name="io.gnosis.kouban.core.ui.splash.SplashFragment"
+        android:name="io.gnosis.kouban.ui.splash.SplashFragment"
         android:label="SplashFragment"
         tools:layout="@layout/fragment_splash">
         <action
@@ -36,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/onboardingFragment"
-        android:name="io.gnosis.kouban.core.ui.onboarding.OnboardingFragment"
+        android:name="io.gnosis.kouban.ui.onboarding.OnboardingFragment"
         android:label="OnboardingFragment"
         tools:layout="@layout/fragment_onboarding">
         <action
@@ -45,7 +45,7 @@
     </fragment>
     <fragment
         android:id="@+id/addressCaptureFragment"
-        android:name="io.gnosis.kouban.core.ui.address.capture.AddressCaptureFragment"
+        android:name="io.gnosis.kouban.ui.address.capture.AddressCaptureFragment"
         android:label="AddressCaptureFragment"
         tools:layout="@layout/fragment_address_capture">
         <action
@@ -54,7 +54,7 @@
     </fragment>
     <fragment
         android:id="@+id/addressCompleteFragment"
-        android:name="io.gnosis.kouban.core.ui.address.complete.AddressCompleteFragment"
+        android:name="io.gnosis.kouban.ui.address.complete.AddressCompleteFragment"
         android:label="AddressCompleteFragment"
         tools:layout="@layout/fragment_address_complete">
         <action

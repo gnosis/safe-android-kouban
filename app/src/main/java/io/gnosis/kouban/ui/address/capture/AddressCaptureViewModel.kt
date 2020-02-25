@@ -1,4 +1,4 @@
-package io.gnosis.kouban.core.ui.address.capture
+package io.gnosis.kouban.ui.address.capture
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,7 +23,11 @@ class AddressCaptureViewModel(private val safeAddressManager: SafeAddressManager
 
     fun submitAddress() {
         viewModelScope.launch(Dispatchers.IO) {
-            safeAddressManager.getSafeAddress()?.run { safeAddressEvents.postValue(SafeAddressStored(this)) }
+            safeAddressManager.getSafeAddress()?.run { safeAddressEvents.postValue(
+                SafeAddressStored(
+                    this
+                )
+            ) }
                 ?: safeAddressEvents.postValue(Error(AddressNotSet()))
         }
     }

@@ -1,19 +1,16 @@
-package io.gnosis.kouban.core.ui.transaction
+package io.gnosis.kouban.ui.transaction
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import io.gnosis.kouban.core.R
-import io.gnosis.kouban.core.databinding.ItemTransactionBinding
+import io.gnosis.kouban.databinding.ItemTransactionBinding
 import io.gnosis.kouban.core.ui.adapter.BaseFactory
 import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
 import io.gnosis.kouban.data.models.ServiceSafeTx
 import io.gnosis.kouban.data.utils.asMiddleEllipsized
 import io.gnosis.kouban.data.utils.shiftedString
 import io.gnosis.kouban.data.utils.shortChecksumString
-import pm.gnosis.models.Transaction
-import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
 
 class TransactionsFactory : BaseFactory<ItemTransactionBinding, BaseTransactionViewHolder>() {
 

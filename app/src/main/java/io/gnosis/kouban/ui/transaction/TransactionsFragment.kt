@@ -1,4 +1,4 @@
-package io.gnosis.kouban.core.ui.transaction
+package io.gnosis.kouban.ui.transaction
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,8 +9,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.kouban.core.ui.base.BaseFragment
-import io.gnosis.kouban.core.databinding.FragmentTransactionsBinding
-import io.gnosis.kouban.core.databinding.ItemTransactionBinding
+import io.gnosis.kouban.databinding.FragmentTransactionsBinding
+import io.gnosis.kouban.databinding.ItemTransactionBinding
 import io.gnosis.kouban.core.ui.adapter.BaseAdapter
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.Error

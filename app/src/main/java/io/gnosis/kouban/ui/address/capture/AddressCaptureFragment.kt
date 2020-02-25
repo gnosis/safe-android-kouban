@@ -1,4 +1,4 @@
-package io.gnosis.kouban.core.ui.address.capture
+package io.gnosis.kouban.ui.address.capture
 
 import android.app.Activity
 import android.content.Intent
@@ -10,10 +10,10 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.gnosis.kouban.core.R
-import io.gnosis.kouban.core.databinding.FragmentAddressCaptureBinding
+import io.gnosis.kouban.databinding.FragmentAddressCaptureBinding
 import io.gnosis.kouban.core.ui.base.BaseFragment
 import io.gnosis.kouban.core.ui.base.Error
-import io.gnosis.kouban.core.ui.onboarding.OnboardingFragmentDirections
+import io.gnosis.kouban.ui.onboarding.OnboardingFragmentDirections
 import io.gnosis.kouban.qrscanner.QRCodeScanActivity
 import org.koin.androidx.scope.currentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
