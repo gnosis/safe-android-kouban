@@ -39,7 +39,7 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
 
         with(binding) {
 
-            safeAddress.text = context!!.formatEthAddress(address)
+            safeAddress.text = address.formatEthAddress(context!!)
             safeAddressImage.setAddress(address)
             safeCheckData.visibility = View.GONE
 
@@ -76,7 +76,7 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
         binding.ownersList.removeAllViews()
         owners.forEach {
             val ownerItem = ItemEthAddressBinding.inflate(layoutInflater)
-            ownerItem.ownerAddress.text = context!!.formatEthAddress(it)
+            ownerItem.ownerAddress.text = it.formatEthAddress(context!!)
             ownerItem.ownerAddressImage.setAddress(it)
             binding.ownersList.addView(ownerItem.root)
         }
@@ -88,7 +88,7 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
         if (modules.isNotEmpty()) {
             modules.forEach {
                 val moduleItem = ItemEthAddressBinding.inflate(layoutInflater)
-                moduleItem.ownerAddress.text = context!!.formatEthAddress(it)
+                moduleItem.ownerAddress.text = it.formatEthAddress(context!!)
                 moduleItem.ownerAddressImage.setAddress(it)
                 binding.modulesList.addView(moduleItem.root)
             }

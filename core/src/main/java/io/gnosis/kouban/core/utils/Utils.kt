@@ -13,10 +13,10 @@ import pm.gnosis.utils.asEthereumAddressString
 
 fun parseEthereumAddress(address: String) = address.asEthereumAddress() ?: ERC67Parser.parse(address)?.address
 
-fun Context.formatEthAddress(address: Solidity.Address): Spannable {
+fun Solidity.Address.formatEthAddress(context: Context): Spannable {
     //make first & last 4 characters black
-    val addressString = SpannableStringBuilder(address.asEthereumAddressString()).insert(21, "\n")
-    addressString.setSpan(ForegroundColorSpan(getColorCompat(R.color.address_boundaries)), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-    addressString.setSpan(ForegroundColorSpan(getColorCompat(R.color.address_boundaries)), addressString.length - 4, addressString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    val addressString = SpannableStringBuilder(this.asEthereumAddressString()).insert(21, "\n")
+    addressString.setSpan(ForegroundColorSpan(context.getColorCompat(R.color.address_boundaries)), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    addressString.setSpan(ForegroundColorSpan(context.getColorCompat(R.color.address_boundaries)), addressString.length - 4, addressString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
     return addressString
 }

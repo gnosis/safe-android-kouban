@@ -23,7 +23,7 @@ class EthAddressViewHolder(private val binding: ItemEthAddressBinding, private v
     BaseViewHolder<Solidity.Address, ItemEthAddressBinding>(binding) {
 
     override fun bind(owner: Solidity.Address) {
-        binding.ownerAddress.text = binding.root.context.formatEthAddress(owner)
+        binding.ownerAddress.text = owner.formatEthAddress(binding.root.context)
         binding.ownerAddressImage.setAddress(owner)
     }
 }
