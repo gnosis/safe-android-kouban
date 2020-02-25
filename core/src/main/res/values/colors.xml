@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="black">#000000</color>
     <color name="pressedShade">#33000000</color>
     <color name="divider">#19252223</color>
     <color name="toolbar_action">@color/blue</color>
@@ -15,5 +16,6 @@
     <color name="colorSecondary">#5D6D74</color>
     <color name="secondaryText">@color/colorSecondary</color>
     <color name="valid">#00C672</color>
-
+    <color name="warning">#f2994a</color>
+    <color name="address_boundaries">@color/black</color>
 </resources>

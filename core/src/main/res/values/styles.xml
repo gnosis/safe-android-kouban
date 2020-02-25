@@ -43,4 +43,20 @@
         <item name="srcCompat">@drawable/ic_arrow_back_24dp</item>
     </style>
 
+    <style name="SectionLabel" parent="Text">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/dark_grey</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:lineSpacingExtra">3sp</item>
+    </style>
+
+    <style name="SectionValue" parent="Text">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:lineSpacingExtra">3sp</item>
+    </style>
+
 </resources>

@@ -1,4 +1,4 @@
-package io.gnosis.kouban.settings.ui
+package io.gnosis.kouban.safe_check.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -12,22 +12,24 @@ import io.gnosis.kouban.data.repositories.TokenRepository
 import kotlinx.coroutines.Dispatchers
 import pm.gnosis.model.Solidity
 
-class SettingsViewModel(
+class SafeCheckViewModel(
     private val safeRepository: SafeRepository,
     private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
-    fun loadOwners(address: Solidity.Address): LiveData<ViewState> =
+    fun loadSafeConfig(address: Solidity.Address): LiveData<ViewState> =
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
             emit(Loading(true))
-            kotlin.runCatching { safeRepository.loadSafeInfo(address) }
+            kotlin.runCatching {
+               safeRepository.loadSafeInfo(address)
+            }
                 .onFailure {
                     emit(Loading(false))
                     emit(Error(it))
                 }
                 .onSuccess {
                     emit(Loading(false))
-                    emit(SafeSettings(it.owners, it.threshold.toInt()))
+                    emit(SafeSettings(it.owners, it.threshold.toInt(), it.txCount.toInt(), it.modules))
                 }
         }
 
@@ -35,4 +37,7 @@ class SettingsViewModel(
 
 data class SafeSettings(
     val owners: List<Solidity.Address>,
-    val threshold: Int) : ViewState()
+    val threshold: Int,
+    val txCount: Int,
+    val modules: List<Solidity.Address>) : ViewState()
+

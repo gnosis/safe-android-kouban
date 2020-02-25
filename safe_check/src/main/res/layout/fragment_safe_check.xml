@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<!--    <ProgressBar-->
+<!--        android:id="@+id/safe_check_progress"-->
+<!--        style="?android:attr/progressBarStyle"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="center"-->
+<!--        app:layout_anchorGravity="center" />-->
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/layout_safe_details_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:title="@string/safe_status" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_to_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/safe_address_label"
+                    style="@style/SectionLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/safe_address"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/safe_address"
+                    style="@style/LightText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/safe_address_image"
+                    app:layout_constraintStart_toEndOf="@+id/safe_address_image"
+                    app:layout_constraintTop_toTopOf="@+id/safe_address_image"
+                    tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+                <pm.gnosis.blockies.BlockiesImageView
+                    android:id="@+id/safe_address_image"
+                    android:layout_width="@dimen/info_blockies"
+                    android:layout_height="@dimen/info_blockies"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/safe_address_label" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/safe_check_data"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/safe_address_image">
+
+                    <TextView
+                        android:id="@+id/contract_version_label"
+                        style="@style/SectionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/contract_version"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/contract_version"
+                        style="@style/SectionValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/contract_version_label"
+                        tools:text="Version 1.0.0" />
+
+                    <TextView
+                        android:id="@+id/ens_name_label"
+                        style="@style/SectionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/ens_name"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/contract_version" />
+
+                    <TextView
+                        android:id="@+id/num_tx_label"
+                        style="@style/SectionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/num_transactions"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/ens_name" />
+
+                    <TextView
+                        android:id="@+id/owners_label"
+                        style="@style/SectionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/owners"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/num_tx" />
+
+                    <TextView
+                        android:id="@+id/threshold_label"
+                        style="@style/SectionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/required_confirmations"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/owners_list" />
+
+
+                    <TextView
+                        android:id="@+id/modules_label"
+                        style="@style/SectionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/modules"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/threshold" />
+
+
+                    <ViewSwitcher
+                        android:id="@+id/modules_data"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/modules_label">
+
+                        <TextView
+                            android:id="@+id/modules_empty"
+                            style="@style/SectionValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:text="@string/modules_none_specified" />
+
+                        <LinearLayout
+                            android:id="@+id/modules_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" />
+
+                    </ViewSwitcher>
+
+
+                    <TextView
+                        android:id="@+id/deployment_param_label"
+                        style="@style/SectionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/deployment_parameters"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/modules_data" />
+
+
+                    <TextView
+                        android:id="@+id/deployment_param"
+                        style="@style/SectionValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="24dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/deployment_param_label"
+                        tools:text="@string/click_for_details" />
+
+                    <TextView
+                        android:id="@+id/threshold"
+                        style="@style/SectionValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/threshold_label"
+                        tools:text="2 of the 2 owners need to confirm" />
+
+                    <TextView
+                        android:id="@+id/num_tx"
+                        style="@style/SectionValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/num_tx_label"
+                        tools:text="5" />
+
+                    <TextView
+                        android:id="@+id/ens_name"
+                        style="@style/SectionValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/ens_name_label"
+                        tools:text="@string/ens_name_none_set" />
+
+                    <LinearLayout
+                        android:id="@+id/owners_list"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/owners_label"/>
+
+
+                    <ImageView
+                        android:id="@+id/contract_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        android:tint="@color/tomato"
+                        app:layout_constraintBottom_toBottomOf="@+id/contract_version_label"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/contract_version_label"
+                        app:srcCompat="@drawable/ic_error_black_24dp" />
+
+                    <ImageView
+                        android:id="@+id/owners_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        android:tint="@color/safe_green"
+                        app:layout_constraintBottom_toBottomOf="@+id/owners_label"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/owners_label"
+                        app:srcCompat="@drawable/ic_check_circle_black_24dp" />
+
+                    <ImageView
+                        android:id="@+id/modules_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        android:tint="@color/safe_green"
+                        app:layout_constraintBottom_toBottomOf="@+id/modules_label"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/modules_label"
+                        app:layout_constraintVertical_bias="0.0"
+                        app:srcCompat="@drawable/ic_check_circle_black_24dp" />
+
+                    <ImageView
+                        android:id="@+id/deployment_param_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        android:tint="@color/safe_green"
+                        app:layout_constraintBottom_toTopOf="@+id/deployment_param"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/deployment_param"
+                        app:layout_constraintVertical_bias="0.0"
+                        app:srcCompat="@drawable/ic_check_circle_black_24dp" />
+
+                    <ImageView
+                        android:id="@+id/threshold_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        android:tint="@color/warning"
+                        app:layout_constraintBottom_toBottomOf="@+id/threshold_label"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/threshold_label"
+                        app:layout_constraintVertical_bias="0.0"
+                        app:srcCompat="@drawable/ic_info_outline_black_24dp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
