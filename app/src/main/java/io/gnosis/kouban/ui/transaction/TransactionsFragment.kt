@@ -1,16 +1,17 @@
-package io.gnosis.kouban.core.ui.transaction
+package io.gnosis.kouban.ui.transaction
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.*
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.kouban.core.ui.base.BaseFragment
-import io.gnosis.kouban.core.databinding.FragmentTransactionsBinding
-import io.gnosis.kouban.core.databinding.ItemTransactionBinding
+import io.gnosis.kouban.databinding.FragmentTransactionsBinding
+import io.gnosis.kouban.databinding.ItemTransactionBinding
 import io.gnosis.kouban.core.ui.adapter.BaseAdapter
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.Error
@@ -21,6 +22,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
+import io.gnosis.kouban.R
 
 class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
 
@@ -40,6 +42,19 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
             list.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
 
             swipeToRefresh.setOnRefreshListener {
+            }
+
+            toolbar.inflateMenu(R.menu.main)
+            toolbar.setOnMenuItemClickListener {
+                when(it.itemId) {
+                    R.id.safe_check -> {
+                        findNavController().navigate(TransactionsFragmentDirections.actionTransactionsFragmentToSafeCheckFragment(navArgs.safeAddress))
+                        true
+                    }
+                    else -> {
+                        false
+                    }
+                }
             }
         }
         load(navArgs.safeAddress.asEthereumAddress()!!)

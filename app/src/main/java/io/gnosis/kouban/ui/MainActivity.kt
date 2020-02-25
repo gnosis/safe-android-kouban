@@ -1,7 +1,7 @@
 package io.gnosis.kouban.ui
 
 import android.os.Bundle
-import io.gnosis.kouban.core.databinding.ActivityMainBinding
+import io.gnosis.kouban.databinding.ActivityMainBinding
 import io.gnosis.kouban.core.ui.base.BaseActivity
 
 class MainActivity : BaseActivity() {

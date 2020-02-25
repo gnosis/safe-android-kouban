@@ -1,4 +1,4 @@
-package io.gnosis.kouban.core.ui.splash
+package io.gnosis.kouban.ui.splash
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,9 +7,10 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import io.gnosis.kouban.core.R
-import io.gnosis.kouban.core.databinding.FragmentSplashBinding
+import io.gnosis.kouban.R
+import io.gnosis.kouban.databinding.FragmentSplashBinding
 import io.gnosis.kouban.core.ui.base.BaseFragment
+import io.gnosis.kouban.ui.splash.SplashFragmentDirections
 import org.koin.androidx.scope.currentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pm.gnosis.utils.asEthereumAddressString

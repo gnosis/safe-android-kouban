@@ -1,4 +1,4 @@
-package io.gnosis.kouban.core.ui.transaction
+package io.gnosis.kouban.ui.transaction
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData

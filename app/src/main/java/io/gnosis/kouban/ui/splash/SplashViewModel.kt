@@ -1,4 +1,4 @@
-package io.gnosis.kouban.core.ui.splash
+package io.gnosis.kouban.ui.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData

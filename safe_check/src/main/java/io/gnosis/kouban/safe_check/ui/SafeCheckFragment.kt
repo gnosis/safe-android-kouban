@@ -101,7 +101,7 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
 
     companion object {
 
-        private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
+        private const val EXTRA_SAFE_ADDRESS = "safeAddress"
 
         fun newInstance(safeAddress: Solidity.Address) =
             SafeCheckFragment().withArgs(

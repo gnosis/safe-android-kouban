@@ -1,4 +1,4 @@
-package io.gnosis.kouban.core.ui.address.complete
+package io.gnosis.kouban.ui.address.complete
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.gnosis.kouban.core.R
-import io.gnosis.kouban.core.databinding.FragmentAddressCompleteBinding
+import io.gnosis.kouban.databinding.FragmentAddressCompleteBinding
 import io.gnosis.kouban.core.ui.base.BaseFragment
 import io.gnosis.kouban.core.ui.base.Error
 import org.koin.androidx.scope.currentScope
