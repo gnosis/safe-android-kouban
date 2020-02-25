@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 
-abstract class BaseFactory<VH : BaseViewHolder<Any>> {
+abstract class BaseFactory<VH : BaseViewHolder<*>> {
 
     abstract fun newViewHolder(viewBinding: ViewBinding, viewType: Int): VH
 
@@ -12,3 +12,5 @@ abstract class BaseFactory<VH : BaseViewHolder<Any>> {
 
     open fun <T> viewTypeFor(item: T): Int = 0
 }
+
+class UnsupportedViewType : Throwable()
