@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import com.squareup.picasso.Picasso
 import io.gnosis.kouban.core.ui.adapter.BaseFactory
 import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
+import io.gnosis.kouban.core.utils.formatEthAddress
 import io.gnosis.kouban.safe_check.databinding.ItemEthAddressBinding
 import pm.gnosis.model.Solidity
 
@@ -22,7 +23,7 @@ class EthAddressViewHolder(private val binding: ItemEthAddressBinding, private v
     BaseViewHolder<Solidity.Address, ItemEthAddressBinding>(binding) {
 
     override fun bind(owner: Solidity.Address) {
-        binding.ownerAddress.text = ""
+        binding.ownerAddress.text = binding.root.context.formatEthAddress(owner)
         binding.ownerAddressImage.setAddress(owner)
     }
 }

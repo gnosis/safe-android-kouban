@@ -17,13 +17,11 @@ class SafeCheckViewModel(
     private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
-    fun loadOwners(address: Solidity.Address): LiveData<ViewState> =
+    fun loadSafeConfig(address: Solidity.Address): LiveData<ViewState> =
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
             emit(Loading(true))
             kotlin.runCatching {
-
-                val safeInfo = safeRepository.loadSafeInfo(address)
-                safeInfo
+               safeRepository.loadSafeInfo(address)
             }
                 .onFailure {
                     emit(Loading(false))
