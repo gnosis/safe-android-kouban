@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.*
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +22,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
+import io.gnosis.kouban.R
 
 class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
 
@@ -40,6 +42,19 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
             list.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
 
             swipeToRefresh.setOnRefreshListener {
+            }
+
+            toolbar.inflateMenu(R.menu.main)
+            toolbar.setOnMenuItemClickListener {
+                when(it.itemId) {
+                    R.id.safe_check -> {
+                        findNavController().navigate(TransactionsFragmentDirections.actionTransactionsFragmentToSafeCheckFragment(navArgs.safeAddress))
+                        true
+                    }
+                    else -> {
+                        false
+                    }
+                }
             }
         }
         load(navArgs.safeAddress.asEthereumAddress()!!)

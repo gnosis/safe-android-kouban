@@ -17,6 +17,9 @@
         <argument
             android:name="safeAddress"
             app:argType="string" />
+        <action
+            android:id="@+id/action_transactionsFragment_to_safeCheckFragment"
+            app:destination="@id/safeCheckFragment" />
     </fragment>
     <fragment
         android:id="@+id/splashFragment"
@@ -62,5 +65,13 @@
             app:destination="@id/transactionsFragment"
             app:popUpTo="@id/main_nav_graph"
             app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/safeCheckFragment"
+        android:name="io.gnosis.kouban.safe_check.ui.SafeCheckFragment"
+        android:label="SafeCheckFragment" >
+        <argument
+            android:name="safeAddress"
+            app:argType="string" />
     </fragment>
 </navigation>
