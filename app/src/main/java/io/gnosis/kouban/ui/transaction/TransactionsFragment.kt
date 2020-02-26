@@ -11,11 +11,9 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.kouban.core.ui.base.BaseFragment
 import io.gnosis.kouban.databinding.FragmentTransactionsBinding
-import io.gnosis.kouban.databinding.ItemTransactionBinding
 import io.gnosis.kouban.core.ui.adapter.BaseAdapter
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.Error
-import io.gnosis.kouban.data.models.ServiceSafeTx
 import org.koin.androidx.scope.currentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pm.gnosis.model.Solidity
@@ -27,7 +25,7 @@ import io.gnosis.kouban.R
 class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
 
     private val viewModel by currentScope.viewModel<TransactionsViewModel>(this)
-    private val adapter by currentScope.inject<BaseAdapter<ServiceSafeTx, ItemTransactionBinding, BaseTransactionViewHolder>>()
+    private val adapter by currentScope.inject<BaseAdapter<BaseTransactionViewHolder<Any>>>()
     private val navArgs by navArgs<TransactionsFragmentArgs>()
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionsBinding =
@@ -46,7 +44,7 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
 
             toolbar.inflateMenu(R.menu.main)
             toolbar.setOnMenuItemClickListener {
-                when(it.itemId) {
+                when (it.itemId) {
                     R.id.safe_check -> {
                         findNavController().navigate(TransactionsFragmentDirections.actionTransactionsFragmentToSafeCheckFragment(navArgs.safeAddress))
                         true
@@ -64,11 +62,17 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
         viewModel.loadTransactionsOf(address).observe(viewLifecycleOwner, Observer {
             when (it) {
                 is Loading -> binding.swipeToRefresh.isRefreshing = it.isLoading
-                is Transactions -> adapter.setItemsUnsafe(it.transactions.flatMap { transactions -> transactions.value })
+                is Transactions -> adapter.setItemsUnsafe(it.transactions.flatMap { transactions ->
+                    mutableListOf<Any>(
+                        Header(transactions.key.name)
+                    ).apply {
+                        addAll(transactions.value)
+                    }
+                })
                 is Error -> {
                     it.throwable.printStackTrace()
                     Timber.e(it.throwable)
-                    snackbar(binding.root, "SOME ERROR")
+                    snackbar(binding.root, R.string.unknown_error)
                 }
             }
         })

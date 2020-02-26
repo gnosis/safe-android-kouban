@@ -5,14 +5,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 
-class BaseAdapter<T, VB, VH>(
-    private val factory: BaseFactory<VB, VH>
-) : RecyclerView.Adapter<VH>() where VH : BaseViewHolder<T, VB>, VB : ViewBinding {
+class BaseAdapter<VH>(
+    private val factory: BaseFactory<VH>
+) : RecyclerView.Adapter<VH>() where VH : BaseViewHolder<Any> {
 
-    private val items = mutableListOf<T>()
+    private val items = mutableListOf<Any>()
 
     @Deprecated("Unsafe")
-    fun setItemsUnsafe(items: List<T>) {
+    fun setItemsUnsafe(items: List<Any>) {
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()
@@ -24,11 +24,15 @@ class BaseAdapter<T, VB, VH>(
             viewType
         )
 
+    override fun getItemViewType(position: Int): Int =
+        factory.viewTypeFor(items[position]).takeUnless { it < 0 } ?: throw UnsupportedItem()
+
 
     override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-//        holder.itemViewType
         holder.bind(items[position])
     }
 }
+
+class UnsupportedItem : Throwable()
