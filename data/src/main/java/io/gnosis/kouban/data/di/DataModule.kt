@@ -3,6 +3,7 @@ package io.gnosis.kouban.data.di
 import androidx.room.Room
 import io.gnosis.kouban.data.BuildConfig
 import io.gnosis.kouban.data.backend.JsonRpcApi
+import io.gnosis.kouban.data.backend.MagicApi
 import io.gnosis.kouban.data.backend.RelayServiceApi
 import io.gnosis.kouban.data.backend.TransactionServiceApi
 import io.gnosis.kouban.data.db.TokensDatabase
@@ -51,6 +52,13 @@ val dataModule = module {
             .create(JsonRpcApi::class.java)
     }
 
+    single<MagicApi> {
+        get<Retrofit.Builder>()
+            .baseUrl(BuildConfig.MAGIC_SERVICE_URL)
+            .build()
+            .create(MagicApi::class.java)
+    }
+
     single { Room.databaseBuilder(get(), TokensDatabase::class.java, TokensDatabase.DB_NAME).build() }
 
     single { get<TokensDatabase>().tokenInfoDao() }
@@ -62,7 +70,7 @@ val dataModule = module {
     single<FingerprintHelper> { AndroidFingerprintHelper(get()) }
 
     single {
-        SafeRepository(get(), get(), get(), get(), get(), get())
+        SafeRepository(get(), get(), get(), get(), get(), get(), get())
     }
 
     single {

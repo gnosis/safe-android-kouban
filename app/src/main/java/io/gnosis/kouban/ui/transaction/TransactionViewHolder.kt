@@ -23,8 +23,13 @@ class TransactionViewHolder(
     override fun bind(item: Transaction) {
         with(viewBinding) {
             root.context.let { context ->
-//                textTxHash.text = context.getString(R.string.hash, item.address.asEthereumAddressString().asMiddleEllipsized(4))
+                //                textTxHash.text = context.getString(R.string.hash, item.address.asEthereumAddressString().asMiddleEllipsized(4))
 //                textAmount.text = item.transferInfo?.amount?.shiftedString(2)
+                textAddress.text = item.address.asEthereumAddressString().asMiddleEllipsized(4)
+                blockiesAddress.setAddress(item.address)
+                item.transferInfo?.let { transferInfo ->
+                    textTokenAmount.text = "${20} ${transferInfo.tokenSymbol}"
+                }
             }
         }
     }

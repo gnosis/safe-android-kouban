@@ -16,20 +16,20 @@ import org.koin.dsl.module
 
 val fragmentModule = module {
 
-    scope(named<io.gnosis.kouban.ui.transaction.TransactionsFragment>()) {
-        viewModel { io.gnosis.kouban.ui.transaction.TransactionsViewModel(get()) }
-        factory { BaseAdapter(io.gnosis.kouban.ui.transaction.TransactionsFactory()) }
+    scope(named<TransactionsFragment>()) {
+        viewModel { TransactionsViewModel(get()) }
+        factory { BaseAdapter(TransactionsFactory()) }
     }
 
-    scope(named<io.gnosis.kouban.ui.splash.SplashFragment>()) {
-        viewModel { io.gnosis.kouban.ui.splash.SplashViewModel(get()) }
+    scope(named<SplashFragment>()) {
+        viewModel { SplashViewModel(get()) }
     }
 
-    scope(named<io.gnosis.kouban.ui.address.capture.AddressCaptureFragment>()) {
-        viewModel { io.gnosis.kouban.ui.address.capture.AddressCaptureViewModel(get()) }
+    scope(named<AddressCaptureFragment>()) {
+        viewModel { AddressCaptureViewModel(get()) }
     }
 
-    scope(named<io.gnosis.kouban.ui.address.complete.AddressCompleteFragment>()) {
-        viewModel { io.gnosis.kouban.ui.address.complete.AddressCompleteViewModel(get()) }
+    scope(named<AddressCompleteFragment>()) {
+        viewModel { AddressCompleteViewModel(get()) }
     }
 }
