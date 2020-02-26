@@ -50,6 +50,21 @@ class SafeRepository(
         jsonRpcApi.performCall(safe, GnosisSafe.GetModules.encode()).let { GnosisSafe.GetModules.decode(it).param0.items }
 
 
+    @Deprecated("I shouldn't exist")
+    suspend fun fakeGeTransactions(safe: Solidity.Address): TransactionsDto =
+        TransactionsDto(listOf(mockTransaction(safe)), emptyList())
+
+    @Deprecated("I shouldn't exist either")
+    private fun mockTransaction(safe: Solidity.Address) =
+        Transaction(
+            safe,
+            -1,
+            null,
+            null,
+            TransactionType.Incoming,
+            TransactionState.Pending
+        )
+
     suspend fun loadTokenBalances(safe: Solidity.Address): List<Balance> =
         transactionServiceApi.loadBalances(safe.asEthereumAddressChecksumString()).map {
             val tokenAddress = it.tokenAddress ?: TokenRepository.ETH_ADDRESS

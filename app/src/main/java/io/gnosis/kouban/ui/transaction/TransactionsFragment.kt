@@ -40,6 +40,7 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
             list.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
 
             swipeToRefresh.setOnRefreshListener {
+                load(navArgs.safeAddress.asEthereumAddress()!!)
             }
 
             toolbar.inflateMenu(R.menu.main)
@@ -69,6 +70,7 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
                         addAll(transactions.value)
                     }
                 })
+                is ListViewItems -> adapter.setItemsUnsafe(it.listItems)
                 is Error -> {
                     it.throwable.printStackTrace()
                     Timber.e(it.throwable)
