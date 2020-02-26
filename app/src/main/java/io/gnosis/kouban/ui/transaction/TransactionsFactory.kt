@@ -22,18 +22,16 @@ enum class TransactionViewTypes {
 class TransactionsFactory : BaseFactory<BaseTransactionViewHolder<Any>>() {
 
     override fun newViewHolder(viewBinding: ViewBinding, viewType: Int): BaseTransactionViewHolder<Any> {
-        return when (viewType) {
-            TransactionViewTypes.Transaction.ordinal -> TransactionViewHolder(viewBinding as ItemTransactionBinding)
-            TransactionViewTypes.Header.ordinal -> HeaderViewHolder(viewBinding as ItemHeaderBinding)
-            else -> throw UnsupportedViewType()
+        return when (TransactionViewTypes.values()[viewType]) {
+            TransactionViewTypes.Transaction -> TransactionViewHolder(viewBinding as ItemTransactionBinding)
+            TransactionViewTypes.Header -> HeaderViewHolder(viewBinding as ItemHeaderBinding)
         } as BaseTransactionViewHolder<Any>
     }
 
     override fun layout(layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int): ViewBinding {
-        return when (viewType) {
-            TransactionViewTypes.Transaction.ordinal -> ItemTransactionBinding.inflate(layoutInflater, parent, false)
-            TransactionViewTypes.Header.ordinal -> ItemHeaderBinding.inflate(layoutInflater, parent, false)
-            else -> throw UnsupportedViewType()
+        return when (TransactionViewTypes.values()[viewType]) {
+            TransactionViewTypes.Transaction -> ItemTransactionBinding.inflate(layoutInflater, parent, false)
+            TransactionViewTypes.Header -> ItemHeaderBinding.inflate(layoutInflater, parent, false)
         }
     }
 
