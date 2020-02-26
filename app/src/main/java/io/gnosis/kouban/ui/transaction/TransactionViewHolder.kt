@@ -23,8 +23,8 @@ class TransactionViewHolder(
     override fun bind(item: Transaction) {
         with(viewBinding) {
             root.context.let { context ->
-                textTxHash.text = context.getString(R.string.hash, item.address.asEthereumAddressString().asMiddleEllipsized(4))
-                textAmount.text = item.transferInfo?.amount?.shiftedString(2)
+//                textTxHash.text = context.getString(R.string.hash, item.address.asEthereumAddressString().asMiddleEllipsized(4))
+//                textAmount.text = item.transferInfo?.amount?.shiftedString(2)
             }
         }
     }

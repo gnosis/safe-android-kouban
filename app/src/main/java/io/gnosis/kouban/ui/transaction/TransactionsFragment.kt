@@ -45,15 +45,12 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
 
             toolbar.inflateMenu(R.menu.main)
             toolbar.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.safe_check -> {
-                        findNavController().navigate(TransactionsFragmentDirections.actionTransactionsFragmentToSafeCheckFragment(navArgs.safeAddress))
-                        true
-                    }
-                    else -> {
-                        false
-                    }
+                if (it.itemId == R.id.safe_check) {
+                    findNavController().navigate(
+                        TransactionsFragmentDirections.actionTransactionsFragmentToSafeCheckFragment(navArgs.safeAddress)
+                    )
                 }
+                true
             }
         }
         load(navArgs.safeAddress.asEthereumAddress()!!)
