@@ -1,6 +1,7 @@
 package io.gnosis.kouban.ui.transaction
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.viewbinding.ViewBinding
@@ -76,11 +77,11 @@ class TransactionViewHolder(
     }
 }
 
-data class Header(val label: String)
+data class Header(@StringRes val label: Int)
 
 class HeaderViewHolder(private val viewBinding: ItemHeaderBinding) : BaseTransactionViewHolder<Header>(viewBinding) {
 
     override fun bind(item: Header) {
-        viewBinding.textTo.text = item.label
+        viewBinding.textTo.setText(item.label)
     }
 }

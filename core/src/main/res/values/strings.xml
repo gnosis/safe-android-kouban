@@ -49,4 +49,7 @@
 
     <string name="transaction_token_amount_label">%1$s %2$s</string>
     <string name="transaction_description_label">%1$s\n(%2$s bytes)</string>
+
+    <string name="pending_label">Pending</string>
+    <string name="history_label">History</string>
 </resources>

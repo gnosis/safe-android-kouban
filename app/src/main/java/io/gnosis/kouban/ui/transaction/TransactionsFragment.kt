@@ -59,13 +59,6 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
         viewModel.loadTransactionsOf(address).observe(viewLifecycleOwner, Observer {
             when (it) {
                 is Loading -> binding.swipeToRefresh.isRefreshing = it.isLoading
-                is Transactions -> adapter.setItemsUnsafe(it.transactions.flatMap { transactions ->
-                    mutableListOf<Any>(
-                        Header(transactions.key.name)
-                    ).apply {
-                        addAll(transactions.value)
-                    }
-                })
                 is ListViewItems -> adapter.setItemsUnsafe(it.listItems)
                 is Error -> {
                     it.throwable.printStackTrace()

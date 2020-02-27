@@ -3,6 +3,7 @@ package io.gnosis.kouban.ui.transaction
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import io.gnosis.kouban.R
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
@@ -29,9 +30,9 @@ class TransactionsViewModel(
                 .onSuccess {
                     emit(Loading(false))
                     val listItems = mutableListOf<Any>().apply {
-                        add(Header("Pending"))
+                        add(Header(R.string.pending_label))
                         addAll(it.pending)
-                        add(Header("History"))
+                        add(Header(R.string.history_label))
                         addAll(it.history)
                     }
                     emit(ListViewItems(listItems))
@@ -40,7 +41,5 @@ class TransactionsViewModel(
 
 
 }
-
-data class Transactions(val transactions: Map<TransactionState, List<ServiceSafeTx>>) : ViewState()
 
 data class ListViewItems(val listItems: List<Any>) : ViewState()
