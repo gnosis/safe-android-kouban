@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
+import com.squareup.picasso.Picasso
 import io.gnosis.kouban.core.R
 import io.gnosis.kouban.databinding.ItemTransactionBinding
 import io.gnosis.kouban.core.ui.adapter.BaseFactory
@@ -20,11 +21,11 @@ enum class TransactionViewTypes {
     Header, Transaction
 }
 
-class TransactionsFactory : BaseFactory<BaseTransactionViewHolder<Any>>() {
+class TransactionsFactory(private val picasso: Picasso) : BaseFactory<BaseTransactionViewHolder<Any>>() {
 
     override fun newViewHolder(viewBinding: ViewBinding, viewType: Int): BaseTransactionViewHolder<Any> {
         return when (TransactionViewTypes.values()[viewType]) {
-            TransactionViewTypes.Transaction -> TransactionViewHolder(viewBinding as ItemTransactionBinding)
+            TransactionViewTypes.Transaction -> TransactionViewHolder(viewBinding as ItemTransactionBinding, picasso)
             TransactionViewTypes.Header -> HeaderViewHolder(viewBinding as ItemHeaderBinding)
         } as BaseTransactionViewHolder<Any>
     }

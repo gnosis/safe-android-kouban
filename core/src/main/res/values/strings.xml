@@ -47,4 +47,6 @@
     <string name="onboarding_slide3_title">Check your Safe health</string>
     <string name="onboarding_slide3_description">Get an easy overview if your Safe is properly setup and secure</string>
 
+    <string name="transaction_token_amount_label">%1$s %2$s</string>
+    <string name="transaction_description_label">%1$s\n(%2$s bytes)</string>
 </resources>

@@ -18,7 +18,7 @@ val fragmentModule = module {
 
     scope(named<TransactionsFragment>()) {
         viewModel { TransactionsViewModel(get()) }
-        factory { BaseAdapter(TransactionsFactory()) }
+        factory { BaseAdapter(TransactionsFactory(get())) }
     }
 
     scope(named<SplashFragment>()) {
