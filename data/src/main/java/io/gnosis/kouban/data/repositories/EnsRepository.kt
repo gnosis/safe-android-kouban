@@ -17,11 +17,7 @@ class EnsRepository(
 
     suspend fun resolve(url: String): Solidity.Address {
 
-        val node =
-            ensNormalizer.normalize(url).split(".").foldRight<String, ByteArray?>(null) { part, node ->
-                if (node == null && part.isEmpty()) ByteArray(32)
-                else Sha3Utils.keccak((node ?: ByteArray(32)) + Sha3Utils.keccak(part.toByteArray()))
-            } ?: ByteArray(32)
+        val node = ensNormalizer.normalize(url).nameHash()
 
         val resolverRequest = jsonRpcApi.post(
             listOf(
@@ -60,12 +56,7 @@ class EnsRepository(
     // reverse ens resolution
     suspend fun resolve(address: Solidity.Address): String {
 
-        val node =
-            "${address.asEthereumAddressString().removeHexPrefix()}.addr.reverse".split(".").foldRight<String, ByteArray?>(null) { part, node ->
-                if (node == null && part.isEmpty()) ByteArray(32)
-                else Sha3Utils.keccak((node ?: ByteArray(32)) + Sha3Utils.keccak(part.toByteArray()))
-            } ?: ByteArray(32)
-
+        val node = "${address.asEthereumAddressString().removeHexPrefix()}.addr.reverse".nameHash()
 
         val resolverRequest = jsonRpcApi.post(
             listOf(
@@ -108,6 +99,13 @@ class EnsRepository(
 
             result
         }
+    }
+
+    private fun String.nameHash(): ByteArray {
+        return this.split(".").foldRight<String, ByteArray?>(null) { part, node ->
+            if (node == null && part.isEmpty()) ByteArray(32)
+            else Sha3Utils.keccak((node ?: ByteArray(32)) + Sha3Utils.keccak(part.toByteArray()))
+        } ?: ByteArray(32)
     }
 
 
