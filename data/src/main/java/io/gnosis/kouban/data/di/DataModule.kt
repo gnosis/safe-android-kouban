@@ -6,8 +6,7 @@ import io.gnosis.kouban.data.backend.JsonRpcApi
 import io.gnosis.kouban.data.backend.RelayServiceApi
 import io.gnosis.kouban.data.backend.TransactionServiceApi
 import io.gnosis.kouban.data.db.TokensDatabase
-import io.gnosis.kouban.data.repositories.SafeRepository
-import io.gnosis.kouban.data.repositories.TokenRepository
+import io.gnosis.kouban.data.repositories.*
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
 import pm.gnosis.mnemonic.Bip39
@@ -67,5 +66,13 @@ val dataModule = module {
 
     single {
         TokenRepository(get(), get())
+    }
+
+    single<EnsNormalizer> {
+        IDNEnsNormalizer()
+    }
+
+    single {
+        EnsRepository(get(), get())
     }
 }
