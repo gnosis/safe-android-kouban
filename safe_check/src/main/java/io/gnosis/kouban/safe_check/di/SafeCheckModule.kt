@@ -12,7 +12,7 @@ val settingsModule = module {
 
     scope(named<SafeCheckFragment>()) {
         viewModel {
-            SafeCheckViewModel(get(), get())
+            SafeCheckViewModel(get(), get(), get())
         }
     }
 }
