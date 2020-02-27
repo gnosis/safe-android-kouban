@@ -29,6 +29,7 @@
         app:layout_constraintEnd_toStartOf="@id/vertical_middle"
         app:layout_constraintStart_toEndOf="@id/image_token_logo"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="300 DAI" />
 
     <TextView
@@ -42,6 +43,7 @@
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/image_token_logo"
         app:layout_constraintTop_toBottomOf="@id/text_token_amount"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="300 DAI" />
 
     <androidx.constraintlayout.widget.Guideline
@@ -76,6 +78,7 @@
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/vertical_middle"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="0x1234...5678" />
 
     <TextView
@@ -92,6 +95,7 @@
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/vertical_middle"
         app:layout_constraintTop_toBottomOf="@id/text_address"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="2020/01/01" />
 
     <pm.gnosis.blockies.BlockiesImageView
@@ -101,5 +105,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="8dp"
+        android:alpha="0.5"
+        android:background="@color/dark_grey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/blockies_address"
+        app:layout_constraintStart_toEndOf="@id/image_token_logo"
+        app:layout_constraintTop_toBottomOf="@id/text_description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

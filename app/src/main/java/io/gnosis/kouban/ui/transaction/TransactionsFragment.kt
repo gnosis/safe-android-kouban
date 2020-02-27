@@ -37,7 +37,6 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
         with(binding) {
             list.layoutManager = LinearLayoutManager(context)
             list.adapter = adapter
-            list.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
 
             swipeToRefresh.setOnRefreshListener {
                 load(navArgs.safeAddress.asEthereumAddress()!!)
