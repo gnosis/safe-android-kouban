@@ -107,11 +107,6 @@ class SafeRepository(
                 ),
                 JsonRpcApi.JsonRpcRequest(
                     id = 4,
-                    method = "eth_getTransactionCount",
-                    params = listOf(safe, "latest")
-                ),
-                JsonRpcApi.JsonRpcRequest(
-                    id = 5,
                     method = "eth_call",
                     params = listOf(
                         mapOf(
@@ -125,10 +120,9 @@ class SafeRepository(
         val masterCopy = responses[0].result!!.asEthereumAddress()!!
         val owners = GnosisSafe.GetOwners.decode(responses[1].result!!).param0.items
         val threshold = GnosisSafe.GetThreshold.decode(responses[2].result!!).param0.value
-        val nonce = GnosisSafe.Nonce.decode(responses[3].result!!).param0.value
-        val txCount = responses[4].result!!.removeHexPrefix().toInt(16)
-        val modules = GnosisSafe.GetModules.decode(responses[5].result!!).param0.items
-        return SafeInfo(safe, masterCopy, owners, threshold, nonce, txCount, modules)
+        val nonce = GnosisSafe.Nonce.decode(responses[3].result!!).param0.value //txCount
+        val modules = GnosisSafe.GetModules.decode(responses[4].result!!).param0.items
+        return SafeInfo(safe, masterCopy, owners, threshold, nonce, modules)
     }
 
     suspend fun loadSafeNonce(safe: Solidity.Address): BigInteger =
