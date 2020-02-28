@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Kouban</string>
+    <string name="filter_menu">Filter</string>
 </resources>

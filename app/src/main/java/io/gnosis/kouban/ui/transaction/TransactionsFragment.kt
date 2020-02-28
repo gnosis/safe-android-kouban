@@ -1,13 +1,10 @@
 package io.gnosis.kouban.ui.transaction
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.kouban.core.ui.base.BaseFragment
 import io.gnosis.kouban.databinding.FragmentTransactionsBinding
@@ -44,15 +41,21 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
 
             toolbar.inflateMenu(R.menu.main)
             toolbar.setOnMenuItemClickListener {
-                if (it.itemId == R.id.safe_check) {
-                    findNavController().navigate(
-                        TransactionsFragmentDirections.actionTransactionsFragmentToSafeCheckFragment(navArgs.safeAddress)
-                    )
-                }
+                onMenuItemClicked(it.itemId)
                 true
             }
         }
         load(navArgs.safeAddress.asEthereumAddress()!!)
+    }
+
+    private fun onMenuItemClicked(itemId: Int) {
+        when (itemId) {
+            R.id.safe_check -> findNavController().navigate(
+                TransactionsFragmentDirections.actionTransactionsFragmentToSafeCheckFragment(navArgs.safeAddress)
+            )
+            R.id.transaction_filter -> {
+            }
+        }
     }
 
     private fun load(address: Solidity.Address) {
@@ -68,4 +71,5 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
             }
         })
     }
+
 }
