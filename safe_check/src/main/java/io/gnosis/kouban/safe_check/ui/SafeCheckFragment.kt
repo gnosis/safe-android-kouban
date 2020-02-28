@@ -59,6 +59,7 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
                 }
                 is SafeSettings -> {
                     binding.safeCheckData.visibility = View.VISIBLE
+                    binding.ensName.text = it.ensName
                     addOwners(it.owners)
                     binding.threshold.text = it.threshold.toString()
                     binding.numTx.text = it.txCount.toString()
