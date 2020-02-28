@@ -37,22 +37,19 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
         with(binding) {
             list.layoutManager = LinearLayoutManager(context)
             list.adapter = adapter
-            list.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
 
             swipeToRefresh.setOnRefreshListener {
+                load(navArgs.safeAddress.asEthereumAddress()!!)
             }
 
             toolbar.inflateMenu(R.menu.main)
             toolbar.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.safe_check -> {
-                        findNavController().navigate(TransactionsFragmentDirections.actionTransactionsFragmentToSafeCheckFragment(navArgs.safeAddress))
-                        true
-                    }
-                    else -> {
-                        false
-                    }
+                if (it.itemId == R.id.safe_check) {
+                    findNavController().navigate(
+                        TransactionsFragmentDirections.actionTransactionsFragmentToSafeCheckFragment(navArgs.safeAddress)
+                    )
                 }
+                true
             }
         }
         load(navArgs.safeAddress.asEthereumAddress()!!)
@@ -62,13 +59,7 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
         viewModel.loadTransactionsOf(address).observe(viewLifecycleOwner, Observer {
             when (it) {
                 is Loading -> binding.swipeToRefresh.isRefreshing = it.isLoading
-                is Transactions -> adapter.setItemsUnsafe(it.transactions.flatMap { transactions ->
-                    mutableListOf<Any>(
-                        Header(transactions.key.name)
-                    ).apply {
-                        addAll(transactions.value)
-                    }
-                })
+                is ListViewItems -> adapter.setItemsUnsafe(it.listItems)
                 is Error -> {
                     it.throwable.printStackTrace()
                     Timber.e(it.throwable)

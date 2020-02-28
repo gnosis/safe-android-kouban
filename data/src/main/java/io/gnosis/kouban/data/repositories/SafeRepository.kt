@@ -4,6 +4,7 @@ import android.content.Context
 import io.gnosis.kouban.contracts.ERC20Token
 import io.gnosis.kouban.contracts.GnosisSafe
 import io.gnosis.kouban.data.backend.JsonRpcApi
+import io.gnosis.kouban.data.backend.MagicApi
 import io.gnosis.kouban.data.backend.TransactionServiceApi
 import io.gnosis.kouban.data.backend.dto.ServiceTransaction
 import io.gnosis.kouban.data.backend.dto.ServiceTransactionRequest
@@ -27,6 +28,7 @@ class SafeRepository(
     private val bip39: Bip39,
     private val jsonRpcApi: JsonRpcApi,
     private val transactionServiceApi: TransactionServiceApi,
+    private val magicApi: MagicApi,
     private val preferencesManager: PreferencesManager,
     private val tokensRepository: TokenRepository
 ) {
@@ -49,6 +51,15 @@ class SafeRepository(
     suspend fun loadModules(safe: Solidity.Address): List<Solidity.Address> =
         jsonRpcApi.performCall(safe, GnosisSafe.GetModules.encode()).let { GnosisSafe.GetModules.decode(it).param0.items }
 
+
+    @Deprecated("This uses magic")
+    suspend fun getTransactions(safe: Solidity.Address): TransactionsDto =
+        magicApi.getTransactions(safe.asEthereumAddressChecksumString()).let {
+            TransactionsDto(
+                it.pending.filter { (it.dataInfo != null).xor(it.transferInfo != null) },
+                it.history.filter { (it.dataInfo != null).xor(it.transferInfo != null) }
+            )
+        }
 
     suspend fun loadTokenBalances(safe: Solidity.Address): List<Balance> =
         transactionServiceApi.loadBalances(safe.asEthereumAddressChecksumString()).map {
