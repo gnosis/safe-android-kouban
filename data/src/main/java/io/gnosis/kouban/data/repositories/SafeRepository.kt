@@ -53,7 +53,7 @@ class SafeRepository(
 
 
     @Deprecated("This uses magic")
-    suspend fun fakeGeTransactions(safe: Solidity.Address): TransactionsDto =
+    suspend fun getTransactions(safe: Solidity.Address): TransactionsDto =
         magicApi.getTransactions(safe.asEthereumAddressChecksumString()).let {
             TransactionsDto(
                 it.pending.filter { (it.dataInfo != null).xor(it.transferInfo != null) },
