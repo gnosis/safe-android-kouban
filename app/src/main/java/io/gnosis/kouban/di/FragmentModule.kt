@@ -5,7 +5,9 @@ import io.gnosis.kouban.ui.address.capture.AddressCaptureFragment
 import io.gnosis.kouban.ui.address.capture.AddressCaptureViewModel
 import io.gnosis.kouban.ui.address.complete.AddressCompleteFragment
 import io.gnosis.kouban.ui.address.complete.AddressCompleteViewModel
+import io.gnosis.kouban.ui.filter.transaction.TokenSymbolFilterViewHolder
 import io.gnosis.kouban.ui.filter.transaction.TransactionFilterDialog
+import io.gnosis.kouban.ui.filter.transaction.TransactionFilterFactory
 import io.gnosis.kouban.ui.filter.transaction.TransactionFilterViewModel
 import io.gnosis.kouban.ui.splash.SplashFragment
 import io.gnosis.kouban.ui.splash.SplashViewModel
@@ -37,5 +39,6 @@ val fragmentModule = module {
 
     scope(named<TransactionFilterDialog>()) {
         viewModel { TransactionFilterViewModel(get()) }
+        factory { BaseAdapter(TransactionFilterFactory()) }
     }
 }
