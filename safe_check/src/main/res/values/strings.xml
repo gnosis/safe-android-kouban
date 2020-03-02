@@ -17,4 +17,5 @@
     <string name="deployment_parameters">Deployment parameters</string>
     <string name="click_for_details">Click to see details</string>
     <string name="num_transactions">Number of Transactions</string>
+    <string name="safe_mastercopy_version">Version %1$s"</string>
 </resources>

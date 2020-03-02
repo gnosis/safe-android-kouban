@@ -15,7 +15,7 @@
 <!--        app:layout_anchorGravity="center" />-->
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/layout_safe_details_appbar"
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white">
@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:title="@string/safe_status" />
+            app:title="@string/safe_status"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -207,10 +207,10 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="24dp"
+                        android:text="@string/click_for_details"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/deployment_param_label"
-                        tools:text="@string/click_for_details" />
+                        app:layout_constraintTop_toBottomOf="@+id/deployment_param_label" />
 
                     <TextView
                         android:id="@+id/threshold"
