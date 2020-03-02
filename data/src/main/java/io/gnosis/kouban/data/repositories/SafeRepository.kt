@@ -1,11 +1,11 @@
 package io.gnosis.kouban.data.repositories
 
 import android.content.Context
-import com.squareup.moshi.Moshi
 import io.gnosis.kouban.contracts.ERC20Token
 import io.gnosis.kouban.contracts.GnosisSafe
 import io.gnosis.kouban.contracts.GnosisSafeV1
 import io.gnosis.kouban.contracts.ProxyFactory
+import io.gnosis.kouban.data.BuildConfig
 import io.gnosis.kouban.data.backend.JsonRpcApi
 import io.gnosis.kouban.data.backend.MagicApi
 import io.gnosis.kouban.data.backend.TransactionServiceApi
@@ -25,7 +25,6 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.*
 import java.math.BigInteger
-import io.gnosis.kouban.data.BuildConfig
 
 class SafeRepository(
     context: Context,
@@ -146,7 +145,7 @@ class SafeRepository(
         return SafeInfo(safe, masterCopy, fallbackHandler, owners, threshold, nonce, modules)
     }
 
-    suspend fun loadSafeDeploymentParams(safe: Solidity.Address) {
+    suspend fun loadSafeDeploymentParams(safe: Solidity.Address): SafeInfoDeployment? {
 
         //TODO: check with previous versions of proxy factory if not results were found
         val creationLogsRequest = jsonRpcApi.logs(
@@ -182,12 +181,25 @@ class SafeRepository(
             val deploymentMastercopy = inputArgs._mastercopy
 
             val deploymentArgsEncoded = inputArgs.initializer.encodePacked().removeSolidityMethodPrefix(GnosisSafe.Setup.METHOD_ID)
-            val deploymentArgs = when(deploymentMastercopy) {
-                safeMasterCopy_1_0_0 -> GnosisSafe.Setup.decodeArguments(deploymentArgsEncoded)
-                safeMasterCopy_1_1_1 -> GnosisSafeV1.Setup.decodeArguments(deploymentArgsEncoded)
-                else -> GnosisSafe.Setup.decodeArguments(deploymentArgsEncoded)
+            val safeDeploymentInfo = when(deploymentMastercopy) {
+                safeMasterCopy_1_0_0 -> {
+                    val deploymentArgs = GnosisSafe.Setup.decodeArguments(deploymentArgsEncoded)
+                    SafeInfoDeployment(deploymentMastercopy, deploymentArgs.fallbackhandler, deploymentArgs._owners.items, deploymentArgs._threshold.value)
+                }
+                safeMasterCopy_1_1_1 -> {
+                    val deploymentArgs = GnosisSafeV1.Setup.decodeArguments(deploymentArgsEncoded)
+                    SafeInfoDeployment(deploymentMastercopy, deploymentArgs.fallbackhandler, deploymentArgs._owners.items, deploymentArgs._threshold.value)
+                }
+                else -> {
+                    val deploymentArgs = GnosisSafe.Setup.decodeArguments(deploymentArgsEncoded)
+                    SafeInfoDeployment(deploymentMastercopy, deploymentArgs.fallbackhandler, deploymentArgs._owners.items, deploymentArgs._threshold.value)
+                }
             }
+
+            return safeDeploymentInfo
         }
+
+        return null
     }
 
     suspend fun loadSafeNonce(safe: Solidity.Address): BigInteger =
