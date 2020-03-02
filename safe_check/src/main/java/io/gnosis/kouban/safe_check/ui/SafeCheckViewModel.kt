@@ -86,6 +86,15 @@ class SafeCheckViewModel(
         }
         healthCheck[CheckSection.CONTRACT] = contractCheck
 
+        // should have fallback handler
+        // fallback handler should be known
+        val fallbackHandlerCheck =
+            if (info.fallbackHandler != null)
+                CheckData(CheckResult.GREEN)
+            else
+                CheckData(CheckResult.YELLOW)
+        healthCheck[CheckSection.FALLBACK_HANDLER] = fallbackHandlerCheck
+
         val ownersCount = info.owners.size
 
         // should have more that 1 owner
@@ -127,7 +136,7 @@ data class SafeSettings(
     @StringRes
     val contractVersionResId: Int,
     val masterCopy: Solidity.Address,
-    val fallbackHandler: Solidity.Address,
+    val fallbackHandler: Solidity.Address?,
     val ensName: String?,
     val owners: List<Solidity.Address>,
     val threshold: Int,
@@ -140,6 +149,7 @@ data class SafeSettings(
 
 enum class CheckSection {
     CONTRACT,
+    FALLBACK_HANDLER,
     OWNERS,
     THRESHOLD,
     MODULES,

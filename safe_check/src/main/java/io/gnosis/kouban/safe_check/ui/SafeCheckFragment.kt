@@ -1,10 +1,15 @@
 package io.gnosis.kouban.safe_check.ui
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -12,6 +17,7 @@ import io.gnosis.kouban.core.ui.base.BaseFragment
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.helper.AddressHelper
+import io.gnosis.kouban.core.ui.views.HintTooltip
 import io.gnosis.kouban.core.utils.formatEthAddress
 import io.gnosis.kouban.data.repositories.SafeDeploymentInfoNotFound
 import io.gnosis.kouban.safe_check.R
@@ -21,7 +27,9 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.currentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -75,25 +83,96 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
                     binding.contractVersion.text = getString(R.string.safe_mastercopy_version, getString(it.contractVersionResId))
                     binding.masterCopyAddress.text = it.masterCopy.formatEthAddress(context!!)
                     binding.masterCopyImage.setAddress(it.masterCopy)
-                    binding.fallbackHandlerAddress.text = it.fallbackHandler.formatEthAddress(context!!)
+                    binding.fallbackHandlerAddress.text = it.fallbackHandler?.formatEthAddress(context!!)
                     binding.fallbackHandlerImage.setAddress(it.fallbackHandler)
                     binding.ensName.text = it.ensName ?: getString(R.string.ens_name_none_set)
                     addOwners(it.owners)
                     binding.threshold.text = it.threshold.toString()
                     binding.numTx.text = it.txCount.toString()
                     binding.deploymentParam.isEnabled = it.deploymentInfoAvailable
-                    binding.deploymentParam.text = getString( if(it.deploymentInfoAvailable) R.string.click_for_details else R.string.deployment_parameters_not_available)
+                    binding.deploymentParam.text =
+                        getString(if (it.deploymentInfoAvailable) R.string.click_for_details else R.string.deployment_parameters_not_available)
                     addModules(it.modules)
+
+                    // show health check results
+                    val healthCheck = it.checkResults
+
+                    healthCheck[CheckSection.CONTRACT]?.let {
+                        setCheckIndicator(binding.contractCheck, it)
+                    }
+
+                    healthCheck[CheckSection.FALLBACK_HANDLER]?.let {
+                        setCheckIndicator(binding.fallbackHandlerCheck, it)
+                    }
+
+                    healthCheck[CheckSection.THRESHOLD]?.let {
+                        setCheckIndicator(binding.thresholdCheck, it)
+                    }
+
+                    healthCheck[CheckSection.OWNERS]?.let {
+                        setCheckIndicator(binding.ownersCheck, it)
+                    }
+
+                    healthCheck[CheckSection.MODULES]?.let {
+                        setCheckIndicator(binding.modulesCheck, it)
+                    }
+
+                    healthCheck[CheckSection.DEPLOYMENT_INFO]?.let {
+                        setCheckIndicator(binding.deploymentParamCheck, it)
+                    }
                 }
                 is Error -> {
                     Timber.e(it.throwable)
-                    when(it.throwable) {
+                    when (it.throwable) {
                         is SafeDeploymentInfoNotFound -> snackbar(binding.root, getString(R.string.error_load_safe_deployment))
-                        else ->  snackbar(binding.root, getString(R.string.error_load_safe_info))
+                        else -> snackbar(binding.root, getString(R.string.error_load_safe_info))
                     }
                 }
             }
         })
+    }
+
+    private fun setCheckIndicator(checkCircle: ImageView, check: CheckData) {
+        checkCircle.visible(true)
+        animateCheckIndicator(checkCircle)
+        when (check.result) {
+            CheckResult.GREEN -> {
+                checkCircle.setImageResource(R.drawable.ic_check_circle_black_24dp)
+                checkCircle.setColorFilter(context!!.getColorCompat(R.color.safe_green), PorterDuff.Mode.SRC_IN)
+            }
+            CheckResult.YELLOW -> {
+                checkCircle.setImageResource(R.drawable.ic_info_outline_black_24dp)
+                checkCircle.setColorFilter(context!!.getColorCompat(R.color.warning), PorterDuff.Mode.SRC_IN)
+            }
+            CheckResult.RED -> {
+                checkCircle.setImageResource(R.drawable.ic_error_black_24dp)
+                checkCircle.setColorFilter(context!!.getColorCompat(R.color.tomato), PorterDuff.Mode.SRC_IN)
+            }
+        }
+        if (!check.hint.isNullOrBlank())
+            binding.contractCheck.setOnClickListener {
+                HintTooltip(context!!, check.hint).showAsDropDown(it)
+            }
+    }
+
+    private fun animateCheckIndicator(checkCircle: ImageView) {
+        val set = AnimatorSet()
+        val scaleUp = ObjectAnimator.ofPropertyValuesHolder(
+            checkCircle,
+            PropertyValuesHolder.ofFloat("scaleX", 1.2f),
+            PropertyValuesHolder.ofFloat("scaleY", 1.2f)
+        )
+        scaleUp.duration = 500
+
+        val scaleDown = ObjectAnimator.ofPropertyValuesHolder(
+            checkCircle,
+            PropertyValuesHolder.ofFloat("scaleX", 1f),
+            PropertyValuesHolder.ofFloat("scaleY", 1f)
+        )
+        scaleDown.duration = 500
+
+        set.playSequentially(scaleUp, scaleDown)
+        set.start()
     }
 
     private fun addOwners(owners: List<Solidity.Address>) {

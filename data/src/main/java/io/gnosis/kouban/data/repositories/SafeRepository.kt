@@ -137,7 +137,7 @@ class SafeRepository(
             )
         )
         val masterCopy = responses[0].result!!.asEthereumAddress()!!
-        val fallbackHandler = responses[1].result!!.asEthereumAddress()!!
+        val fallbackHandler = responses[1].result?.asEthereumAddress()
         val owners = GnosisSafe.GetOwners.decode(responses[2].result!!).param0.items
         val threshold = GnosisSafe.GetThreshold.decode(responses[3].result!!).param0.value
         val nonce = GnosisSafe.Nonce.decode(responses[4].result!!).param0.value //txCount
