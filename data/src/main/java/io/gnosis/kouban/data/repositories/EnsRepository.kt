@@ -54,7 +54,7 @@ class EnsRepository(
 
 
     // reverse ens resolution
-    suspend fun resolve(address: Solidity.Address): String {
+    suspend fun resolve(address: Solidity.Address): String? {
 
         val node = "${address.asEthereumAddressString().removeHexPrefix()}.addr.reverse".nameHash()
 
@@ -90,7 +90,7 @@ class EnsRepository(
 
         val nameResult = nameRequest[0].result
         return if (nameResult?.removePrefix("0x").isNullOrBlank()) {
-            ""
+            null
         } else {
             val source = SolidityBase.PartitionData.of(nameResult!!)
             // Add decoders
