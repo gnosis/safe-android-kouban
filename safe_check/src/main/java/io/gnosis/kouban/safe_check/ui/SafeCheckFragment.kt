@@ -71,8 +71,7 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
                 }
                 is SafeSettings -> {
                     binding.safeCheckData.visibility = View.VISIBLE
-                    binding.contractVersion.text =
-                        getString(R.string.safe_mastercopy_version, it.contractVersion ?: getString(R.string.version_unknown))
+                    binding.contractVersion.text = getString(R.string.safe_mastercopy_version, getString(it.contractVersionResId))
                     binding.ensName.text = it.ensName ?: getString(R.string.ens_name_none_set)
                     addOwners(it.owners)
                     binding.threshold.text = it.threshold.toString()

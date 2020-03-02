@@ -15,7 +15,7 @@ class EnsRepository(
     private val ensNormalizer: EnsNormalizer
 ) {
 
-    suspend fun resolve(url: String): Solidity.Address {
+    suspend fun resolve(url: String): Solidity.Address? {
 
         val node = ensNormalizer.normalize(url).nameHash()
 
@@ -49,7 +49,7 @@ class EnsRepository(
             )
         )
 
-        return addressRequest[0].result!!.asEthereumAddress()!!
+        return addressRequest[0].result?.asEthereumAddress()
     }
 
 

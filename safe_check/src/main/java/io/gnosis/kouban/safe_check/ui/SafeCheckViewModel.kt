@@ -1,5 +1,6 @@
 package io.gnosis.kouban.safe_check.ui
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -10,6 +11,7 @@ import io.gnosis.kouban.core.ui.base.ViewState
 import io.gnosis.kouban.data.repositories.EnsRepository
 import io.gnosis.kouban.data.repositories.SafeRepository
 import io.gnosis.kouban.data.repositories.TokenRepository
+import io.gnosis.kouban.safe_check.R
 import kotlinx.coroutines.Dispatchers
 import pm.gnosis.model.Solidity
 
@@ -28,14 +30,14 @@ class SafeCheckViewModel(
                 val safeInfo = safeRepository.loadSafeInfo(address)
                 val ensName = ensRepository.resolve(address)
 
-                val contractVersion = when(safeInfo.masterCopy) {
-                    SafeRepository.safeMasterCopy_0_1_0 -> "0.1.0"
-                    SafeRepository.safeMasterCopy_1_0_0 -> "1.0.0"
-                    SafeRepository.safeMasterCopy_1_1_1 -> "1.1.1"
-                    else -> null
+                val contractVersionResId = when(safeInfo.masterCopy) {
+                    SafeRepository.safeMasterCopy_0_1_0 -> R.string.version_0_1_0
+                    SafeRepository.safeMasterCopy_1_0_0 -> R.string.version_1_0_0
+                    SafeRepository.safeMasterCopy_1_1_1 -> R.string.version_1_1_1
+                    else -> R.string.version_unknown
 
                 }
-                SafeSettings(contractVersion, ensName, safeInfo.owners, safeInfo.threshold.toInt(), safeInfo.currentNonce.toInt(), safeInfo.modules)
+                SafeSettings(contractVersionResId, ensName, safeInfo.owners, safeInfo.threshold.toInt(), safeInfo.currentNonce.toInt(), safeInfo.modules)
             }
                 .onFailure {
                     emit(Loading(false))
@@ -50,7 +52,8 @@ class SafeCheckViewModel(
 }
 
 data class SafeSettings(
-    val contractVersion: String?,
+    @StringRes
+    val contractVersionResId: Int,
     val ensName: String?,
     val owners: List<Solidity.Address>,
     val threshold: Int,
