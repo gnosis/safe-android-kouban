@@ -76,14 +76,47 @@ class SafeCheckViewModel(
     private fun performHealthCheck(info: SafeInfo, deploymentInfo: SafeInfoDeployment?): HashMap<CheckSection, CheckData> {
         val healthCheck = HashMap<CheckSection, CheckData>()
 
-        val contractCheckData =  when (info.masterCopy) {
+        // should have recent contract version
+        val contractCheck = when (info.masterCopy) {
             SafeRepository.safeMasterCopy_0_1_0 -> CheckData(CheckResult.YELLOW)
             SafeRepository.safeMasterCopy_1_0_0 -> CheckData(CheckResult.YELLOW)
             SafeRepository.safeMasterCopy_1_1_1 -> CheckData(CheckResult.GREEN)
             else -> CheckData(CheckResult.RED)
         }
-        healthCheck[CheckSection.CONTRACT] = contractCheckData
+        healthCheck[CheckSection.CONTRACT] = contractCheck
 
+        val ownersCount = info.owners.size
+
+        // should have more that 1 owner
+        val ownersCheck = when (ownersCount) {
+            1 -> CheckData(CheckResult.YELLOW)
+            else -> CheckData(CheckResult.GREEN)
+        }
+        healthCheck[CheckSection.OWNERS] = ownersCheck
+
+        // should have multi factor authentication
+        // threshold == ownersCount should be avoided => lose of one of the private keys will lead to lock out
+        val thresoldCheck = when (info.threshold.toInt()) {
+            1 -> CheckData(CheckResult.YELLOW)
+            ownersCount -> CheckData(CheckResult.YELLOW)
+            else -> CheckData(CheckResult.GREEN)
+        }
+        healthCheck[CheckSection.THRESHOLD] = thresoldCheck
+
+        // all unaudited modules are potentially unsafe
+        val modulesCheck =
+            if (info.modules.isNotEmpty())
+                CheckData(CheckResult.YELLOW)
+            else CheckData(CheckResult.GREEN)
+        healthCheck[CheckSection.MODULES] = modulesCheck
+
+        // deployment info should be accessible and it should be possible to decode it
+        val deploymentCheck =
+            if (deploymentInfo != null)
+                CheckData(CheckResult.GREEN)
+            else
+                CheckData(CheckResult.YELLOW)
+        healthCheck[CheckSection.DEPLOYMENT_INFO] = deploymentCheck
 
         return healthCheck
     }
@@ -106,7 +139,7 @@ data class SafeSettings(
 enum class CheckSection {
     CONTRACT,
     OWNERS,
-    CONFIRMATIONS,
+    THRESHOLD,
     MODULES,
     DEPLOYMENT_INFO
 }
