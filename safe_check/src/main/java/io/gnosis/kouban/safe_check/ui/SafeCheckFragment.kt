@@ -78,6 +78,12 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
                     binding.numTx.text = it.txCount.toString()
                     addModules(it.modules)
                 }
+                is SafeDeploymentSettings -> {
+                    
+                }
+                is SafeDeploymentInfoNotFoundError -> {
+
+                }
                 is Error -> {
                     Timber.e(it.throwable)
                     snackbar(binding.root, "SOME ERRROR")

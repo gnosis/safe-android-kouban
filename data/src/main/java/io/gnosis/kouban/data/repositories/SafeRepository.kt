@@ -145,7 +145,7 @@ class SafeRepository(
         return SafeInfo(safe, masterCopy, fallbackHandler, owners, threshold, nonce, modules)
     }
 
-    suspend fun loadSafeDeploymentParams(safe: Solidity.Address): SafeInfoDeployment? {
+    suspend fun loadSafeDeploymentParams(safe: Solidity.Address): SafeInfoDeployment {
 
         //TODO: check with previous versions of proxy factory if not results were found
         val creationLogsRequest = jsonRpcApi.logs(
@@ -164,42 +164,58 @@ class SafeRepository(
         )
 
         val logs = creationLogsRequest.result
-        val txHash = logs.find { it.data == safe.encode().addHexPrefix() }?.transactionHash
+        val txHash = logs.find { it.data == safe.encode().addHexPrefix() }?.transactionHash ?: throw SafeDeploymentInfoNotFound()
 
-        txHash?.let {
 
-            val transactionRequest = jsonRpcApi.transaction(
-                JsonRpcApi.JsonRpcRequest(
-                    id = 0,
-                    method = "eth_getTransactionByHash",
-                    params = listOf(it)
+        val deploymentTransaction = loadTransactionByHash(txHash)
+        val inputArgs = ProxyFactory.CreateProxyWithNonce.decodeArguments(deploymentTransaction?.input!!.removeSolidityMethodPrefix(ProxyFactory.CreateProxyWithNonce.METHOD_ID))
+        val deploymentMastercopy = inputArgs._mastercopy
+
+        val deploymentArgsEncoded = inputArgs.initializer.encodePacked().removeSolidityMethodPrefix(GnosisSafe.Setup.METHOD_ID)
+        val safeDeploymentInfo = when (deploymentMastercopy) {
+            safeMasterCopy_1_0_0 -> {
+                val deploymentArgs = GnosisSafe.Setup.decodeArguments(deploymentArgsEncoded)
+                SafeInfoDeployment(
+                    deploymentMastercopy,
+                    deploymentArgs.fallbackhandler,
+                    deploymentArgs._owners.items,
+                    deploymentArgs._threshold.value
                 )
-            )
-
-            val deploymentTransaction = transactionRequest.result
-            val inputArgs = ProxyFactory.CreateProxyWithNonce.decodeArguments(deploymentTransaction?.input!!.removeSolidityMethodPrefix(ProxyFactory.CreateProxyWithNonce.METHOD_ID))
-            val deploymentMastercopy = inputArgs._mastercopy
-
-            val deploymentArgsEncoded = inputArgs.initializer.encodePacked().removeSolidityMethodPrefix(GnosisSafe.Setup.METHOD_ID)
-            val safeDeploymentInfo = when(deploymentMastercopy) {
-                safeMasterCopy_1_0_0 -> {
-                    val deploymentArgs = GnosisSafe.Setup.decodeArguments(deploymentArgsEncoded)
-                    SafeInfoDeployment(deploymentMastercopy, deploymentArgs.fallbackhandler, deploymentArgs._owners.items, deploymentArgs._threshold.value)
-                }
-                safeMasterCopy_1_1_1 -> {
-                    val deploymentArgs = GnosisSafeV1.Setup.decodeArguments(deploymentArgsEncoded)
-                    SafeInfoDeployment(deploymentMastercopy, deploymentArgs.fallbackhandler, deploymentArgs._owners.items, deploymentArgs._threshold.value)
-                }
-                else -> {
-                    val deploymentArgs = GnosisSafe.Setup.decodeArguments(deploymentArgsEncoded)
-                    SafeInfoDeployment(deploymentMastercopy, deploymentArgs.fallbackhandler, deploymentArgs._owners.items, deploymentArgs._threshold.value)
-                }
             }
-
-            return safeDeploymentInfo
+            safeMasterCopy_1_1_1 -> {
+                val deploymentArgs = GnosisSafeV1.Setup.decodeArguments(deploymentArgsEncoded)
+                SafeInfoDeployment(
+                    deploymentMastercopy,
+                    deploymentArgs.fallbackhandler,
+                    deploymentArgs._owners.items,
+                    deploymentArgs._threshold.value
+                )
+            }
+            else -> {
+                val deploymentArgs = GnosisSafe.Setup.decodeArguments(deploymentArgsEncoded)
+                SafeInfoDeployment(
+                    deploymentMastercopy,
+                    deploymentArgs.fallbackhandler,
+                    deploymentArgs._owners.items,
+                    deploymentArgs._threshold.value
+                )
+            }
         }
 
-        return null
+        return safeDeploymentInfo
+    }
+
+    private suspend fun loadTransactionByHash(txHash: String): JsonRpcApi.JsonRpcTransactionResult.Transaction? {
+
+        val transactionRequest = jsonRpcApi.transaction(
+            JsonRpcApi.JsonRpcRequest(
+                id = 0,
+                method = "eth_getTransactionByHash",
+                params = listOf(txHash)
+            )
+        )
+
+        return transactionRequest.result
     }
 
     suspend fun loadSafeNonce(safe: Solidity.Address): BigInteger =
@@ -522,4 +538,6 @@ class SafeRepository(
         private const val PROXY_FACTORY = BuildConfig.PROXY_FACTORY_ADDRESS
     }
 }
+
+class SafeDeploymentInfoNotFound : Throwable()
 
