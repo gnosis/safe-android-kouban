@@ -1,6 +1,7 @@
 package io.gnosis.kouban.data.managers
 
 import io.gnosis.kouban.data.models.Transaction
+import io.gnosis.kouban.data.repositories.TokenRepository
 import java.util.*
 
 class SearchManager {
@@ -57,8 +58,13 @@ data class TransactionTokenSymbolFilter(
 
     override fun apply(item: Transaction): Boolean =
         selectedValue.isNotEmpty()
-                && item.transferInfo != null
-                && selectedValue.contains(item.transferInfo.tokenSymbol)
+                && (item.isDataInfoAvailable() || item.usesSelectedToken())
+
+    private fun Transaction.isDataInfoAvailable() = this.dataInfo != null && selectedValue.contains(TokenRepository.ETH_TOKEN_INFO.symbol)
+
+    private fun Transaction.usesSelectedToken(): Boolean =
+        selectedValue.contains(this.transferInfo?.tokenSymbol)
+
 }
 
 data class TransactionTimestampFilter(

@@ -1,5 +1,6 @@
 package io.gnosis.kouban.ui.transaction
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
 import androidx.lifecycle.*
@@ -55,7 +56,9 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
                 TransactionsFragmentDirections.actionTransactionsFragmentToSafeCheckFragment(navArgs.safeAddress)
             )
             R.id.transaction_filter -> {
-                TransactionFilterDialog().show(childFragmentManager, TransactionFilterDialog::class.java.simpleName)
+                TransactionFilterDialog().apply {
+                    onDismissCallback = { load(navArgs.safeAddress.asEthereumAddress()!!) }
+                }.show(childFragmentManager, TransactionFilterDialog::class.java.simpleName)
             }
         }
     }

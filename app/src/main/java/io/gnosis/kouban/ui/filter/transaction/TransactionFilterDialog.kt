@@ -1,5 +1,6 @@
 package io.gnosis.kouban.ui.filter.transaction
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ class TransactionFilterDialog : BaseBottomSheetFragment<DialogTransactionFilterB
 
     private val viewModel by currentScope.viewModel<TransactionFilterViewModel>(this)
     private val adapter by currentScope.inject<BaseAdapter<BaseTransactionFilterViewHolder<Any>>>()
+    var onDismissCallback: (() -> Unit)? = null
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): DialogTransactionFilterBinding =
         DialogTransactionFilterBinding.inflate(inflater, container, false)
@@ -38,4 +40,8 @@ class TransactionFilterDialog : BaseBottomSheetFragment<DialogTransactionFilterB
         })
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        onDismissCallback?.invoke()
+        super.onDismiss(dialog)
+    }
 }

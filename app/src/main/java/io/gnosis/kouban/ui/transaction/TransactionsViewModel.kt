@@ -7,12 +7,14 @@ import io.gnosis.kouban.R
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
+import io.gnosis.kouban.data.managers.SearchManager
 import io.gnosis.kouban.data.repositories.SafeRepository
 import kotlinx.coroutines.Dispatchers
 import pm.gnosis.model.Solidity
 
 class TransactionsViewModel(
-    private val safeRepository: SafeRepository
+    private val safeRepository: SafeRepository,
+    private val searchManager: SearchManager
 ) : ViewModel() {
 
     fun loadTransactionsOf(address: Solidity.Address) = loadFakeTransactionsOf(address)
@@ -29,9 +31,9 @@ class TransactionsViewModel(
                     emit(Loading(false))
                     val listItems = mutableListOf<Any>().apply {
                         add(Header(R.string.pending_label))
-                        addAll(it.pending)
+                        addAll(searchManager.applyDiff(it.pending))
                         add(Header(R.string.history_label))
-                        addAll(it.history)
+                        addAll(searchManager.applyDiff(it.history))
                     }
                     emit(ListViewItems(listItems))
                 }
