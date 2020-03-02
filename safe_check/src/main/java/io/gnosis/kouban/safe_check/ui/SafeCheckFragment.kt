@@ -13,6 +13,7 @@ import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.helper.AddressHelper
 import io.gnosis.kouban.core.utils.formatEthAddress
+import io.gnosis.kouban.data.repositories.SafeDeploymentInfoNotFound
 import io.gnosis.kouban.safe_check.R
 import io.gnosis.kouban.safe_check.databinding.FragmentSafeCheckBinding
 import io.gnosis.kouban.safe_check.databinding.ItemEthAddressBinding
@@ -80,13 +81,12 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
                     binding.deploymentParam.text = getString( if(it.deploymentInfoAvailable) R.string.click_for_details else R.string.deployment_parameters_not_available)
                     addModules(it.modules)
                 }
-                is SafeDeploymentInfoNotFoundError -> {
-                    Timber.e(it.throwable)
-                    snackbar(binding.root, getString(R.string.error_load_safe_deployment))
-                }
                 is Error -> {
                     Timber.e(it.throwable)
-                    snackbar(binding.root, getString(R.string.error_load_safe_info))
+                    when(it.throwable) {
+                        is SafeDeploymentInfoNotFound -> snackbar(binding.root, getString(R.string.error_load_safe_deployment))
+                        else ->  snackbar(binding.root, getString(R.string.error_load_safe_info))
+                    }
                 }
             }
         })

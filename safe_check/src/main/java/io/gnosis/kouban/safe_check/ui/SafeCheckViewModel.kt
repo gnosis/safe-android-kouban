@@ -10,7 +10,6 @@ import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
 import io.gnosis.kouban.data.models.SafeInfoDeployment
 import io.gnosis.kouban.data.repositories.EnsRepository
-import io.gnosis.kouban.data.repositories.SafeDeploymentInfoNotFound
 import io.gnosis.kouban.data.repositories.SafeRepository
 import io.gnosis.kouban.data.repositories.TokenRepository
 import io.gnosis.kouban.safe_check.R
@@ -32,8 +31,8 @@ class SafeCheckViewModel(
             if (safeDeploymentInfo == null) {
                 try {
                     safeDeploymentInfo = safeRepository.loadSafeDeploymentParams(address)
-                } catch (e: SafeDeploymentInfoNotFound) {
-                    emit(SafeDeploymentInfoNotFoundError(e))
+                } catch (e: Exception) {
+                    emit(Error(e))
                 }
             }
 
@@ -81,7 +80,4 @@ data class SafeSettings(
     val deploymentInfoAvailable: Boolean
 ) : ViewState()
 
-
-
-data class SafeDeploymentInfoNotFoundError(val throwable: Throwable) : ViewState()
 
