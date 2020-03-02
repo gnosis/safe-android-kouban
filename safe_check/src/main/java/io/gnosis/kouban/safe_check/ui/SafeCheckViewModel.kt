@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
+import io.gnosis.kouban.data.models.SafeInfo
 import io.gnosis.kouban.data.models.SafeInfoDeployment
 import io.gnosis.kouban.data.repositories.EnsRepository
 import io.gnosis.kouban.data.repositories.SafeRepository
@@ -58,7 +59,8 @@ class SafeCheckViewModel(
                         safeInfo.threshold.toInt(),
                         safeInfo.currentNonce.toInt(),
                         safeInfo.modules,
-                        safeDeploymentInfo != null
+                        safeDeploymentInfo != null,
+                        performHealthCheck(safeInfo, safeDeploymentInfo)
                     )
 
                 }.onSuccess {
@@ -70,6 +72,21 @@ class SafeCheckViewModel(
                 }
             }
         }
+
+    private fun performHealthCheck(info: SafeInfo, deploymentInfo: SafeInfoDeployment?): HashMap<CheckSection, CheckData> {
+        val healthCheck = HashMap<CheckSection, CheckData>()
+
+        val contractCheckData =  when (info.masterCopy) {
+            SafeRepository.safeMasterCopy_0_1_0 -> CheckData(CheckResult.YELLOW)
+            SafeRepository.safeMasterCopy_1_0_0 -> CheckData(CheckResult.YELLOW)
+            SafeRepository.safeMasterCopy_1_1_1 -> CheckData(CheckResult.GREEN)
+            else -> CheckData(CheckResult.RED)
+        }
+        healthCheck[CheckSection.CONTRACT] = contractCheckData
+
+
+        return healthCheck
+    }
 }
 
 data class SafeSettings(
@@ -81,7 +98,27 @@ data class SafeSettings(
     val threshold: Int,
     val txCount: Int,
     val modules: List<Solidity.Address>,
-    val deploymentInfoAvailable: Boolean
+    val deploymentInfoAvailable: Boolean,
+    val checkResults: HashMap<CheckSection, CheckData>
 ) : ViewState()
 
+
+enum class CheckSection {
+    CONTRACT,
+    OWNERS,
+    CONFIRMATIONS,
+    MODULES,
+    DEPLOYMENT_INFO
+}
+
+enum class CheckResult {
+    GREEN,
+    YELLOW,
+    RED
+}
+
+data class CheckData(
+    val result: CheckResult,
+    val hint: String? = null
+)
 

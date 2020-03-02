@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import io.gnosis.kouban.core.ui.base.BaseDialogFragment
 import io.gnosis.kouban.safe_check.databinding.DialogSafeDeploymentDetailsBinding
 
@@ -23,8 +24,10 @@ class SafeDeploymentDetailsDialog : BaseDialogFragment<DialogSafeDeploymentDetai
 
     companion object {
 
-        fun show(contex: Context) {
-            SafeDeploymentDetailsDialog().show()
+        private val TAG = SafeDeploymentDetailsDialog::class.java.simpleName
+
+        fun show(context: Context) {
+            SafeDeploymentDetailsDialog().show((context as FragmentActivity).supportFragmentManager, TAG)
         }
     }
 }
