@@ -8,7 +8,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 val networkModule = module {
@@ -17,12 +16,12 @@ val networkModule = module {
             .connectTimeout(20, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
             .writeTimeout(20, TimeUnit.SECONDS)
-            .addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-                override fun log(message: String) {
-                    Timber.i(message)
-                }
-            }).apply { level = HttpLoggingInterceptor.Level.BODY })
-            .build()
+            .apply {
+                if (BuildConfig.DEBUG)
+                    addInterceptor(
+                        HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+                    )
+            }.build()
     }
 
     single {

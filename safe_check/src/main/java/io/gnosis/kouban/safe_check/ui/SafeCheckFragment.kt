@@ -2,14 +2,19 @@ package io.gnosis.kouban.safe_check.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import io.gnosis.kouban.core.ui.base.BaseFragment
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.helper.AddressHelper
 import io.gnosis.kouban.core.utils.formatEthAddress
+import io.gnosis.kouban.data.repositories.SafeDeploymentInfoNotFound
+import io.gnosis.kouban.safe_check.R
 import io.gnosis.kouban.safe_check.databinding.FragmentSafeCheckBinding
 import io.gnosis.kouban.safe_check.databinding.ItemEthAddressBinding
 import org.koin.android.ext.android.inject
@@ -32,8 +37,16 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSafeCheckBinding =
         FragmentSafeCheckBinding.inflate(inflater, container, false)
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         address = arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!!
 
@@ -59,15 +72,21 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
                 }
                 is SafeSettings -> {
                     binding.safeCheckData.visibility = View.VISIBLE
-                    binding.ensName.text = it.ensName
+                    binding.contractVersion.text = getString(R.string.safe_mastercopy_version, getString(it.contractVersionResId))
+                    binding.ensName.text = it.ensName ?: getString(R.string.ens_name_none_set)
                     addOwners(it.owners)
                     binding.threshold.text = it.threshold.toString()
                     binding.numTx.text = it.txCount.toString()
+                    binding.deploymentParam.isEnabled = it.deploymentInfoAvailable
+                    binding.deploymentParam.text = getString( if(it.deploymentInfoAvailable) R.string.click_for_details else R.string.deployment_parameters_not_available)
                     addModules(it.modules)
                 }
                 is Error -> {
                     Timber.e(it.throwable)
-                    snackbar(binding.root, "SOME ERRROR")
+                    when(it.throwable) {
+                        is SafeDeploymentInfoNotFound -> snackbar(binding.root, getString(R.string.error_load_safe_deployment))
+                        else ->  snackbar(binding.root, getString(R.string.error_load_safe_info))
+                    }
                 }
             }
         })
@@ -99,6 +118,16 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                findNavController().navigateUp()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+
+    }
 
     companion object {
 

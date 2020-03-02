@@ -18,6 +18,12 @@ android {
         buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.rinkeby.gnosis.io/api/"))
         buildConfigField javaTypes.STRING, "MAGIC_SERVICE_URL", asString("https://safe-services-kouban.herokuapp.com/api/rinkeby/")
         buildConfigField javaTypes.STRING, "ENS_REGISTRY", asString(getKey("ENS_REGISTRY", "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"))
+
+        buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B"))
+
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_1_0", asString(getKey("SAFE_MASTER_COPY_0_1_0", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af")) // Version 0.1.0 (All networks)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_0_0", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A")) // Version 1.0.0 (All networks)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_1_1", asString(getKey("SAFE_MASTER_COPY_1_1_1", "0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F")) // Version 1.1.1 (All networks)
     }
 }
 

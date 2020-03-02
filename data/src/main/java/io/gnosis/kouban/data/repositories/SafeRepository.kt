@@ -3,6 +3,9 @@ package io.gnosis.kouban.data.repositories
 import android.content.Context
 import io.gnosis.kouban.contracts.ERC20Token
 import io.gnosis.kouban.contracts.GnosisSafe
+import io.gnosis.kouban.contracts.GnosisSafeV1
+import io.gnosis.kouban.contracts.ProxyFactory
+import io.gnosis.kouban.data.BuildConfig
 import io.gnosis.kouban.data.backend.JsonRpcApi
 import io.gnosis.kouban.data.backend.MagicApi
 import io.gnosis.kouban.data.backend.TransactionServiceApi
@@ -88,6 +91,11 @@ class SafeRepository(
                 ),
                 JsonRpcApi.JsonRpcRequest(
                     id = 1,
+                    method = "eth_getStorageAt",
+                    params = listOf(safe, "0x6c9a6c4a39284e37ed1cf53d337577d14212a4870fb976a4366c693b939918d5", "latest")
+                ),
+                JsonRpcApi.JsonRpcRequest(
+                    id = 2,
                     method = "eth_call",
                     params = listOf(
                         mapOf(
@@ -97,7 +105,7 @@ class SafeRepository(
                     )
                 ),
                 JsonRpcApi.JsonRpcRequest(
-                    id = 2,
+                    id = 3,
                     method = "eth_call",
                     params = listOf(
                         mapOf(
@@ -107,7 +115,7 @@ class SafeRepository(
                     )
                 ),
                 JsonRpcApi.JsonRpcRequest(
-                    id = 3,
+                    id = 4,
                     method = "eth_call",
                     params = listOf(
                         mapOf(
@@ -117,7 +125,7 @@ class SafeRepository(
                     )
                 ),
                 JsonRpcApi.JsonRpcRequest(
-                    id = 4,
+                    id = 5,
                     method = "eth_call",
                     params = listOf(
                         mapOf(
@@ -129,11 +137,85 @@ class SafeRepository(
             )
         )
         val masterCopy = responses[0].result!!.asEthereumAddress()!!
-        val owners = GnosisSafe.GetOwners.decode(responses[1].result!!).param0.items
-        val threshold = GnosisSafe.GetThreshold.decode(responses[2].result!!).param0.value
-        val nonce = GnosisSafe.Nonce.decode(responses[3].result!!).param0.value //txCount
-        val modules = GnosisSafe.GetModules.decode(responses[4].result!!).param0.items
-        return SafeInfo(safe, masterCopy, owners, threshold, nonce, modules)
+        val fallbackHandler = responses[1].result!!.asEthereumAddress()!!
+        val owners = GnosisSafe.GetOwners.decode(responses[2].result!!).param0.items
+        val threshold = GnosisSafe.GetThreshold.decode(responses[3].result!!).param0.value
+        val nonce = GnosisSafe.Nonce.decode(responses[4].result!!).param0.value //txCount
+        val modules = GnosisSafe.GetModules.decode(responses[5].result!!).param0.items
+        return SafeInfo(safe, masterCopy, fallbackHandler, owners, threshold, nonce, modules)
+    }
+
+    suspend fun loadSafeDeploymentParams(safe: Solidity.Address): SafeInfoDeployment {
+
+        //TODO: check with previous versions of proxy factory if not results were found
+        val creationLogsRequest = jsonRpcApi.logs(
+            JsonRpcApi.JsonRpcRequest(
+                id = 0,
+                method = "eth_getLogs",
+                params = listOf(
+                    mapOf(
+                        "fromBlock" to "earliest",
+                        "address" to PROXY_FACTORY,
+                        "topics" to listOf(ProxyFactory.Events.ProxyCreation.EVENT_ID.addHexPrefix())
+                    ), "latest"
+
+                )
+            )
+        )
+
+        val logs = creationLogsRequest.result
+        val txHash = logs.find { it.data == safe.encode().addHexPrefix() }?.transactionHash ?: throw SafeDeploymentInfoNotFound()
+
+
+        val deploymentTransaction = loadTransactionByHash(txHash)
+        val inputArgs = ProxyFactory.CreateProxyWithNonce.decodeArguments(deploymentTransaction?.input!!.removeSolidityMethodPrefix(ProxyFactory.CreateProxyWithNonce.METHOD_ID))
+        val deploymentMastercopy = inputArgs._mastercopy
+
+        val deploymentArgsEncoded = inputArgs.initializer.encodePacked().removeSolidityMethodPrefix(GnosisSafe.Setup.METHOD_ID)
+        val safeDeploymentInfo = when (deploymentMastercopy) {
+            safeMasterCopy_1_0_0 -> {
+                val deploymentArgs = GnosisSafe.Setup.decodeArguments(deploymentArgsEncoded)
+                SafeInfoDeployment(
+                    deploymentMastercopy,
+                    deploymentArgs.fallbackhandler,
+                    deploymentArgs._owners.items,
+                    deploymentArgs._threshold.value
+                )
+            }
+            safeMasterCopy_1_1_1 -> {
+                val deploymentArgs = GnosisSafeV1.Setup.decodeArguments(deploymentArgsEncoded)
+                SafeInfoDeployment(
+                    deploymentMastercopy,
+                    deploymentArgs.fallbackhandler,
+                    deploymentArgs._owners.items,
+                    deploymentArgs._threshold.value
+                )
+            }
+            else -> {
+                val deploymentArgs = GnosisSafe.Setup.decodeArguments(deploymentArgsEncoded)
+                SafeInfoDeployment(
+                    deploymentMastercopy,
+                    deploymentArgs.fallbackhandler,
+                    deploymentArgs._owners.items,
+                    deploymentArgs._threshold.value
+                )
+            }
+        }
+
+        return safeDeploymentInfo
+    }
+
+    private suspend fun loadTransactionByHash(txHash: String): JsonRpcApi.JsonRpcTransactionResult.Transaction? {
+
+        val transactionRequest = jsonRpcApi.transaction(
+            JsonRpcApi.JsonRpcRequest(
+                id = 0,
+                method = "eth_getTransactionByHash",
+                params = listOf(txHash)
+            )
+        )
+
+        return transactionRequest.result
     }
 
     suspend fun loadSafeNonce(safe: Solidity.Address): BigInteger =
@@ -435,6 +517,11 @@ class SafeRepository(
     private fun ByteArray.toAddress() = Solidity.Address(this.asBigInteger())
 
     companion object {
+
+        val safeMasterCopy_0_1_0 = BuildConfig.SAFE_MASTER_COPY_0_1_0.asEthereumAddress()!!
+        val safeMasterCopy_1_0_0 = BuildConfig.SAFE_MASTER_COPY_1_0_0.asEthereumAddress()!!
+        val safeMasterCopy_1_1_1 = BuildConfig.SAFE_MASTER_COPY_1_1_1.asEthereumAddress()!!
+
         private const val ERC191_BYTE = "19"
         private const val ERC191_VERSION = "01"
 
@@ -447,6 +534,10 @@ class SafeRepository(
             "0x08c379a000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000020"
 
         private const val ENC_PASSWORD = "ThisShouldNotBeHardcoded"
+
+        private const val PROXY_FACTORY = BuildConfig.PROXY_FACTORY_ADDRESS
     }
 }
+
+class SafeDeploymentInfoNotFound : Throwable()
 
