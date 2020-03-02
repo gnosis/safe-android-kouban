@@ -39,6 +39,6 @@ val fragmentModule = module {
 
     scope(named<TransactionFilterDialog>()) {
         viewModel { TransactionFilterViewModel(get()) }
-        factory { BaseAdapter(TransactionFilterFactory()) }
+        factory { BaseAdapter(TransactionFilterFactory(get())) }
     }
 }

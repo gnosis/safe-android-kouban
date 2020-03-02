@@ -66,7 +66,7 @@ class SafeRepository(
                 val tokenSymbolsHistory = transactions.history.groupBy { it.transferInfo?.tokenSymbol ?: TokenRepository.ETH_TOKEN_INFO.symbol }.keys
 
                 val tokenSymbols = tokenSymbolsPending + tokenSymbolsHistory
-                searchManager.activateFilter(TransactionTokenSymbolFilter(tokenSymbols.distinct(), mutableListOf()))
+                searchManager.activateFilter(TransactionTokenSymbolFilter(tokenSymbols.distinct(), tokenSymbols.toMutableList()))
                 Unit
             }
         }
