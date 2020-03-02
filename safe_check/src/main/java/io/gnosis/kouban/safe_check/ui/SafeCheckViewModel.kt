@@ -53,6 +53,7 @@ class SafeCheckViewModel(
 
                     SafeSettings(
                         contractVersionResId,
+                        safeInfo.masterCopy,
                         safeInfo.fallbackHandler,
                         ensName,
                         safeInfo.owners,
@@ -125,6 +126,7 @@ class SafeCheckViewModel(
 data class SafeSettings(
     @StringRes
     val contractVersionResId: Int,
+    val masterCopy: Solidity.Address,
     val fallbackHandler: Solidity.Address,
     val ensName: String?,
     val owners: List<Solidity.Address>,
