@@ -11,6 +11,10 @@ import java.math.BigInteger
 
 
 interface JsonRpcApi {
+
+    @POST(".")
+    suspend fun transaction(@Body jsonRpcRequest: JsonRpcRequest): JsonRpcTransactionResult
+
     @POST(".")
     suspend fun receipt(@Body jsonRpcRequest: JsonRpcRequest): JsonRpcTransactionReceiptResult
 
@@ -90,6 +94,22 @@ interface JsonRpcApi {
                 @Json(name = "topics") val topics: List<String>
             )
         }
+    }
+
+    @JsonClass(generateAdapter = true)
+    data class JsonRpcTransactionResult(
+        @Json(name = "id") val id: Int,
+        @Json(name = "jsonrpc") val jsonRpc: String,
+        @Json(name = "error") val error: JsonRpcError? = null,
+        @Json(name = "result") val result: Transaction?
+    ) {
+        @JsonClass(generateAdapter = true)
+        data class Transaction(
+            //TODO: add fields
+            @Json(name = "from") val from: Solidity.Address,
+            @Json(name = "to") val to: Solidity.Address,
+            @Json(name = "input") val input: String
+        )
     }
 
     companion object {
