@@ -32,7 +32,7 @@ class SafeCheckViewModel(
                     SafeRepository.safeMasterCopy_0_1_0 -> "0.1.0"
                     SafeRepository.safeMasterCopy_1_0_0 -> "1.0.0"
                     SafeRepository.safeMasterCopy_1_1_1 -> "1.1.1"
-                    else -> "unknown"
+                    else -> null
 
                 }
                 SafeSettings(contractVersion, ensName, safeInfo.owners, safeInfo.threshold.toInt(), safeInfo.currentNonce.toInt(), safeInfo.modules)
@@ -50,7 +50,7 @@ class SafeCheckViewModel(
 }
 
 data class SafeSettings(
-    val contractVersion: String,
+    val contractVersion: String?,
     val ensName: String?,
     val owners: List<Solidity.Address>,
     val threshold: Int,
