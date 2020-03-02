@@ -28,27 +28,28 @@ class SafeCheckViewModel(
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
             emit(Loading(true))
 
-            if (safeDeploymentInfo == null) {
-                try {
-                    safeDeploymentInfo = safeRepository.loadSafeDeploymentParams(address)
-                } catch (e: Exception) {
-                    emit(Error(e))
-                }
-            }
+            kotlin.runCatching {
 
-            try {
-                val safeInfo = safeRepository.loadSafeInfo(address)
-                val ensName = ensRepository.resolve(address)
+                if (safeDeploymentInfo == null)
+                    kotlin.runCatching {
+                        safeRepository.loadSafeDeploymentParams(address)
+                    }.onSuccess {
+                        safeDeploymentInfo = it
+                    }.onFailure {
+                        emit(Error(it))
+                    }
 
-                val contractVersionResId = when (safeInfo.masterCopy) {
-                    SafeRepository.safeMasterCopy_0_1_0 -> R.string.version_0_1_0
-                    SafeRepository.safeMasterCopy_1_0_0 -> R.string.version_1_0_0
-                    SafeRepository.safeMasterCopy_1_1_1 -> R.string.version_1_1_1
-                    else -> R.string.version_unknown
-                }
+                kotlin.runCatching {
+                    val safeInfo = safeRepository.loadSafeInfo(address)
+                    val ensName = ensRepository.resolve(address)
 
-                emit(Loading(false))
-                emit(
+                    val contractVersionResId = when (safeInfo.masterCopy) {
+                        SafeRepository.safeMasterCopy_0_1_0 -> R.string.version_0_1_0
+                        SafeRepository.safeMasterCopy_1_0_0 -> R.string.version_1_0_0
+                        SafeRepository.safeMasterCopy_1_1_1 -> R.string.version_1_1_1
+                        else -> R.string.version_unknown
+                    }
+
                     SafeSettings(
                         contractVersionResId,
                         safeInfo.fallbackHandler,
@@ -59,11 +60,14 @@ class SafeCheckViewModel(
                         safeInfo.modules,
                         safeDeploymentInfo != null
                     )
-                )
 
-            } catch (e: Exception) {
-                emit(Loading(false))
-                emit(Error(e))
+                }.onSuccess {
+                    emit(Loading(false))
+                    emit(it)
+                }.onFailure {
+                    emit(Loading(false))
+                    emit(Error(it))
+                }
             }
         }
 }
