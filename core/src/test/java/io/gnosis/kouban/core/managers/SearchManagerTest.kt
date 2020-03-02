@@ -1,6 +1,7 @@
 package io.gnosis.kouban.core.managers
 
-import org.junit.Assert.*
+import io.gnosis.kouban.data.managers.BoundaryFilter
+import io.gnosis.kouban.data.managers.SearchManager
 import org.junit.Test
 
 class SearchManagerTest {

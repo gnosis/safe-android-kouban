@@ -18,6 +18,7 @@ import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
 import io.gnosis.kouban.R
+import io.gnosis.kouban.ui.filter.transaction.TransactionFilterDialog
 
 class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
 
@@ -54,6 +55,7 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
                 TransactionsFragmentDirections.actionTransactionsFragmentToSafeCheckFragment(navArgs.safeAddress)
             )
             R.id.transaction_filter -> {
+                TransactionFilterDialog().show(childFragmentManager, TransactionFilterDialog::class.java.simpleName)
             }
         }
     }

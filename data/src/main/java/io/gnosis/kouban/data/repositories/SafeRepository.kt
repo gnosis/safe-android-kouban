@@ -8,6 +8,8 @@ import io.gnosis.kouban.data.backend.MagicApi
 import io.gnosis.kouban.data.backend.TransactionServiceApi
 import io.gnosis.kouban.data.backend.dto.ServiceTransaction
 import io.gnosis.kouban.data.backend.dto.ServiceTransactionRequest
+import io.gnosis.kouban.data.managers.SearchManager
+import io.gnosis.kouban.data.managers.TransactionTokenSymbolFilter
 import io.gnosis.kouban.data.models.*
 import io.gnosis.kouban.data.utils.asMiddleEllipsized
 import io.gnosis.kouban.data.utils.nullOnThrow
@@ -29,6 +31,7 @@ class SafeRepository(
     private val jsonRpcApi: JsonRpcApi,
     private val transactionServiceApi: TransactionServiceApi,
     private val magicApi: MagicApi,
+    private val searchManager: SearchManager,
     private val preferencesManager: PreferencesManager,
     private val tokensRepository: TokenRepository
 ) {
@@ -58,7 +61,14 @@ class SafeRepository(
             TransactionsDto(
                 it.pending.filter { (it.dataInfo != null).xor(it.transferInfo != null) },
                 it.history.filter { (it.dataInfo != null).xor(it.transferInfo != null) }
-            )
+            ).also { transactions ->
+                val tokenSymbolsPending = transactions.pending.groupBy { it.transferInfo?.tokenSymbol ?: TokenRepository.ETH_TOKEN_INFO.symbol }.keys
+                val tokenSymbolsHistory = transactions.history.groupBy { it.transferInfo?.tokenSymbol ?: TokenRepository.ETH_TOKEN_INFO.symbol }.keys
+
+                val tokenSymbols = tokenSymbolsPending + tokenSymbolsHistory
+                searchManager.activateFilter(TransactionTokenSymbolFilter(tokenSymbols.distinct(), mutableListOf()))
+                Unit
+            }
         }
 
     suspend fun loadTokenBalances(safe: Solidity.Address): List<Balance> =
