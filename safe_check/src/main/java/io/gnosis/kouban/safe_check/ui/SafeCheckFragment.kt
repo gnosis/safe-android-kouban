@@ -76,17 +76,17 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
                     addOwners(it.owners)
                     binding.threshold.text = it.threshold.toString()
                     binding.numTx.text = it.txCount.toString()
+                    binding.deploymentParam.isEnabled = it.deploymentInfoAvailable
+                    binding.deploymentParam.text = getString( if(it.deploymentInfoAvailable) R.string.click_for_details else R.string.deployment_parameters_not_available)
                     addModules(it.modules)
                 }
-                is SafeDeploymentSettings -> {
-                    
-                }
                 is SafeDeploymentInfoNotFoundError -> {
-
+                    Timber.e(it.throwable)
+                    snackbar(binding.root, getString(R.string.error_load_safe_deployment))
                 }
                 is Error -> {
                     Timber.e(it.throwable)
-                    snackbar(binding.root, "SOME ERRROR")
+                    snackbar(binding.root, getString(R.string.error_load_safe_info))
                 }
             }
         })

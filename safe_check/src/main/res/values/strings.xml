@@ -23,4 +23,6 @@
     <string name="click_for_details">Click to see details</string>
     <string name="num_transactions">Number of Transactions</string>
     <string name="safe_mastercopy_version">Version %1$s"</string>
+    <string name="error_load_safe_info">error loading safe info</string>
+    <string name="error_load_safe_deployment">error loading safe deployment info</string>
 </resources>

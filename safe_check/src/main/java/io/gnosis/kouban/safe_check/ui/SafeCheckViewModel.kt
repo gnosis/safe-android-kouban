@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
+import io.gnosis.kouban.data.models.SafeInfoDeployment
 import io.gnosis.kouban.data.repositories.EnsRepository
 import io.gnosis.kouban.data.repositories.SafeDeploymentInfoNotFound
 import io.gnosis.kouban.data.repositories.SafeRepository
@@ -22,9 +23,19 @@ class SafeCheckViewModel(
     private val ensRepository: EnsRepository
 ) : ViewModel() {
 
+    private var safeDeploymentInfo: SafeInfoDeployment? = null
+
     fun loadSafeConfig(address: Solidity.Address): LiveData<ViewState> =
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
             emit(Loading(true))
+
+            if (safeDeploymentInfo == null) {
+                try {
+                    safeDeploymentInfo = safeRepository.loadSafeDeploymentParams(address)
+                } catch (e: SafeDeploymentInfoNotFound) {
+                    emit(SafeDeploymentInfoNotFoundError(e))
+                }
+            }
 
             try {
                 val safeInfo = safeRepository.loadSafeInfo(address)
@@ -46,7 +57,8 @@ class SafeCheckViewModel(
                         safeInfo.owners,
                         safeInfo.threshold.toInt(),
                         safeInfo.currentNonce.toInt(),
-                        safeInfo.modules
+                        safeInfo.modules,
+                        safeDeploymentInfo != null
                     )
                 )
 
@@ -54,28 +66,7 @@ class SafeCheckViewModel(
                 emit(Loading(false))
                 emit(Error(e))
             }
-
-            try {
-                val deploymentInfo = safeRepository.loadSafeDeploymentParams(address)
-                val deploymentContractVersionResId = when (deploymentInfo.masterCopy) {
-                    SafeRepository.safeMasterCopy_0_1_0 -> R.string.version_0_1_0
-                    SafeRepository.safeMasterCopy_1_0_0 -> R.string.version_1_0_0
-                    SafeRepository.safeMasterCopy_1_1_1 -> R.string.version_1_1_1
-                    else -> R.string.version_unknown
-                }
-                emit(
-                    SafeDeploymentSettings(
-                        deploymentContractVersionResId,
-                        deploymentInfo.fallbackHandler,
-                        deploymentInfo.owners,
-                        deploymentInfo.threshold.toInt()
-                    )
-                )
-            } catch (e: SafeDeploymentInfoNotFound) {
-                emit(SafeDeploymentInfoNotFoundError(e))
-            }
         }
-
 }
 
 data class SafeSettings(
@@ -86,16 +77,11 @@ data class SafeSettings(
     val owners: List<Solidity.Address>,
     val threshold: Int,
     val txCount: Int,
-    val modules: List<Solidity.Address>
+    val modules: List<Solidity.Address>,
+    val deploymentInfoAvailable: Boolean
 ) : ViewState()
 
-data class SafeDeploymentSettings(
-    @StringRes
-    val contractVersionResId: Int,
-    val fallbackHandler: Solidity.Address,
-    val owners: List<Solidity.Address>,
-    val threshold: Int
-) : ViewState()
+
 
 data class SafeDeploymentInfoNotFoundError(val throwable: Throwable) : ViewState()
 
