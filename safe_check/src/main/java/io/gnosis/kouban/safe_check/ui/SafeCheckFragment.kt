@@ -94,8 +94,11 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
                     binding.threshold.text = getString(R.string.required_confirmations_value, it.threshold, it.owners.size)
                     binding.numTx.text = it.txCount.toString()
                     binding.deploymentParam.isEnabled = it.deploymentInfoAvailable
-                    binding.deploymentParam.text =
-                        getString(if (it.deploymentInfoAvailable) R.string.click_for_details else R.string.deployment_parameters_not_available)
+                    binding.deploymentParam.setText(
+                        if (it.deploymentInfoAvailable)
+                            R.string.click_for_details
+                        else R.string.deployment_parameters_not_available
+                    )
                     addModules(it.modules)
 
                     // show health check results
