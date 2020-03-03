@@ -27,7 +27,7 @@ fun String.parseToBigIntegerOrNull(): BigInteger? =
 fun String.parseToBigInteger(): BigInteger =
     if (startsWith("0x")) hexAsBigInteger() else decimalAsBigInteger()
 
-fun Long.asFormattedDateTime(context: Context, dateFormat: String = "YYYY/MM/dd HH:mm") : String =
+fun Long.asFormattedDateTime(context: Context, dateFormat: String = "dd-MM-yyyy hh:mm") : String =
     Date().apply { time = this@asFormattedDateTime * 1000 }.let { date ->
         with(SimpleDateFormat(dateFormat,ConfigurationCompat.getLocales(context.resources.configuration)[0])) {
             format(date)

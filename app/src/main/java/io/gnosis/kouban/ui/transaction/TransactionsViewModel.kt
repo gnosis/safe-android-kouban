@@ -30,10 +30,15 @@ class TransactionsViewModel(
                 .onSuccess {
                     emit(Loading(false))
                     val listItems = mutableListOf<Any>().apply {
-                        add(Header(R.string.pending_label))
-                        addAll(searchManager.applyDiff(it.pending))
-                        add(Header(R.string.history_label))
-                        addAll(searchManager.applyDiff(it.history))
+                        searchManager.applyDiff(it.pending).takeUnless { it.isEmpty() }?.let {
+                            add(Header(R.string.pending_label))
+                            addAll(it)
+                        }
+
+                        searchManager.applyDiff(it.history).takeUnless { it.isEmpty() }?.let {
+                            add(Header(R.string.history_label))
+                            addAll(it)
+                        }
                     }
                     emit(ListViewItems(listItems))
                 }

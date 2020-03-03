@@ -1,15 +1,13 @@
 package io.gnosis.kouban.ui.transaction
 
-import android.content.Context
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.isVisible
 import androidx.viewbinding.ViewBinding
 import com.squareup.picasso.Picasso
 import io.gnosis.kouban.core.R
 import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
 import io.gnosis.kouban.core.utils.asFormattedDateTime
-import io.gnosis.kouban.core.utils.formatEthAddress
 import io.gnosis.kouban.core.utils.setTransactionIcon
 import io.gnosis.kouban.data.models.DataInfo
 import io.gnosis.kouban.data.models.Transaction
@@ -42,7 +40,7 @@ class TransactionViewHolder(
     }
 
     private fun ItemTransactionBinding.setTransferInfo(transferInfo: TransferInfo) {
-        textDescription.text = ""
+        textDescription.isVisible = false
         textTokenAmount.text = root.context.getString(
             R.string.transaction_token_amount_label,
             transferInfo.amount.shiftedString(transferInfo.decimals, 3),
@@ -57,6 +55,7 @@ class TransactionViewHolder(
             dataInfo.ethValue.shiftedString(ETH_TOKEN_INFO.decimals, 3),
             ETH_TOKEN_INFO.symbol
         )
+        textDescription.isVisible = true
         textDescription.text = root.context.getString(
             R.string.transaction_description_label,
             dataInfo.methodName.orEmpty(),
@@ -67,8 +66,8 @@ class TransactionViewHolder(
 
     private fun ItemTransactionBinding.setIconForType(transactionType: TransactionType) {
         val (drawable, color) = when (transactionType) {
-            TransactionType.Incoming -> R.drawable.ic_arrow_right_24dp to R.color.safe_green
-            TransactionType.Outgoing -> R.drawable.ic_arrow_left_24dp to R.color.tomato
+            TransactionType.Incoming -> R.drawable.ic_arrow_left_24dp to R.color.safe_green
+            TransactionType.Outgoing -> R.drawable.ic_arrow_right_24dp to R.color.tomato
         }
         iconType.apply {
             setColorFilter(ContextCompat.getColor(root.context, color), android.graphics.PorterDuff.Mode.SRC_IN)
