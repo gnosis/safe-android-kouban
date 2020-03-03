@@ -69,7 +69,7 @@ val dataModule = module {
     single<FingerprintHelper> { AndroidFingerprintHelper(get()) }
 
     single {
-        SafeRepository(get(), get(), get(), get(), get(), get(), get())
+        SafeRepository(get(), get(), get(), get(), get(), get(), get(), get())
     }
 
     single {

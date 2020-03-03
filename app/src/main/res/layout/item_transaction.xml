@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
 
     <ImageView
         android:id="@+id/image_token_logo"
@@ -23,6 +24,8 @@
         android:id="@+id/text_token_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:lines="1"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         app:layout_constraintBottom_toTopOf="@id/text_description"
@@ -36,6 +39,7 @@
         android:id="@+id/text_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:lines="1"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -89,6 +93,7 @@
         android:lines="1"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
+        android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/blockies_address"
         app:layout_constraintHorizontal_bias="1"
@@ -108,13 +113,14 @@
 
     <View
         android:layout_width="0dp"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:alpha="0.5"
         android:background="@color/dark_grey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/blockies_address"
         app:layout_constraintStart_toEndOf="@id/image_token_logo"
-        app:layout_constraintTop_toBottomOf="@id/text_description" />
+        app:layout_constraintTop_toBottomOf="@id/text_timestamp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
