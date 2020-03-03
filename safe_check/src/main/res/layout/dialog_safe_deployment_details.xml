@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <TextView
+        android:id="@+id/contract_version_label"
+        style="@style/SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/contract_version"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/contract_version"
+        style="@style/SectionValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/contract_version_label"
+        tools:text="Version 1.0.0" />
+
+    <!-- Mastercopy -->
+
+    <TextView
+        android:id="@+id/master_copy_label"
+        style="@style/SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/mastercopy"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/contract_version" />
+
+    <TextView
+        android:id="@+id/master_copy_address"
+        style="@style/LightText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/master_copy_image"
+        app:layout_constraintStart_toEndOf="@+id/master_copy_image"
+        app:layout_constraintTop_toTopOf="@+id/master_copy_image"
+        tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/master_copy_image"
+        android:layout_width="@dimen/info_blockies"
+        android:layout_height="@dimen/info_blockies"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/master_copy_label" />
+
+    <!-- Fallback handler-->
+
+    <TextView
+        android:id="@+id/fallback_handler_label"
+        style="@style/SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/fallback_handler"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/master_copy_image" />
+
+    <TextView
+        android:id="@+id/fallback_handler_address"
+        style="@style/LightText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/fallback_handler_image"
+        app:layout_constraintStart_toEndOf="@+id/fallback_handler_image"
+        app:layout_constraintTop_toTopOf="@+id/fallback_handler_image"
+        tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/fallback_handler_image"
+        android:layout_width="@dimen/info_blockies"
+        android:layout_height="@dimen/info_blockies"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fallback_handler_label" />
+
+    <!--                   -->
+
+    <TextView
+        android:id="@+id/owners_label"
+        style="@style/SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/owners"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fallback_handler_image" />
+
+    <LinearLayout
+        android:id="@+id/owners_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/owners_label" />
+
+    <TextView
+        android:id="@+id/threshold_label"
+        style="@style/SectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/required_confirmations"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/owners_list" />
+
+    <TextView
+        android:id="@+id/threshold"
+        style="@style/SectionValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/threshold_label"
+        tools:text="2 of the 2 owners need to confirm" />
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

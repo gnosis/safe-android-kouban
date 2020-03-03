@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
+import io.gnosis.kouban.data.models.SafeInfo
 import io.gnosis.kouban.data.models.SafeInfoDeployment
 import io.gnosis.kouban.data.repositories.EnsRepository
 import io.gnosis.kouban.data.repositories.SafeRepository
@@ -22,7 +23,8 @@ class SafeCheckViewModel(
     private val ensRepository: EnsRepository
 ) : ViewModel() {
 
-    private var safeDeploymentInfo: SafeInfoDeployment? = null
+    var safeDeploymentInfo: SafeInfoDeployment? = null
+        private set
 
     fun loadSafeConfig(address: Solidity.Address): LiveData<ViewState> =
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
@@ -52,13 +54,15 @@ class SafeCheckViewModel(
 
                     SafeSettings(
                         contractVersionResId,
+                        safeInfo.masterCopy,
                         safeInfo.fallbackHandler,
                         ensName,
                         safeInfo.owners,
                         safeInfo.threshold.toInt(),
                         safeInfo.currentNonce.toInt(),
                         safeInfo.modules,
-                        safeDeploymentInfo != null
+                        safeDeploymentInfo != null,
+                        performHealthCheck(safeInfo, safeDeploymentInfo)
                     )
 
                 }.onSuccess {
@@ -70,18 +74,121 @@ class SafeCheckViewModel(
                 }
             }
         }
+
+    private fun performHealthCheck(info: SafeInfo, deploymentInfo: SafeInfoDeployment?): HashMap<CheckSection, CheckData> {
+        val healthCheck = HashMap<CheckSection, CheckData>()
+
+        return healthCheck
+            .checkContract(info)
+            .checkFallbackHandler(info)
+            .checkOwners(info)
+            .checkThreshold(info)
+            .checkModules(info)
+            .checkDeployment(deploymentInfo)
+    }
+
+    private fun HashMap<CheckSection, CheckData>.checkContract(info: SafeInfo): HashMap<CheckSection, CheckData> {
+        // should have recent contract version
+        val contractCheck = when (info.masterCopy) {
+            SafeRepository.safeMasterCopy_0_1_0 -> CheckData(CheckResult.YELLOW)
+            SafeRepository.safeMasterCopy_1_0_0 -> CheckData(CheckResult.YELLOW)
+            SafeRepository.safeMasterCopy_1_1_1 -> CheckData(CheckResult.GREEN)
+            else -> CheckData(CheckResult.RED)
+        }
+        this[CheckSection.CONTRACT] = contractCheck
+        return this
+    }
+
+    private fun HashMap<CheckSection, CheckData>.checkFallbackHandler(info: SafeInfo): HashMap<CheckSection, CheckData> {
+        // should have fallback handler
+        // fallback handler should be known
+        val fallbackHandlerCheck =
+            if (info.fallbackHandler != null)
+                CheckData(CheckResult.GREEN)
+            else
+                CheckData(CheckResult.YELLOW)
+        this[CheckSection.FALLBACK_HANDLER] = fallbackHandlerCheck
+        return this
+    }
+
+    private fun HashMap<CheckSection, CheckData>.checkOwners(info: SafeInfo): HashMap<CheckSection, CheckData> {
+        val ownersCount = info.owners.size
+        // should have more that 1 owner
+        val ownersCheck = when (ownersCount) {
+            1 -> CheckData(CheckResult.YELLOW)
+            else -> CheckData(CheckResult.GREEN)
+        }
+        this[CheckSection.OWNERS] = ownersCheck
+        return this
+    }
+
+    private fun HashMap<CheckSection, CheckData>.checkThreshold(info: SafeInfo): HashMap<CheckSection, CheckData> {
+        val ownersCount = info.owners.size
+        // should have multi factor authentication
+        // threshold == ownersCount should be avoided => lose of one of the private keys will lead to lock out
+        val thresoldCheck = when (info.threshold.toInt()) {
+            1 -> CheckData(CheckResult.YELLOW)
+            ownersCount -> CheckData(CheckResult.YELLOW)
+            else -> CheckData(CheckResult.GREEN)
+        }
+        this[CheckSection.THRESHOLD] = thresoldCheck
+        return this
+    }
+
+    private fun HashMap<CheckSection, CheckData>.checkModules(info: SafeInfo): HashMap<CheckSection, CheckData> {
+        // all unaudited modules are potentially unsafe
+        val modulesCheck =
+            if (info.modules.isNotEmpty())
+                CheckData(CheckResult.YELLOW)
+            else CheckData(CheckResult.GREEN)
+        this[CheckSection.MODULES] = modulesCheck
+        return this
+    }
+
+    private fun HashMap<CheckSection, CheckData>.checkDeployment(deploymentInfo: SafeInfoDeployment?): HashMap<CheckSection, CheckData> {
+        // deployment info should be accessible and it should be possible to decode it
+        val deploymentCheck =
+            if (deploymentInfo != null)
+                CheckData(CheckResult.GREEN)
+            else
+                CheckData(CheckResult.YELLOW)
+        this[CheckSection.DEPLOYMENT_INFO] = deploymentCheck
+        return this
+    }
 }
 
 data class SafeSettings(
     @StringRes
     val contractVersionResId: Int,
-    val fallbackHandler: Solidity.Address,
+    val masterCopy: Solidity.Address,
+    val fallbackHandler: Solidity.Address?,
     val ensName: String?,
     val owners: List<Solidity.Address>,
     val threshold: Int,
     val txCount: Int,
     val modules: List<Solidity.Address>,
-    val deploymentInfoAvailable: Boolean
+    val deploymentInfoAvailable: Boolean,
+    val checkResults: HashMap<CheckSection, CheckData>
 ) : ViewState()
 
+
+enum class CheckSection {
+    CONTRACT,
+    FALLBACK_HANDLER,
+    OWNERS,
+    THRESHOLD,
+    MODULES,
+    DEPLOYMENT_INFO
+}
+
+enum class CheckResult {
+    GREEN,
+    YELLOW,
+    RED
+}
+
+data class CheckData(
+    val result: CheckResult,
+    val hint: String? = null
+)
 
