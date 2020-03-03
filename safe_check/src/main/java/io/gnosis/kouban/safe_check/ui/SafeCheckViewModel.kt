@@ -105,7 +105,7 @@ class SafeCheckViewModel(
         // should have fallback handler
         // fallback handler should be known
         val fallbackHandlerCheck =
-            if (info.fallbackHandler != null && info.fallbackHandler != "0x0".asEthereumAddress())
+            if (info.fallbackHandler != null && info.fallbackHandler != Solidity.Address(BigInteger.ZERO))
                 CheckData(CheckResult.GREEN)
             else
                 CheckData(CheckResult.YELLOW)
