@@ -16,10 +16,10 @@ data class TransactionsDto(
 data class Transaction(
     val address: Solidity.Address,
     val timestamp: Long,
-    //both null or both defined, must be filtered out
+    val txHash: String?,
+    val executionHash: String?,
     val transferInfo: TransferInfo?,
     val dataInfo: DataInfo?,
-
     val type: TransactionType,
     val state: TransactionState
 )
