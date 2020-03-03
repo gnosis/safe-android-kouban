@@ -16,7 +16,6 @@ import io.gnosis.kouban.data.repositories.TokenRepository
 import io.gnosis.kouban.safe_check.R
 import kotlinx.coroutines.Dispatchers
 import pm.gnosis.model.Solidity
-import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 
 class SafeCheckViewModel(
