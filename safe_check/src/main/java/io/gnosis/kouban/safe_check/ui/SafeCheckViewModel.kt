@@ -16,6 +16,7 @@ import io.gnosis.kouban.data.repositories.TokenRepository
 import io.gnosis.kouban.safe_check.R
 import kotlinx.coroutines.Dispatchers
 import pm.gnosis.model.Solidity
+import java.math.BigInteger
 
 class SafeCheckViewModel(
     private val safeRepository: SafeRepository,
@@ -103,7 +104,7 @@ class SafeCheckViewModel(
         // should have fallback handler
         // fallback handler should be known
         val fallbackHandlerCheck =
-            if (info.fallbackHandler != null)
+            if (info.fallbackHandler != null && info.fallbackHandler != Solidity.Address(BigInteger.ZERO))
                 CheckData(CheckResult.GREEN)
             else
                 CheckData(CheckResult.YELLOW)
