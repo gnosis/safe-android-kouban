@@ -8,8 +8,9 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-abstract class BaseDialogFragment<T : ViewBinding> : DialogFragment() {
+abstract class BaseBottomSheetDialogFragment<T : ViewBinding> : BottomSheetDialogFragment() {
 
     private var _binding: T? = null
     protected val binding get() = _binding!!
@@ -27,7 +28,7 @@ abstract class BaseDialogFragment<T : ViewBinding> : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+       // dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         return dialog
     }
 

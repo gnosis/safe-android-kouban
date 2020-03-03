@@ -23,7 +23,8 @@ class SafeCheckViewModel(
     private val ensRepository: EnsRepository
 ) : ViewModel() {
 
-    private var safeDeploymentInfo: SafeInfoDeployment? = null
+    var safeDeploymentInfo: SafeInfoDeployment? = null
+        private set
 
     fun loadSafeConfig(address: Solidity.Address): LiveData<ViewState> =
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {

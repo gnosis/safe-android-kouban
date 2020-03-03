@@ -64,6 +64,10 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
             safeAddressImage.setAddress(address)
             safeCheckData.visibility = View.GONE
 
+            deploymentParam.setOnClickListener {
+                SafeDeploymentDetailsDialog.show(context!!, viewModel.safeDeploymentInfo!!)
+            }
+
             swipeToRefresh.setOnRefreshListener {
                 load(address)
             }
@@ -87,7 +91,7 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
                     binding.fallbackHandlerImage.setAddress(it.fallbackHandler)
                     binding.ensName.text = it.ensName ?: getString(R.string.ens_name_none_set)
                     addOwners(it.owners)
-                    binding.threshold.text = it.threshold.toString()
+                    binding.threshold.text = getString(R.string.required_confirmations_value, it.threshold, it.owners.size)
                     binding.numTx.text = it.txCount.toString()
                     binding.deploymentParam.isEnabled = it.deploymentInfoAvailable
                     binding.deploymentParam.text =
