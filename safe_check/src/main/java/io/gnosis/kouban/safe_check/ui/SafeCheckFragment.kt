@@ -79,55 +79,8 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
     private fun load(address: Solidity.Address) {
         viewModel.loadSafeConfig(address).observe(viewLifecycleOwner, Observer {
             when (it) {
-                is Loading -> {
-                    binding.swipeToRefresh.isRefreshing = it.isLoading
-                }
-                is SafeSettings -> {
-                    binding.safeCheckData.visibility = View.VISIBLE
-                    binding.contractVersion.text = getString(R.string.safe_mastercopy_version, getString(it.contractVersionResId))
-                    binding.masterCopyAddress.text = it.masterCopy.formatEthAddress(context!!)
-                    binding.masterCopyImage.setAddress(it.masterCopy)
-                    binding.fallbackHandlerAddress.text = it.fallbackHandler?.formatEthAddress(context!!)
-                    binding.fallbackHandlerImage.setAddress(it.fallbackHandler)
-                    binding.ensName.text = it.ensName ?: getString(R.string.ens_name_none_set)
-                    addOwners(it.owners)
-                    binding.threshold.text = getString(R.string.required_confirmations_value, it.threshold, it.owners.size)
-                    binding.numTx.text = it.txCount.toString()
-                    binding.deploymentParam.isEnabled = it.deploymentInfoAvailable
-                    binding.deploymentParam.setText(
-                        if (it.deploymentInfoAvailable)
-                            R.string.click_for_details
-                        else R.string.deployment_parameters_not_available
-                    )
-                    addModules(it.modules)
-
-                    // show health check results
-                    val healthCheck = it.checkResults
-
-                    healthCheck[CheckSection.CONTRACT]?.let {
-                        setCheckIndicator(binding.contractCheck, it)
-                    }
-
-                    healthCheck[CheckSection.FALLBACK_HANDLER]?.let {
-                        setCheckIndicator(binding.fallbackHandlerCheck, it)
-                    }
-
-                    healthCheck[CheckSection.THRESHOLD]?.let {
-                        setCheckIndicator(binding.thresholdCheck, it)
-                    }
-
-                    healthCheck[CheckSection.OWNERS]?.let {
-                        setCheckIndicator(binding.ownersCheck, it)
-                    }
-
-                    healthCheck[CheckSection.MODULES]?.let {
-                        setCheckIndicator(binding.modulesCheck, it)
-                    }
-
-                    healthCheck[CheckSection.DEPLOYMENT_INFO]?.let {
-                        setCheckIndicator(binding.deploymentParamCheck, it)
-                    }
-                }
+                is Loading -> binding.swipeToRefresh.isRefreshing = it.isLoading
+                is SafeSettings -> displaySafeSettings(it)
                 is Error -> {
                     Timber.e(it.throwable)
                     when (it.throwable) {
@@ -137,6 +90,53 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
                 }
             }
         })
+    }
+
+    private fun displaySafeSettings(safeSettings: SafeSettings) {
+        binding.safeCheckData.visibility = View.VISIBLE
+        binding.contractVersion.text = getString(R.string.safe_mastercopy_version, getString(safeSettings.contractVersionResId))
+        binding.masterCopyAddress.text = safeSettings.masterCopy.formatEthAddress(context!!)
+        binding.masterCopyImage.setAddress(safeSettings.masterCopy)
+        binding.fallbackHandlerAddress.text = safeSettings.fallbackHandler?.formatEthAddress(context!!)
+        binding.fallbackHandlerImage.setAddress(safeSettings.fallbackHandler)
+        binding.ensName.text = safeSettings.ensName ?: getString(R.string.ens_name_none_set)
+        addOwners(safeSettings.owners)
+        binding.threshold.text = getString(R.string.required_confirmations_value, safeSettings.threshold, safeSettings.owners.size)
+        binding.numTx.text = safeSettings.txCount.toString()
+        binding.deploymentParam.isEnabled = safeSettings.deploymentInfoAvailable
+        binding.deploymentParam.setText(
+            if (safeSettings.deploymentInfoAvailable)
+                R.string.click_for_details
+            else R.string.deployment_parameters_not_available
+        )
+        addModules(safeSettings.modules)
+
+        // show health check results
+        val healthCheck = safeSettings.checkResults
+
+        healthCheck[CheckSection.CONTRACT]?.let {
+            setCheckIndicator(binding.contractCheck, it)
+        }
+
+        healthCheck[CheckSection.FALLBACK_HANDLER]?.let {
+            setCheckIndicator(binding.fallbackHandlerCheck, it)
+        }
+
+        healthCheck[CheckSection.THRESHOLD]?.let {
+            setCheckIndicator(binding.thresholdCheck, it)
+        }
+
+        healthCheck[CheckSection.OWNERS]?.let {
+            setCheckIndicator(binding.ownersCheck, it)
+        }
+
+        healthCheck[CheckSection.MODULES]?.let {
+            setCheckIndicator(binding.modulesCheck, it)
+        }
+
+        healthCheck[CheckSection.DEPLOYMENT_INFO]?.let {
+            setCheckIndicator(binding.deploymentParamCheck, it)
+        }
     }
 
     private fun setCheckIndicator(checkCircle: ImageView, check: CheckData) {

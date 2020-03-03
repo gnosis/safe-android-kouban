@@ -78,6 +78,16 @@ class SafeCheckViewModel(
     private fun performHealthCheck(info: SafeInfo, deploymentInfo: SafeInfoDeployment?): HashMap<CheckSection, CheckData> {
         val healthCheck = HashMap<CheckSection, CheckData>()
 
+        return healthCheck
+            .checkContract(info)
+            .checkFallbackHandler(info)
+            .checkOwners(info)
+            .checkThreshold(info)
+            .checkModules(info)
+            .checkDeployment(deploymentInfo)
+    }
+
+    private fun HashMap<CheckSection, CheckData>.checkContract(info: SafeInfo): HashMap<CheckSection, CheckData> {
         // should have recent contract version
         val contractCheck = when (info.masterCopy) {
             SafeRepository.safeMasterCopy_0_1_0 -> CheckData(CheckResult.YELLOW)
@@ -85,8 +95,11 @@ class SafeCheckViewModel(
             SafeRepository.safeMasterCopy_1_1_1 -> CheckData(CheckResult.GREEN)
             else -> CheckData(CheckResult.RED)
         }
-        healthCheck[CheckSection.CONTRACT] = contractCheck
+        this[CheckSection.CONTRACT] = contractCheck
+        return this
+    }
 
+    private fun HashMap<CheckSection, CheckData>.checkFallbackHandler(info: SafeInfo): HashMap<CheckSection, CheckData> {
         // should have fallback handler
         // fallback handler should be known
         val fallbackHandlerCheck =
@@ -94,17 +107,23 @@ class SafeCheckViewModel(
                 CheckData(CheckResult.GREEN)
             else
                 CheckData(CheckResult.YELLOW)
-        healthCheck[CheckSection.FALLBACK_HANDLER] = fallbackHandlerCheck
+        this[CheckSection.FALLBACK_HANDLER] = fallbackHandlerCheck
+        return this
+    }
 
+    private fun HashMap<CheckSection, CheckData>.checkOwners(info: SafeInfo): HashMap<CheckSection, CheckData> {
         val ownersCount = info.owners.size
-
         // should have more that 1 owner
         val ownersCheck = when (ownersCount) {
             1 -> CheckData(CheckResult.YELLOW)
             else -> CheckData(CheckResult.GREEN)
         }
-        healthCheck[CheckSection.OWNERS] = ownersCheck
+        this[CheckSection.OWNERS] = ownersCheck
+        return this
+    }
 
+    private fun HashMap<CheckSection, CheckData>.checkThreshold(info: SafeInfo): HashMap<CheckSection, CheckData> {
+        val ownersCount = info.owners.size
         // should have multi factor authentication
         // threshold == ownersCount should be avoided => lose of one of the private keys will lead to lock out
         val thresoldCheck = when (info.threshold.toInt()) {
@@ -112,24 +131,29 @@ class SafeCheckViewModel(
             ownersCount -> CheckData(CheckResult.YELLOW)
             else -> CheckData(CheckResult.GREEN)
         }
-        healthCheck[CheckSection.THRESHOLD] = thresoldCheck
+        this[CheckSection.THRESHOLD] = thresoldCheck
+        return this
+    }
 
+    private fun HashMap<CheckSection, CheckData>.checkModules(info: SafeInfo): HashMap<CheckSection, CheckData> {
         // all unaudited modules are potentially unsafe
         val modulesCheck =
             if (info.modules.isNotEmpty())
                 CheckData(CheckResult.YELLOW)
             else CheckData(CheckResult.GREEN)
-        healthCheck[CheckSection.MODULES] = modulesCheck
+        this[CheckSection.MODULES] = modulesCheck
+        return this
+    }
 
+    private fun HashMap<CheckSection, CheckData>.checkDeployment(deploymentInfo: SafeInfoDeployment?): HashMap<CheckSection, CheckData> {
         // deployment info should be accessible and it should be possible to decode it
         val deploymentCheck =
             if (deploymentInfo != null)
                 CheckData(CheckResult.GREEN)
             else
                 CheckData(CheckResult.YELLOW)
-        healthCheck[CheckSection.DEPLOYMENT_INFO] = deploymentCheck
-
-        return healthCheck
+        this[CheckSection.DEPLOYMENT_INFO] = deploymentCheck
+        return this
     }
 }
 
