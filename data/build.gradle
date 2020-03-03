@@ -19,7 +19,10 @@ android {
         buildConfigField javaTypes.STRING, "MAGIC_SERVICE_URL", asString("https://safe-services-kouban.herokuapp.com/api/rinkeby/")
         buildConfigField javaTypes.STRING, "ENS_REGISTRY", asString(getKey("ENS_REGISTRY", "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"))
 
-        buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B"))
+        buildConfigField javaTypes.STRING, "PROXY_FACTORY_1_1_1", asString(getKey("PROXY_FACTORY_ADDRESS", "0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B"))
+        buildConfigField javaTypes.STRING, "PROXY_FACTORY_1_1_0", asString(getKey("PROXY_FACTORY_ADDRESS", "0x50e55Af101C777bA7A1d560a774A82eF002ced9F"))
+        buildConfigField javaTypes.STRING, "PROXY_FACTORY_1_0_0", asString(getKey("PROXY_FACTORY_ADDRESS", "0x12302fe9c02ff50939baaaaf415fc226c078613c"))
+        //buildConfigField javaTypes.STRING, "PROXY_FACTORY_0_1_0", asString(getKey("PROXY_FACTORY_ADDRESS", "0x88cd603a5dc47857d02865bbc7941b588c533263"))
 
         buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_1_0", asString(getKey("SAFE_MASTER_COPY_0_1_0", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af")) // Version 0.1.0 (All networks)
         buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_0_0", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A")) // Version 1.0.0 (All networks)

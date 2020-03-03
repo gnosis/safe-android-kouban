@@ -1,10 +1,7 @@
 package io.gnosis.kouban.data.repositories
 
 import android.content.Context
-import io.gnosis.kouban.contracts.ERC20Token
-import io.gnosis.kouban.contracts.GnosisSafe
-import io.gnosis.kouban.contracts.GnosisSafeV1
-import io.gnosis.kouban.contracts.ProxyFactory
+import io.gnosis.kouban.contracts.*
 import io.gnosis.kouban.data.BuildConfig
 import io.gnosis.kouban.data.backend.JsonRpcApi
 import io.gnosis.kouban.data.backend.MagicApi
@@ -157,41 +154,28 @@ class SafeRepository(
 
     suspend fun loadSafeDeploymentParams(safe: Solidity.Address): SafeInfoDeployment {
 
-        //TODO: check with previous versions of proxy factory if not results were found
-        val creationLogsRequest = jsonRpcApi.logs(
-            JsonRpcApi.JsonRpcRequest(
-                id = 0,
-                method = "eth_getLogs",
-                params = listOf(
-                    mapOf(
-                        "fromBlock" to "earliest",
-                        "address" to PROXY_FACTORY,
-                        "topics" to listOf(ProxyFactory.Events.ProxyCreation.EVENT_ID.addHexPrefix())
-                    ), "latest"
+        var txHash: String? = null
 
-                )
-            )
-        )
-
-        val logs = creationLogsRequest.result
-        val txHash = logs.find { it.data == safe.encode().addHexPrefix() }?.transactionHash ?: throw SafeDeploymentInfoNotFound()
-
-
-        val deploymentTransaction = loadTransactionByHash(txHash)
-        val inputArgs = ProxyFactory.CreateProxyWithNonce.decodeArguments(deploymentTransaction?.input!!.removeSolidityMethodPrefix(ProxyFactory.CreateProxyWithNonce.METHOD_ID))
-        val deploymentMastercopy = inputArgs._mastercopy
-
-        val deploymentArgsEncoded = inputArgs.initializer.encodePacked().removeSolidityMethodPrefix(GnosisSafe.Setup.METHOD_ID)
-        val safeDeploymentInfo = when (deploymentMastercopy) {
-            safeMasterCopy_1_0_0 -> {
-                val deploymentArgs = GnosisSafe.Setup.decodeArguments(deploymentArgsEncoded)
-                SafeInfoDeployment(
-                    deploymentMastercopy,
-                    deploymentArgs.fallbackhandler,
-                    deploymentArgs._owners.items,
-                    deploymentArgs._threshold.value
-                )
+        // check with previous versions of proxy factory if no results were found
+        run loop@{
+            PROXY_FACTORY.values().forEach {
+                txHash = findDeploymentTransactionHash(safe, it.address)
+                if (txHash != null)
+                    return@loop
             }
+        }
+
+        if (txHash == null)
+            throw SafeDeploymentInfoNotFound()
+
+        val deploymentTransaction = loadTransactionByHash(txHash!!)
+
+        val (deploymentMastercopy, initializer) = decodeProxyFactoryArguments(deploymentTransaction?.input!!)
+
+        val deploymentArgsEncoded = initializer.encodePacked().substring(8)
+
+        val safeDeploymentInfo = when (deploymentMastercopy) {
+
             safeMasterCopy_1_1_1 -> {
                 val deploymentArgs = GnosisSafeV1.Setup.decodeArguments(deploymentArgsEncoded)
                 SafeInfoDeployment(
@@ -213,6 +197,33 @@ class SafeRepository(
         }
 
         return safeDeploymentInfo
+    }
+
+    private fun decodeProxyFactoryArguments(input: String): Pair<Solidity.Address, Solidity.Bytes> {
+        val inputDecoded = ProxyFactory.CreateProxyWithNonce.decodeArguments(
+            input.removeHexPrefix().substring(8)
+        )
+        return inputDecoded._mastercopy to inputDecoded.initializer
+    }
+
+    private suspend fun findDeploymentTransactionHash(safe: Solidity.Address, proxyFactory: String): String? {
+        val creationLogsRequest = jsonRpcApi.logs(
+            JsonRpcApi.JsonRpcRequest(
+                id = 0,
+                method = "eth_getLogs",
+                params = listOf(
+                    mapOf(
+                        "fromBlock" to "earliest",
+                        "address" to proxyFactory,
+                        "topics" to listOf(ProxyFactory.Events.ProxyCreation.EVENT_ID.addHexPrefix())
+                    ), "earliest"
+
+                )
+            )
+        )
+
+        val logs = creationLogsRequest.result
+        return logs.find { it.data == safe.encode().addHexPrefix() }?.transactionHash
     }
 
     private suspend fun loadTransactionByHash(txHash: String): JsonRpcApi.JsonRpcTransactionResult.Transaction? {
@@ -545,7 +556,11 @@ class SafeRepository(
 
         private const val ENC_PASSWORD = "ThisShouldNotBeHardcoded"
 
-        private const val PROXY_FACTORY = BuildConfig.PROXY_FACTORY_ADDRESS
+        private enum class PROXY_FACTORY(val address: String) {
+            v1_1_1(BuildConfig.PROXY_FACTORY_1_1_1),
+            v1_1_0(BuildConfig.PROXY_FACTORY_1_1_0),
+            v1_0_0(BuildConfig.PROXY_FACTORY_1_0_0)
+        }
     }
 }
 
