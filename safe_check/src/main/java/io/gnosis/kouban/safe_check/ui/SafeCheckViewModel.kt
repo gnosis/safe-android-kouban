@@ -105,15 +105,14 @@ class SafeCheckViewModel(
     private fun HashMap<CheckSection, CheckData>.checkFallbackHandler(info: SafeInfo): HashMap<CheckSection, CheckData> {
         // should have fallback handler
         // fallback handler should be known
-        val fallbackHandlerCheck =
-            if (info.fallbackHandler != null && info.fallbackHandler != Solidity.Address(BigInteger.ZERO)) {
-                if (info.fallbackHandler == FALLBACK_HANDLER)
-                    CheckData(CheckResult.GREEN, R.string.check_all_good)
-                else
-                    CheckData(CheckResult.YELLOW, R.string.check_fallback_unknown)
-            } else {
-                CheckData(CheckResult.YELLOW, R.string.check_fallback_not_set)
-            }
+        val fallbackHandlerCheck = when {
+            info.fallbackHandler == Solidity.Address(BigInteger.ZERO) || info.fallbackHandler == null -> CheckData(
+                CheckResult.YELLOW,
+                R.string.check_fallback_not_set
+            )
+            info.fallbackHandler == FALLBACK_HANDLER -> CheckData(CheckResult.GREEN, R.string.check_all_good)
+            else -> CheckData(CheckResult.GREEN, R.string.check_all_good)
+        }
         this[CheckSection.FALLBACK_HANDLER] = fallbackHandlerCheck
         return this
     }
@@ -121,10 +120,11 @@ class SafeCheckViewModel(
     private fun HashMap<CheckSection, CheckData>.checkOwners(info: SafeInfo): HashMap<CheckSection, CheckData> {
         val ownersCount = info.owners.size
         // should have more that 1 owner
-        val ownersCheck = when (ownersCount) {
-            1 -> CheckData(CheckResult.YELLOW, R.string.check_owners_only_one)
-            else -> CheckData(CheckResult.GREEN, R.string.check_all_good)
-        }
+        val ownersCheck =
+            if (ownersCount == 1)
+                CheckData(CheckResult.YELLOW, R.string.check_owners_only_one)
+            else
+                CheckData(CheckResult.GREEN, R.string.check_all_good)
         this[CheckSection.OWNERS] = ownersCheck
         return this
     }
@@ -144,17 +144,12 @@ class SafeCheckViewModel(
 
     private fun HashMap<CheckSection, CheckData>.checkModules(info: SafeInfo): HashMap<CheckSection, CheckData> {
         // all unaudited modules are potentially unsafe
-        val modulesCheck =
-            if (info.modules.isNotEmpty()) {
-                //TODO: potentially show checkmark for earch of the modules
-                if (info.modules == listOf(MODULE_ALLOWANCE)) {
-                    CheckData(CheckResult.GREEN, R.string.check_all_good)
-                } else {
-                    CheckData(CheckResult.YELLOW, R.string.check_modules_danger_potential)
-                }
-            } else {
-                CheckData(CheckResult.GREEN, R.string.check_all_good)
-            }
+        //TODO: potentially show checkmark for earch of the modules
+        val modulesCheck = when {
+            info.modules == listOf(MODULE_ALLOWANCE) -> CheckData(CheckResult.GREEN, R.string.check_all_good)
+            info.modules.isNotEmpty() -> CheckData(CheckResult.YELLOW, R.string.check_modules_danger_potential)
+            else -> CheckData(CheckResult.GREEN, R.string.check_all_good)
+        }
         this[CheckSection.MODULES] = modulesCheck
         return this
     }
