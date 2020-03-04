@@ -27,4 +27,15 @@
     <string name="error_load_safe_deployment">error loading safe deployment info</string>
     <string name="mastercopy">Mastercopy</string>
     <string name="fallback_handler">Fallback Handler</string>
+
+    <string name="check_all_good">All good!</string>
+    <string name="check_contract_version_old">Your contract version is outdated! Please update!</string>
+    <string name="check_contract_version_unknown">You are using unknown contract version!</string>
+    <string name="check_fallback_not_set">Fallback Handler is not set for this safe</string>
+    <string name="check_fallback_unknown">Unknown Fallback Handler</string>
+    <string name="check_owners_only_one">Consider adding more owners to the safe</string>
+    <string name="check_threshold_one">You should use multi factor authentication</string>
+    <string name="check_threshold_all">Loss of one of the key will lock you out of the safe!</string>
+    <string name="check_modules_danger_potential">Use modules at your own risk!</string>
+    <string name="check_deployment_info_not_available">Not available!</string>
 </resources>

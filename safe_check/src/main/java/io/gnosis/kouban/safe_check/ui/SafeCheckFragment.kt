@@ -156,10 +156,11 @@ class SafeCheckFragment : BaseFragment<FragmentSafeCheckBinding>() {
                 checkCircle.setColorFilter(context!!.getColorCompat(R.color.tomato), PorterDuff.Mode.SRC_IN)
             }
         }
-        if (!check.hint.isNullOrBlank())
-            binding.contractCheck.setOnClickListener {
-                HintTooltip(context!!, check.hint).showAsDropDown(it)
+        check.hint?. let { hintResId ->
+            checkCircle.setOnClickListener {
+                HintTooltip(context!!, hintResId).showAsDropDown(it)
             }
+        }
     }
 
     private fun animateCheckIndicator(checkCircle: ImageView) {
