@@ -13,9 +13,11 @@ import io.gnosis.kouban.data.models.SafeInfoDeployment
 import io.gnosis.kouban.data.repositories.EnsRepository
 import io.gnosis.kouban.data.repositories.SafeRepository
 import io.gnosis.kouban.data.repositories.TokenRepository
+import io.gnosis.kouban.data.BuildConfig
 import io.gnosis.kouban.safe_check.R
 import kotlinx.coroutines.Dispatchers
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 
 class SafeCheckViewModel(
@@ -91,10 +93,10 @@ class SafeCheckViewModel(
     private fun HashMap<CheckSection, CheckData>.checkContract(info: SafeInfo): HashMap<CheckSection, CheckData> {
         // should have recent contract version
         val contractCheck = when (info.masterCopy) {
-            SafeRepository.safeMasterCopy_0_1_0 -> CheckData(CheckResult.YELLOW)
-            SafeRepository.safeMasterCopy_1_0_0 -> CheckData(CheckResult.YELLOW)
-            SafeRepository.safeMasterCopy_1_1_1 -> CheckData(CheckResult.GREEN)
-            else -> CheckData(CheckResult.RED)
+            SafeRepository.safeMasterCopy_0_1_0 -> CheckData(CheckResult.YELLOW, R.string.check_contract_version_old)
+            SafeRepository.safeMasterCopy_1_0_0 -> CheckData(CheckResult.YELLOW, R.string.check_contract_version_old)
+            SafeRepository.safeMasterCopy_1_1_1 -> CheckData(CheckResult.GREEN, R.string.check_all_good)
+            else -> CheckData(CheckResult.RED, R.string.check_contract_version_unknown)
         }
         this[CheckSection.CONTRACT] = contractCheck
         return this
@@ -103,11 +105,14 @@ class SafeCheckViewModel(
     private fun HashMap<CheckSection, CheckData>.checkFallbackHandler(info: SafeInfo): HashMap<CheckSection, CheckData> {
         // should have fallback handler
         // fallback handler should be known
-        val fallbackHandlerCheck =
-            if (info.fallbackHandler != null && info.fallbackHandler != Solidity.Address(BigInteger.ZERO))
-                CheckData(CheckResult.GREEN)
-            else
-                CheckData(CheckResult.YELLOW)
+        val fallbackHandlerCheck = when {
+            info.fallbackHandler == Solidity.Address(BigInteger.ZERO) || info.fallbackHandler == null -> CheckData(
+                CheckResult.YELLOW,
+                R.string.check_fallback_not_set
+            )
+            info.fallbackHandler == FALLBACK_HANDLER -> CheckData(CheckResult.GREEN, R.string.check_all_good)
+            else -> CheckData(CheckResult.GREEN, R.string.check_all_good)
+        }
         this[CheckSection.FALLBACK_HANDLER] = fallbackHandlerCheck
         return this
     }
@@ -115,10 +120,11 @@ class SafeCheckViewModel(
     private fun HashMap<CheckSection, CheckData>.checkOwners(info: SafeInfo): HashMap<CheckSection, CheckData> {
         val ownersCount = info.owners.size
         // should have more that 1 owner
-        val ownersCheck = when (ownersCount) {
-            1 -> CheckData(CheckResult.YELLOW)
-            else -> CheckData(CheckResult.GREEN)
-        }
+        val ownersCheck =
+            if (ownersCount == 1)
+                CheckData(CheckResult.YELLOW, R.string.check_owners_only_one)
+            else
+                CheckData(CheckResult.GREEN, R.string.check_all_good)
         this[CheckSection.OWNERS] = ownersCheck
         return this
     }
@@ -128,9 +134,9 @@ class SafeCheckViewModel(
         // should have multi factor authentication
         // threshold == ownersCount should be avoided => lose of one of the private keys will lead to lock out
         val thresoldCheck = when (info.threshold.toInt()) {
-            1 -> CheckData(CheckResult.YELLOW)
-            ownersCount -> CheckData(CheckResult.YELLOW)
-            else -> CheckData(CheckResult.GREEN)
+            1 -> CheckData(CheckResult.YELLOW, R.string.check_threshold_one)
+            ownersCount -> CheckData(CheckResult.YELLOW, R.string.check_threshold_all)
+            else -> CheckData(CheckResult.GREEN, R.string.check_all_good)
         }
         this[CheckSection.THRESHOLD] = thresoldCheck
         return this
@@ -138,10 +144,12 @@ class SafeCheckViewModel(
 
     private fun HashMap<CheckSection, CheckData>.checkModules(info: SafeInfo): HashMap<CheckSection, CheckData> {
         // all unaudited modules are potentially unsafe
-        val modulesCheck =
-            if (info.modules.isNotEmpty())
-                CheckData(CheckResult.YELLOW)
-            else CheckData(CheckResult.GREEN)
+        //TODO: potentially show checkmark for earch of the modules
+        val modulesCheck = when {
+            info.modules == listOf(MODULE_ALLOWANCE) -> CheckData(CheckResult.GREEN, R.string.check_all_good)
+            info.modules.isNotEmpty() -> CheckData(CheckResult.YELLOW, R.string.check_modules_danger_potential)
+            else -> CheckData(CheckResult.GREEN, R.string.check_all_good)
+        }
         this[CheckSection.MODULES] = modulesCheck
         return this
     }
@@ -150,11 +158,17 @@ class SafeCheckViewModel(
         // deployment info should be accessible and it should be possible to decode it
         val deploymentCheck =
             if (deploymentInfo != null)
-                CheckData(CheckResult.GREEN)
+                CheckData(CheckResult.GREEN, R.string.check_all_good)
             else
-                CheckData(CheckResult.YELLOW)
+                CheckData(CheckResult.YELLOW, R.string.check_deployment_info_not_available)
         this[CheckSection.DEPLOYMENT_INFO] = deploymentCheck
         return this
+    }
+
+    companion object {
+
+        private val MODULE_ALLOWANCE = BuildConfig.SAFE_MODULE_ALLOWANCE.asEthereumAddress()!!
+        private val FALLBACK_HANDLER = BuildConfig.FALLBACK_HANDLER_DEFAULT.asEthereumAddress()!!
     }
 }
 
@@ -190,6 +204,7 @@ enum class CheckResult {
 
 data class CheckData(
     val result: CheckResult,
-    val hint: String? = null
+    @StringRes
+    val hint: Int? = null
 )
 

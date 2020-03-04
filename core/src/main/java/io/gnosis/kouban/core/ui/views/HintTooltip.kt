@@ -7,21 +7,23 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.annotation.StringRes
 import io.gnosis.kouban.core.R
 
 class HintTooltip(
     val context: Context,
-    hint: String
+    @StringRes
+    hintResId: Int
 ) : PopupWindow(context) {
 
     init {
         setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         isOutsideTouchable = true
-        isFocusable = false
+        isFocusable = true
 
         contentView = LayoutInflater.from(context).inflate(R.layout.popup_hint_tooltip, null)
 
-        contentView.findViewById<TextView>(R.id.text).text = hint
+        contentView.findViewById<TextView>(R.id.text).setText(hintResId)
         height = ViewGroup.LayoutParams.WRAP_CONTENT
         width = ViewGroup.LayoutParams.WRAP_CONTENT
 
