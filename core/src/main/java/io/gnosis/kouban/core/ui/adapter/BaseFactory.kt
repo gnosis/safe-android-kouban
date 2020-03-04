@@ -13,4 +13,4 @@ abstract class BaseFactory<VH : BaseViewHolder<*>> {
     open fun <T> viewTypeFor(item: T): Int = 0
 }
 
-class UnsupportedViewType : Throwable()
+class UnsupportedViewType(message: String? = null) : Throwable(message)

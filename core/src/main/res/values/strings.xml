@@ -52,4 +52,6 @@
 
     <string name="pending_label">Pending</string>
     <string name="history_label">History</string>
+
+    <string name="transaction_details_type_label">Type</string>
 </resources>
