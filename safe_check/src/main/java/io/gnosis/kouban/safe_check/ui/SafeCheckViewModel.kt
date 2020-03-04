@@ -13,9 +13,11 @@ import io.gnosis.kouban.data.models.SafeInfoDeployment
 import io.gnosis.kouban.data.repositories.EnsRepository
 import io.gnosis.kouban.data.repositories.SafeRepository
 import io.gnosis.kouban.data.repositories.TokenRepository
+import io.gnosis.kouban.data.BuildConfig
 import io.gnosis.kouban.safe_check.R
 import kotlinx.coroutines.Dispatchers
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 
 class SafeCheckViewModel(
@@ -140,9 +142,16 @@ class SafeCheckViewModel(
     private fun HashMap<CheckSection, CheckData>.checkModules(info: SafeInfo): HashMap<CheckSection, CheckData> {
         // all unaudited modules are potentially unsafe
         val modulesCheck =
-            if (info.modules.isNotEmpty())
-                CheckData(CheckResult.YELLOW, R.string.check_modules_danger_potential)
-            else CheckData(CheckResult.GREEN, R.string.check_all_good)
+            if (info.modules.isNotEmpty()) {
+                //TODO: potentially show checkmark for earch of the modules
+                if (info.modules == listOf(MODULE_ALLOWANCE)) {
+                    CheckData(CheckResult.GREEN, R.string.check_all_good)
+                } else {
+                    CheckData(CheckResult.YELLOW, R.string.check_modules_danger_potential)
+                }
+            } else {
+                CheckData(CheckResult.GREEN, R.string.check_all_good)
+            }
         this[CheckSection.MODULES] = modulesCheck
         return this
     }
@@ -156,6 +165,11 @@ class SafeCheckViewModel(
                 CheckData(CheckResult.YELLOW, R.string.check_deployment_info_not_available)
         this[CheckSection.DEPLOYMENT_INFO] = deploymentCheck
         return this
+    }
+
+    companion object {
+
+        private val MODULE_ALLOWANCE = BuildConfig.SAFE_MODULE_ALLOWANCE.asEthereumAddress()!!
     }
 }
 
