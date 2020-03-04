@@ -14,6 +14,10 @@ class SearchManagerTest {
             override val upperBound: Int? = null
 
             override fun apply(item: Int): Boolean = item > lowerBound
+
+            override fun clear() {
+                //no-op
+            }
         })
 
         val input = listOf(1, 2, 3)

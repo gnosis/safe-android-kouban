@@ -14,6 +14,9 @@ import io.gnosis.kouban.ui.splash.SplashViewModel
 import io.gnosis.kouban.ui.transaction.TransactionsFactory
 import io.gnosis.kouban.ui.transaction.TransactionsFragment
 import io.gnosis.kouban.ui.transaction.TransactionsViewModel
+import io.gnosis.kouban.ui.transaction.details.TransactionDetailFactory
+import io.gnosis.kouban.ui.transaction.details.TransactionDetailsFragment
+import io.gnosis.kouban.ui.transaction.details.TransactionDetailsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -40,5 +43,10 @@ val fragmentModule = module {
     scope(named<TransactionFilterDialog>()) {
         viewModel { TransactionFilterViewModel(get()) }
         factory { BaseAdapter(TransactionFilterFactory(get())) }
+    }
+
+    scope(named<TransactionDetailsFragment>()) {
+        viewModel { TransactionDetailsViewModel(get()) }
+        factory { BaseAdapter(TransactionDetailFactory()) }
     }
 }

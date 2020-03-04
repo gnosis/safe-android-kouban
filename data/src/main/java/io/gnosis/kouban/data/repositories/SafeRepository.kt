@@ -245,7 +245,7 @@ class SafeRepository(
     suspend fun loadPendingTransactions(safe: Solidity.Address): List<ServiceSafeTx> =
         transactionServiceApi.loadTransactions(safe.asEthereumAddressChecksumString()).results.map { it.toLocal() }
 
-    suspend fun loadPendingTransaction(txHash: String): ServiceSafeTx =
+    suspend fun loadTransaction(txHash: String): ServiceSafeTx =
         transactionServiceApi.loadTransaction(txHash).toLocal()
 
     suspend fun loadTransactionInformation(safe: Solidity.Address, transaction: SafeTx) =
