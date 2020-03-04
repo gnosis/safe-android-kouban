@@ -107,9 +107,12 @@ class SafeCheckViewModel(
         // fallback handler should be known
         val fallbackHandlerCheck =
             if (info.fallbackHandler != null && info.fallbackHandler != Solidity.Address(BigInteger.ZERO)) {
-                CheckData(CheckResult.GREEN, R.string.check_all_good)
+                if (info.fallbackHandler == FALLBACK_HANDLER)
+                    CheckData(CheckResult.GREEN, R.string.check_all_good)
+                else
+                    CheckData(CheckResult.YELLOW, R.string.check_fallback_unknown)
             } else {
-                CheckData(CheckResult.YELLOW, R.string.check_fallback_unknown)
+                CheckData(CheckResult.YELLOW, R.string.check_fallback_not_set)
             }
         this[CheckSection.FALLBACK_HANDLER] = fallbackHandlerCheck
         return this
@@ -170,6 +173,7 @@ class SafeCheckViewModel(
     companion object {
 
         private val MODULE_ALLOWANCE = BuildConfig.SAFE_MODULE_ALLOWANCE.asEthereumAddress()!!
+        private val FALLBACK_HANDLER = BuildConfig.FALLBACK_HANDLER_DEFAULT.asEthereumAddress()!!
     }
 }
 
