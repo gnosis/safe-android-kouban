@@ -8,12 +8,12 @@ import androidx.lifecycle.viewModelScope
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
+import io.gnosis.kouban.data.BuildConfig
 import io.gnosis.kouban.data.models.SafeInfo
 import io.gnosis.kouban.data.models.SafeInfoDeployment
 import io.gnosis.kouban.data.repositories.EnsRepository
 import io.gnosis.kouban.data.repositories.SafeRepository
 import io.gnosis.kouban.data.repositories.TokenRepository
-import io.gnosis.kouban.data.BuildConfig
 import io.gnosis.kouban.safe_check.R
 import kotlinx.coroutines.Dispatchers
 import pm.gnosis.model.Solidity
@@ -81,16 +81,17 @@ class SafeCheckViewModel(
     private fun performHealthCheck(info: SafeInfo, deploymentInfo: SafeInfoDeployment?): HashMap<CheckSection, CheckData> {
         val healthCheck = HashMap<CheckSection, CheckData>()
 
+        healthCheck[CheckSection.CONTRACT] = checkContract(info)
+        healthCheck[CheckSection.FALLBACK_HANDLER] = checkFallbackHandler(info)
+        healthCheck[CheckSection.OWNERS] = checkOwners(info)
+        healthCheck[CheckSection.THRESHOLD] = checkThreshold(info)
+        healthCheck[CheckSection.MODULES] = checkModules(info)
+        healthCheck[CheckSection.DEPLOYMENT_INFO] = checkDeployment(deploymentInfo)
+
         return healthCheck
-            .checkContract(info)
-            .checkFallbackHandler(info)
-            .checkOwners(info)
-            .checkThreshold(info)
-            .checkModules(info)
-            .checkDeployment(deploymentInfo)
     }
 
-    private fun HashMap<CheckSection, CheckData>.checkContract(info: SafeInfo): HashMap<CheckSection, CheckData> {
+    private fun checkContract(info: SafeInfo): CheckData {
         // should have recent contract version
         val contractCheck = when (info.masterCopy) {
             SafeRepository.safeMasterCopy_0_1_0 -> CheckData(CheckResult.YELLOW, R.string.check_contract_version_old)
@@ -98,11 +99,10 @@ class SafeCheckViewModel(
             SafeRepository.safeMasterCopy_1_1_1 -> CheckData(CheckResult.GREEN, R.string.check_all_good)
             else -> CheckData(CheckResult.RED, R.string.check_contract_version_unknown)
         }
-        this[CheckSection.CONTRACT] = contractCheck
-        return this
+        return contractCheck
     }
 
-    private fun HashMap<CheckSection, CheckData>.checkFallbackHandler(info: SafeInfo): HashMap<CheckSection, CheckData> {
+    private fun checkFallbackHandler(info: SafeInfo): CheckData {
         // should have fallback handler
         // fallback handler should be known
         val fallbackHandlerCheck = when {
@@ -113,11 +113,10 @@ class SafeCheckViewModel(
             info.fallbackHandler == FALLBACK_HANDLER -> CheckData(CheckResult.GREEN, R.string.check_all_good)
             else -> CheckData(CheckResult.GREEN, R.string.check_all_good)
         }
-        this[CheckSection.FALLBACK_HANDLER] = fallbackHandlerCheck
-        return this
+        return fallbackHandlerCheck
     }
 
-    private fun HashMap<CheckSection, CheckData>.checkOwners(info: SafeInfo): HashMap<CheckSection, CheckData> {
+    private fun checkOwners(info: SafeInfo): CheckData {
         val ownersCount = info.owners.size
         // should have more that 1 owner
         val ownersCheck =
@@ -125,11 +124,10 @@ class SafeCheckViewModel(
                 CheckData(CheckResult.YELLOW, R.string.check_owners_only_one)
             else
                 CheckData(CheckResult.GREEN, R.string.check_all_good)
-        this[CheckSection.OWNERS] = ownersCheck
-        return this
+        return ownersCheck
     }
 
-    private fun HashMap<CheckSection, CheckData>.checkThreshold(info: SafeInfo): HashMap<CheckSection, CheckData> {
+    private fun checkThreshold(info: SafeInfo): CheckData {
         val ownersCount = info.owners.size
         // should have multi factor authentication
         // threshold == ownersCount should be avoided => lose of one of the private keys will lead to lock out
@@ -138,11 +136,10 @@ class SafeCheckViewModel(
             ownersCount -> CheckData(CheckResult.YELLOW, R.string.check_threshold_all)
             else -> CheckData(CheckResult.GREEN, R.string.check_all_good)
         }
-        this[CheckSection.THRESHOLD] = thresoldCheck
-        return this
+        return thresoldCheck
     }
 
-    private fun HashMap<CheckSection, CheckData>.checkModules(info: SafeInfo): HashMap<CheckSection, CheckData> {
+    private fun checkModules(info: SafeInfo): CheckData {
         // all unaudited modules are potentially unsafe
         //TODO: potentially show checkmark for earch of the modules
         val modulesCheck = when {
@@ -150,19 +147,17 @@ class SafeCheckViewModel(
             info.modules.isNotEmpty() -> CheckData(CheckResult.YELLOW, R.string.check_modules_danger_potential)
             else -> CheckData(CheckResult.GREEN, R.string.check_all_good)
         }
-        this[CheckSection.MODULES] = modulesCheck
-        return this
+        return modulesCheck
     }
 
-    private fun HashMap<CheckSection, CheckData>.checkDeployment(deploymentInfo: SafeInfoDeployment?): HashMap<CheckSection, CheckData> {
+    private fun checkDeployment(deploymentInfo: SafeInfoDeployment?): CheckData {
         // deployment info should be accessible and it should be possible to decode it
         val deploymentCheck =
             if (deploymentInfo != null)
                 CheckData(CheckResult.GREEN, R.string.check_all_good)
             else
                 CheckData(CheckResult.YELLOW, R.string.check_deployment_info_not_available)
-        this[CheckSection.DEPLOYMENT_INFO] = deploymentCheck
-        return this
+        return deploymentCheck
     }
 
     companion object {
