@@ -10,7 +10,7 @@
     <string name="title_onboarding">Onboarding</string>
     <string name="menu_label_balances">Balances</string>
     <string name="menu_label_transactions">Transactions</string>
-
+    <string name="manu_label_transaction_details">Transaction Details</string>
     <string name="address_hint">Enter Address</string>
 
     <string name="address_to">To: %1$s</string>
@@ -54,4 +54,5 @@
     <string name="history_label">History</string>
 
     <string name="transaction_details_type_label">Type</string>
+    <string name="transaction_details_network_fees_label">Network Fees</string>
 </resources>

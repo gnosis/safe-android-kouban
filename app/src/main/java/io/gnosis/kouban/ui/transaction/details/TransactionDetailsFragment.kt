@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.kouban.R
@@ -45,6 +46,8 @@ class TransactionDetailsFragment : BaseFragment<FragmentTransactionDetailsBindin
                     is Error -> snackbar(view, R.string.error_unknown)
                 }
             })
+
+            toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
         }
     }
 }

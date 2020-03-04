@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.data.models.ServiceSafeTx
+import pm.gnosis.utils.asDecimalString
 
 class TransactionDetailsViewModel(private val safeRepository: SafeRepository) : ViewModel() {
 
@@ -36,7 +37,8 @@ class TransactionDetailsViewModel(private val safeRepository: SafeRepository) : 
     private fun ServiceSafeTx.toDetails(): List<Any> {
         return listOf(
             this.tx.to,
-            LabelDescription(R.string.transaction_details_type_label, SpannableString("SOMETHING"))
+            LabelDescription(R.string.transaction_details_type_label, SpannableString("SOMETHING")),
+            LabelDescription(R.string.transaction_details_network_fees_label, SpannableString(execInfo.fees.asDecimalString()))
         )
     }
 }
