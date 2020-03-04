@@ -553,9 +553,7 @@ class SafeRepository(
 
         private const val ESTIMATE_RESPONSE_PREFIX =
             "0x08c379a000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000020"
-
-        private const val ENC_PASSWORD = "ThisShouldNotBeHardcoded"
-
+        
         private enum class PROXY_FACTORY(val address: String) {
             v1_1_1(BuildConfig.PROXY_FACTORY_1_1_1),
             v1_1_0(BuildConfig.PROXY_FACTORY_1_1_0),
