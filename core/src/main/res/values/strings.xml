@@ -58,7 +58,6 @@
     <string name="transaction_details_raw_data_label">Raw Data</string>
     <string name="transaction_details_timestamp_label">Timestamp</string>
 
-    <string name="view_transaction_on"><![CDATA[<font color=#008c73>View transaction on Etherscan.io</font>]]></string>
-    <string name="etherscan_transaction_url" translatable="false">https://rinkeby.etherscan.io/tx/%s</string>
+    <string name="view_transaction_on">View transaction on Etherscan.io</string>
 
 </resources>
