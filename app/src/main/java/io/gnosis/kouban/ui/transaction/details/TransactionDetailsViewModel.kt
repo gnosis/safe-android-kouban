@@ -19,6 +19,8 @@ import io.gnosis.kouban.data.models.SafeTx
 import io.gnosis.kouban.data.models.ServiceSafeTx
 import io.gnosis.kouban.data.models.Transaction
 import io.gnosis.kouban.data.models.TransactionType
+import io.gnosis.kouban.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
+import io.gnosis.kouban.data.utils.shiftedString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asDecimalString
 
@@ -47,7 +49,10 @@ class TransactionDetailsViewModel(
             first!!,
             second.tx.buildTransactionTypeView(first),
             second.tx.to,
-            LabelDescription(R.string.transaction_details_network_fees_label, SpannableString(second.execInfo.fees.asDecimalString())),
+            LabelDescription(
+                R.string.transaction_details_network_fees_label,
+                SpannableString(second.execInfo.fees.shiftedString(ETH_TOKEN_INFO.decimals, decimalsToDisplay = ETH_TOKEN_INFO.decimals))
+            ),
             LabelDate(R.string.transaction_details_timestamp_label, dateInSecs = transaction.timestamp),
             Link(transaction.executionHash!!, R.string.view_transaction_on),
             LabelDescription(R.string.transaction_details_raw_data_label, SpannableString(second.tx.data))
