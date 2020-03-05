@@ -33,21 +33,21 @@ class TransactionDetailsFragment : BaseFragment<FragmentTransactionDetailsBindin
         with(binding) {
             txDetails.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             txDetails.adapter = this@TransactionDetailsFragment.adapter
-
             swipeToRefresh.setOnRefreshListener {
-                viewModel.load()
+                load()
             }
-
-            viewModel.load()
-            viewModel.viewStates.observe(viewLifecycleOwner, Observer {
-                when (it) {
-                    is TransactionDetails -> adapter.setItemsUnsafe(it.details)
-                    is Loading -> swipeToRefresh.isRefreshing = it.isLoading
-                    is Error -> snackbar(view, R.string.error_unknown)
-                }
-            })
-
             toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
         }
+        load()
+    }
+
+    private fun load() {
+        viewModel.load().observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is TransactionDetails -> adapter.setItemsUnsafe(it.details)
+                is Loading -> binding.swipeToRefresh.isRefreshing = it.isLoading
+                is Error -> snackbar(view!!, R.string.error_unknown)
+            }
+        })
     }
 }

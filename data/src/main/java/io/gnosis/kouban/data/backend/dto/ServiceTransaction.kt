@@ -5,7 +5,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class ServiceTransaction(
-    @Json(name = "safe") val safe: String?,
     @Json(name = "to") val to: String?,
     @Json(name = "value") val value: String,
     @Json(name = "data") val data: String?,

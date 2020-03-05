@@ -313,7 +313,6 @@ class SafeRepository(
         ServiceSafeTx(
             hash = safeTxHash,
             tx = SafeTx(
-                safe = safe?.asEthereumAddress() ?: Solidity.Address(BigInteger.ZERO),
                 to = to?.asEthereumAddress() ?: Solidity.Address(BigInteger.ZERO),
                 value = value.decimalAsBigIntegerOrNull() ?: BigInteger.ZERO,
                 data = data ?: "",

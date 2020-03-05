@@ -11,7 +11,6 @@ import java.math.BigInteger
 @Parcelize
 @TypeParceler<Solidity.Address, SolidityAddressParceler>
 data class SafeTx(
-    val safe: Solidity.Address,
     val to: Solidity.Address,
     val value: BigInteger,
     val data: String,

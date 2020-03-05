@@ -56,4 +56,5 @@
     <string name="transaction_details_type_label">Type</string>
     <string name="transaction_details_network_fees_label">Network Fees</string>
     <string name="transaction_details_raw_data_label">Raw Data</string>
+    <string name="transaction_details_timestamp_label">Timestamp</string>
 </resources>

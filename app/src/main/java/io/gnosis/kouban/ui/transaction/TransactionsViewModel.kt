@@ -22,7 +22,7 @@ class TransactionsViewModel(
     private fun loadFakeTransactionsOf(safe: Solidity.Address) =
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
             emit(Loading(true))
-            kotlin.runCatching { safeRepository.getTransactions(safe) }
+            runCatching { safeRepository.getTransactions(safe) }
                 .onFailure {
                     emit(Loading(false))
                     emit(Error(it))
