@@ -9,6 +9,7 @@ import com.squareup.picasso.Picasso
 import io.gnosis.kouban.core.R
 import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
 import io.gnosis.kouban.core.utils.asFormattedDateTime
+import io.gnosis.kouban.core.utils.openUrl
 import io.gnosis.kouban.core.utils.setTransactionIcon
 import io.gnosis.kouban.data.models.DataInfo
 import io.gnosis.kouban.data.models.Transaction
@@ -37,14 +38,15 @@ class TransactionViewHolder(
             item.transferInfo?.let { setTransferInfo(it) }
             item.dataInfo?.let { setDataInfo(it) }
             setIconForType(item.type)
-            root.setOnClickListener {
+            root.setOnClickListener { view ->
                 with(item) {
                     txHash?.let {
                         root.findNavController()
                             .navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(item))
-                    }
-                    executionHash?.let {
-                        //TODO open etherscan
+                    } ?: executionHash?.let { executionHash ->
+                        with(view.context) {
+                            openUrl(getString(R.string.etherscan_transaction_url, executionHash))
+                        }
                     }
                 }
             }
