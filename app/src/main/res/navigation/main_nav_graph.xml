@@ -83,7 +83,7 @@
         android:label="TransactionDetailsFragment"
         tools:layout="@layout/fragment_transaction_details">
         <argument
-            android:name="txHash"
-            app:argType="string" />
+            android:name="transaction"
+            app:argType="io.gnosis.kouban.data.models.Transaction" />
     </fragment>
 </navigation>

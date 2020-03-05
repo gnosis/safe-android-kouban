@@ -313,17 +313,18 @@ class SafeRepository(
         ServiceSafeTx(
             hash = safeTxHash,
             tx = SafeTx(
-                to = to?.asEthereumAddress() ?: pm.gnosis.model.Solidity.Address(java.math.BigInteger.ZERO),
-                value = value.decimalAsBigIntegerOrNull() ?: java.math.BigInteger.ZERO,
+                safe = safe?.asEthereumAddress() ?: Solidity.Address(BigInteger.ZERO),
+                to = to?.asEthereumAddress() ?: Solidity.Address(BigInteger.ZERO),
+                value = value.decimalAsBigIntegerOrNull() ?: BigInteger.ZERO,
                 data = data ?: "",
                 operation = operation.toOperation()
             ),
             execInfo = SafeTxExecInfo(
-                baseGas = baseGas.decimalAsBigIntegerOrNull() ?: java.math.BigInteger.ZERO,
-                txGas = safeTxGas.decimalAsBigIntegerOrNull() ?: java.math.BigInteger.ZERO,
-                gasPrice = gasPrice.decimalAsBigIntegerOrNull() ?: java.math.BigInteger.ZERO,
-                gasToken = gasToken?.asEthereumAddress() ?: pm.gnosis.model.Solidity.Address(java.math.BigInteger.ZERO),
-                refundReceiver = refundReceiver?.asEthereumAddress() ?: pm.gnosis.model.Solidity.Address(java.math.BigInteger.ZERO),
+                baseGas = baseGas.decimalAsBigIntegerOrNull() ?: BigInteger.ZERO,
+                txGas = safeTxGas.decimalAsBigIntegerOrNull() ?: BigInteger.ZERO,
+                gasPrice = gasPrice.decimalAsBigIntegerOrNull() ?: BigInteger.ZERO,
+                gasToken = gasToken?.asEthereumAddress() ?: pm.gnosis.model.Solidity.Address(BigInteger.ZERO),
+                refundReceiver = refundReceiver?.asEthereumAddress() ?: pm.gnosis.model.Solidity.Address(BigInteger.ZERO),
                 nonce = nonce.decimalAsBigInteger()
             ),
             confirmations = confirmations.map { confirmation ->
@@ -553,7 +554,7 @@ class SafeRepository(
 
         private const val ESTIMATE_RESPONSE_PREFIX =
             "0x08c379a000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000020"
-        
+
         private enum class PROXY_FACTORY(val address: String) {
             v1_1_1(BuildConfig.PROXY_FACTORY_1_1_1),
             v1_1_0(BuildConfig.PROXY_FACTORY_1_1_0),

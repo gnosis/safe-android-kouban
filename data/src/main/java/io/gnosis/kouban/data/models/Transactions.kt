@@ -1,5 +1,9 @@
 package io.gnosis.kouban.data.models
 
+import android.os.Parcelable
+import io.gnosis.kouban.data.utils.SolidityAddressParceler
+import kotlinx.android.parcel.Parcelize
+import kotlinx.android.parcel.TypeParceler
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 import java.util.*
@@ -13,6 +17,8 @@ data class TransactionsDto(
     val history: List<Transaction>
 )
 
+@Parcelize
+@TypeParceler<Solidity.Address, SolidityAddressParceler>
 data class Transaction(
     val address: Solidity.Address,
     val timestamp: Long,
@@ -22,17 +28,20 @@ data class Transaction(
     val dataInfo: DataInfo?,
     val type: TransactionType,
     val state: TransactionState
-)
+) : Parcelable
 
+@Parcelize
 data class TransferInfo(
     val tokenSymbol: String,
     val amount: BigInteger,
     val decimals: Int,
     val tokenIconUrl: String?
-)
+) : Parcelable
 
+
+@Parcelize
 data class DataInfo(
     val ethValue: BigInteger,
     val dataByteLength: Int?,
     val methodName: String?
-)
+) : Parcelable

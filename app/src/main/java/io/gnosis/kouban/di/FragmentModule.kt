@@ -1,6 +1,7 @@
 package io.gnosis.kouban.di
 
 import io.gnosis.kouban.core.ui.adapter.BaseAdapter
+import io.gnosis.kouban.data.models.Transaction
 import io.gnosis.kouban.ui.address.capture.AddressCaptureFragment
 import io.gnosis.kouban.ui.address.capture.AddressCaptureViewModel
 import io.gnosis.kouban.ui.address.complete.AddressCompleteFragment
@@ -46,7 +47,7 @@ val fragmentModule = module {
     }
 
     scope(named<TransactionDetailsFragment>()) {
-        viewModel { TransactionDetailsViewModel(get()) }
+        viewModel { (transaction: Transaction) -> TransactionDetailsViewModel(transaction, get(), get()) }
         factory { BaseAdapter(TransactionDetailFactory()) }
     }
 }

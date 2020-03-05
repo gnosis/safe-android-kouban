@@ -16,13 +16,13 @@ import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.databinding.FragmentTransactionDetailsBinding
 import org.koin.androidx.scope.currentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import pm.gnosis.svalinn.common.utils.snackbar
 
 class TransactionDetailsFragment : BaseFragment<FragmentTransactionDetailsBinding>() {
 
     private val navArgs by navArgs<TransactionDetailsFragmentArgs>()
-    private val txHash by lazy { navArgs.txHash }
-    private val viewModel by currentScope.viewModel<TransactionDetailsViewModel>(this)
+    private val viewModel by currentScope.viewModel<TransactionDetailsViewModel>(this) { parametersOf(navArgs.transaction) }
     private val adapter by currentScope.inject<BaseAdapter<BaseDetailViewHolder<Any>>>()
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionDetailsBinding =
@@ -35,10 +35,10 @@ class TransactionDetailsFragment : BaseFragment<FragmentTransactionDetailsBindin
             txDetails.adapter = this@TransactionDetailsFragment.adapter
 
             swipeToRefresh.setOnRefreshListener {
-                viewModel.load(txHash)
+                viewModel.load()
             }
 
-            viewModel.load(txHash)
+            viewModel.load()
             viewModel.viewStates.observe(viewLifecycleOwner, Observer {
                 when (it) {
                     is TransactionDetails -> adapter.setItemsUnsafe(it.details)

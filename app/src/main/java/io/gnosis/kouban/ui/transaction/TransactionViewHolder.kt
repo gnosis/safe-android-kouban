@@ -39,9 +39,9 @@ class TransactionViewHolder(
             setIconForType(item.type)
             root.setOnClickListener {
                 with(item) {
-                    txHash?.let { txHash ->
+                    txHash?.let {
                         root.findNavController()
-                            .navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(txHash))
+                            .navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(item))
                     }
                     executionHash?.let {
                         //TODO open etherscan
