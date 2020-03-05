@@ -19,7 +19,7 @@
             app:contentScrim="@color/white"
             app:expandedTitleGravity="bottom|center_horizontal"
             app:expandedTitleTextAppearance="@style/DarkText"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+            app:layout_scrollFlags="scroll|enterAlways|snap">
 
             <TextView
                 android:id="@+id/safe_address"
