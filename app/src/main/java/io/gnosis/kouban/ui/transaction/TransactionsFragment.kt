@@ -19,7 +19,10 @@ import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
 import io.gnosis.kouban.R
+import io.gnosis.kouban.data.utils.asMiddleEllipsized
 import io.gnosis.kouban.ui.filter.transaction.TransactionFilterDialog
+import org.koin.android.ext.android.bind
+import pm.gnosis.utils.asEthereumAddressString
 
 class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
 
@@ -40,14 +43,33 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
             swipeToRefresh.setOnRefreshListener {
                 load(navArgs.safeAddress.asEthereumAddress()!!)
             }
+        }
+        load(navArgs.safeAddress.asEthereumAddress()!!)
+        setupToolbar()
+    }
 
+    private fun setupToolbar() {
+        with(binding) {
             toolbar.inflateMenu(R.menu.main)
             toolbar.setOnMenuItemClickListener {
                 onMenuItemClicked(it.itemId)
                 true
             }
         }
-        load(navArgs.safeAddress.asEthereumAddress()!!)
+        viewModel.loadHeaderInfo().observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is Error -> onError(it.throwable)
+                is ToolbarSetup -> setToolbarUi(it.safeAddress, it.ensName)
+            }
+        })
+    }
+
+    private fun setToolbarUi(address: Solidity.Address, ensName: String?) {
+        with(binding) {
+            blockiesHeader.setAddress(address)
+            safeName.text = ensName ?: "Safe"
+            safeAddress.text = address.asEthereumAddressString().asMiddleEllipsized(4)
+        }
     }
 
     private fun onMenuItemClicked(itemId: Int) {
@@ -68,13 +90,13 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
             when (it) {
                 is Loading -> binding.swipeToRefresh.isRefreshing = it.isLoading
                 is ListViewItems -> adapter.setItemsUnsafe(it.listItems)
-                is Error -> {
-                    it.throwable.printStackTrace()
-                    Timber.e(it.throwable)
-                    snackbar(binding.root, R.string.unknown_error)
-                }
+                is Error -> onError(it.throwable)
             }
         })
     }
 
+    private fun onError(throwable: Throwable) {
+        Timber.e(throwable)
+        snackbar(binding.root, R.string.unknown_error)
+    }
 }
