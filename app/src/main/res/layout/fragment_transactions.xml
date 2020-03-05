@@ -13,42 +13,40 @@
         android:background="@color/white">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collaping_toolbar"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            app:expandedTitleGravity="top|center_horizontal"
+            app:contentScrim="@color/white"
+            app:expandedTitleGravity="bottom|center_horizontal"
+            app:expandedTitleTextAppearance="@style/DarkText"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/safe_address"
+                style="@style/LightText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center_horizontal"
-                android:orientation="vertical">
+                android:layout_marginBottom="8dp"
+                app:layout_collapseMode="none"
+                tools:text="0x1283...1837" />
 
-                <TextView
-                    android:id="@+id/safe_name"
-                    style="@style/DarkText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:textSize="15sp"
-                    tools:text="Safe" />
-
-                <TextView
-                    android:id="@+id/safe_address"
-                    style="@style/LightText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    tools:text="0x1283...1837" />
-            </LinearLayout>
+            <ProgressBar
+                android:id="@+id/header_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:indeterminate="true"
+                android:progressTint="@color/blue"
+                app:layout_collapseMode="none" />
 
             <pm.gnosis.blockies.BlockiesImageView
                 android:id="@+id/blockies_header"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
-                app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier="0.5" />
+                app:layout_collapseMode="none" />
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"

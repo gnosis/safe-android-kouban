@@ -3,6 +3,7 @@ package io.gnosis.kouban.ui.transaction
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.isVisible
 import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -59,6 +60,7 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
         viewModel.loadHeaderInfo().observe(viewLifecycleOwner, Observer {
             when (it) {
                 is Error -> onError(it.throwable)
+                is Loading -> binding.headerProgress.isVisible = it.isLoading
                 is ToolbarSetup -> setToolbarUi(it.safeAddress, it.ensName)
             }
         })
@@ -67,7 +69,7 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
     private fun setToolbarUi(address: Solidity.Address, ensName: String?) {
         with(binding) {
             blockiesHeader.setAddress(address)
-            safeName.text = ensName ?: "Safe"
+            collapingToolbar.title = ensName ?: "Safe"
             safeAddress.text = address.asEthereumAddressString().asMiddleEllipsized(4)
         }
     }
