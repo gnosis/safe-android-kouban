@@ -3,11 +3,13 @@ package io.gnosis.kouban.ui.transaction
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.navigation.findNavController
 import androidx.viewbinding.ViewBinding
 import com.squareup.picasso.Picasso
 import io.gnosis.kouban.core.R
 import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
 import io.gnosis.kouban.core.utils.asFormattedDateTime
+import io.gnosis.kouban.core.utils.openUrl
 import io.gnosis.kouban.core.utils.setTransactionIcon
 import io.gnosis.kouban.data.models.DataInfo
 import io.gnosis.kouban.data.models.Transaction
@@ -36,6 +38,18 @@ class TransactionViewHolder(
             item.transferInfo?.let { setTransferInfo(it) }
             item.dataInfo?.let { setDataInfo(it) }
             setIconForType(item.type)
+            root.setOnClickListener { view ->
+                with(item) {
+                    txHash?.let {
+                        root.findNavController()
+                            .navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(item))
+                    } ?: executionHash?.let { executionHash ->
+                        with(view.context) {
+                            openUrl(getString(R.string.etherscan_transaction_url, executionHash))
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -56,11 +70,8 @@ class TransactionViewHolder(
             ETH_TOKEN_INFO.symbol
         )
         textDescription.isVisible = true
-        textDescription.text = root.context.getString(
-            R.string.transaction_description_label,
-            dataInfo.methodName.orEmpty(),
-            (dataInfo.dataByteLength ?: 0).toString()
-        )
+        textDescription.text = dataInfo.methodName ?: root.context.getString(R.string.transaction_byte_label, dataInfo.dataByteLength ?: 0)
+
         imageTokenLogo.setTransactionIcon(picasso, ETH_TOKEN_INFO.icon)
     }
 

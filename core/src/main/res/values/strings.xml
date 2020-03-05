@@ -10,7 +10,7 @@
     <string name="title_onboarding">Onboarding</string>
     <string name="menu_label_balances">Balances</string>
     <string name="menu_label_transactions">Transactions</string>
-
+    <string name="manu_label_transaction_details">Transaction Details</string>
     <string name="address_hint">Enter Address</string>
 
     <string name="address_to">To: %1$s</string>
@@ -48,8 +48,16 @@
     <string name="onboarding_slide3_description">Get an easy overview if your Safe is properly setup and secure</string>
 
     <string name="transaction_token_amount_label">%1$s %2$s</string>
-    <string name="transaction_description_label">%1$s\n(%2$s bytes)</string>
+    <string name="transaction_byte_label">(%d bytes)</string>
 
     <string name="pending_label">Pending</string>
     <string name="history_label">History</string>
+
+    <string name="transaction_details_type_label">Type</string>
+    <string name="transaction_details_network_fees_label">Network Fees</string>
+    <string name="transaction_details_raw_data_label">Raw Data</string>
+    <string name="transaction_details_timestamp_label">Timestamp</string>
+
+    <string name="view_transaction_on">View transaction on Etherscan.io</string>
+
 </resources>
