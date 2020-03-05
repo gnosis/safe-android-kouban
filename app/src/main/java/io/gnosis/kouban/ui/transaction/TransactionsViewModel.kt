@@ -26,7 +26,7 @@ class TransactionsViewModel(
     fun loadTransactionsOf(address: Solidity.Address) =
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
             emit(Loading(true))
-            runCatching<Any?, TransactionsDto> { safeRepository.getTransactions(address) }
+            runCatching{ safeRepository.getTransactions(address) }
                 .onFailure {
                     emit(Loading(false))
                     emit(Error(it))
