@@ -49,6 +49,7 @@ class TransactionDetailsViewModel(
             second.tx.to,
             LabelDescription(R.string.transaction_details_network_fees_label, SpannableString(second.execInfo.fees.asDecimalString())),
             LabelDate(R.string.transaction_details_timestamp_label, dateInSecs = transaction.timestamp),
+            Link(transaction.executionHash!!, R.string.view_transaction_on),
             LabelDescription(R.string.transaction_details_raw_data_label, SpannableString(second.tx.data))
         )
     }

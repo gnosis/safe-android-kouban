@@ -29,7 +29,7 @@ fun Context.openUrl(url: String) {
 }
 
 fun TextView.setupLink(url: String, text: String) {
-    val linkDrawable = ContextCompat.getDrawable(this.context, R.drawable.ic_launch_black_24dp)!!
+    val linkDrawable = ContextCompat.getDrawable(this.context, R.drawable.ic_launch_black_12dp)!!
     linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
     this.text = SpannableStringBuilder(Html.fromHtml(text))
         .append(" ")

@@ -11,6 +11,7 @@ import io.gnosis.kouban.core.R
 import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
 import io.gnosis.kouban.core.utils.asFormattedDateTime
 import io.gnosis.kouban.core.utils.formatEthAddress
+import io.gnosis.kouban.core.utils.setupEtherscanTransactionUrl
 import io.gnosis.kouban.data.models.DataInfo
 import io.gnosis.kouban.data.models.TransactionType
 import io.gnosis.kouban.data.models.TransferInfo
@@ -19,6 +20,7 @@ import io.gnosis.kouban.data.utils.shiftedString
 import io.gnosis.kouban.databinding.ItemDetailsAddressBinding
 import io.gnosis.kouban.databinding.ItemDetailsLabelDescriptionBinding
 import io.gnosis.kouban.databinding.ItemDetailsTransactionTypeBinding
+import io.gnosis.kouban.databinding.ItemTransactionDetailsLinkBinding
 import pm.gnosis.model.Solidity
 
 abstract class BaseDetailViewHolder<T>(viewBinding: ViewBinding) : BaseViewHolder<T>(viewBinding)
@@ -113,5 +115,19 @@ class AddressDetailsViewHolder(
             addressImage.setAddress(item)
             address.text = item.formatEthAddress(root.context)
         }
+    }
+}
+
+data class Link(
+    val entityId: String,
+    @StringRes val displayableText: Int
+)
+
+class LinkViewHolder(
+    private val viewBinding: ItemTransactionDetailsLinkBinding
+) : BaseDetailViewHolder<Link>(viewBinding) {
+
+    override fun bind(item: Link) {
+        viewBinding.layoutTransactionStatusEtherscanLink.setupEtherscanTransactionUrl(item.entityId, item.displayableText)
     }
 }
