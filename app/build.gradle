@@ -80,6 +80,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
 
+    implementation "com.google.firebase:firebase-messaging:$versions.firebase_messaging"
+
     implementation project(":core")
     implementation project(":safe_check")
 }
