@@ -26,7 +26,7 @@ ext {
             crashlytics               : '2.10.1',
             dagger                    : '2.17',
             firebase_core             : '16.0.6',
-            firebase_messaging        : '17.3.4',
+            firebase_messaging        : '20.1.1',
             floating_action_button    : '1.6.4',
             geth                      : '1.7.1',
             kethereum                 : '0.79.5',
