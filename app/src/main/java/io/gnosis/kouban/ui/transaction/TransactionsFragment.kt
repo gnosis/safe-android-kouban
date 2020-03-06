@@ -1,8 +1,8 @@
 package io.gnosis.kouban.ui.transaction
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.isVisible
 import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -19,13 +19,16 @@ import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
 import io.gnosis.kouban.R
+import io.gnosis.kouban.data.utils.asMiddleEllipsized
 import io.gnosis.kouban.ui.filter.transaction.TransactionFilterDialog
+import pm.gnosis.utils.asEthereumAddressString
 
 class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
 
     private val viewModel by currentScope.viewModel<TransactionsViewModel>(this)
     private val adapter by currentScope.inject<BaseAdapter<BaseTransactionViewHolder<Any>>>()
     private val navArgs by navArgs<TransactionsFragmentArgs>()
+    private val currentSafe by lazy { navArgs.safeAddress.asEthereumAddress()!! }
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionsBinding =
         FragmentTransactionsBinding.inflate(inflater, container, false)
@@ -38,16 +41,32 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
             list.adapter = adapter
 
             swipeToRefresh.setOnRefreshListener {
-                load(navArgs.safeAddress.asEthereumAddress()!!)
+                load(currentSafe)
             }
+        }
+        load(currentSafe)
+        setupToolbar()
+    }
 
+    private fun setupToolbar() {
+        with(binding) {
+            blockiesHeader.setAddress(currentSafe)
+            safeAddress.text = currentSafe.asEthereumAddressString().asMiddleEllipsized(4)
             toolbar.inflateMenu(R.menu.main)
             toolbar.setOnMenuItemClickListener {
                 onMenuItemClicked(it.itemId)
                 true
             }
         }
-        load(navArgs.safeAddress.asEthereumAddress()!!)
+        viewModel.loadHeaderInfo(currentSafe)
+            .observe(viewLifecycleOwner, Observer {
+                when (it) {
+                    is Error -> onError(it.throwable)
+                    is Loading -> binding.headerProgress.isVisible = it.isLoading
+                    is ENSName -> binding.collapingToolbar.title = it.ensName ?: getString(R.string.safe_label)
+
+                }
+            })
     }
 
     private fun onMenuItemClicked(itemId: Int) {
@@ -68,13 +87,13 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
             when (it) {
                 is Loading -> binding.swipeToRefresh.isRefreshing = it.isLoading
                 is ListViewItems -> adapter.setItemsUnsafe(it.listItems)
-                is Error -> {
-                    it.throwable.printStackTrace()
-                    Timber.e(it.throwable)
-                    snackbar(binding.root, R.string.unknown_error)
-                }
+                is Error -> onError(it.throwable)
             }
         })
     }
 
+    private fun onError(throwable: Throwable) {
+        Timber.e(throwable)
+        snackbar(binding.root, R.string.unknown_error)
+    }
 }

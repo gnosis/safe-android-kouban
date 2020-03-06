@@ -11,7 +11,7 @@ class SearchManager {
     fun <T : Any, F : Filter<T>> activateFilter(newFilter: F) =
         activeFilters.add(newFilter as Filter<Any>)
 
-    fun <T : Any> applyDiff(input: List<T>) =
+    fun <T : Any> filter(input: List<T>) =
         activeFilters.takeUnless { it.isEmpty() }
             ?.fold(input) { filteredInput, filter ->
                 filteredInput.filter { filter.apply(it) }

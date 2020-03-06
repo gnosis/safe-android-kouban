@@ -21,7 +21,7 @@ class SearchManagerTest {
         })
 
         val input = listOf(1, 2, 3)
-        val result = searchManager.applyDiff(input)
+        val result = searchManager.filter(input)
 
         assert(result == listOf(3))
     }
