@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import io.gnosis.kouban.R
-import io.gnosis.kouban.core.managers.SafeAddressManager
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
@@ -32,12 +31,12 @@ class TransactionsViewModel(
                 .onSuccess {
                     emit(Loading(false))
                     val listItems = mutableListOf<Any>().apply {
-                        searchManager.applyDiff(it.pending).takeUnless { it.isEmpty() }?.let {
+                        searchManager.filter(it.pending).takeUnless { it.isEmpty() }?.let {
                             add(Header(R.string.pending_label))
                             addAll(it)
                         }
 
-                        searchManager.applyDiff(it.history).takeUnless { it.isEmpty() }?.let<List<Transaction>, Unit> {
+                        searchManager.filter(it.history).takeUnless { it.isEmpty() }?.let<List<Transaction>, Unit> {
                             add(Header(R.string.history_label))
                             addAll(it)
                         }
