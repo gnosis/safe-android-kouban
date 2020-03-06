@@ -1,6 +1,5 @@
 package io.gnosis.kouban.ui.transaction
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
 import androidx.core.view.isVisible
@@ -22,7 +21,6 @@ import timber.log.Timber
 import io.gnosis.kouban.R
 import io.gnosis.kouban.data.utils.asMiddleEllipsized
 import io.gnosis.kouban.ui.filter.transaction.TransactionFilterDialog
-import org.koin.android.ext.android.bind
 import pm.gnosis.utils.asEthereumAddressString
 
 class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
@@ -30,6 +28,7 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
     private val viewModel by currentScope.viewModel<TransactionsViewModel>(this)
     private val adapter by currentScope.inject<BaseAdapter<BaseTransactionViewHolder<Any>>>()
     private val navArgs by navArgs<TransactionsFragmentArgs>()
+    private val currentSafe by lazy { navArgs.safeAddress.asEthereumAddress()!! }
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionsBinding =
         FragmentTransactionsBinding.inflate(inflater, container, false)
@@ -42,36 +41,32 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
             list.adapter = adapter
 
             swipeToRefresh.setOnRefreshListener {
-                load(navArgs.safeAddress.asEthereumAddress()!!)
+                load(currentSafe)
             }
         }
-        load(navArgs.safeAddress.asEthereumAddress()!!)
+        load(currentSafe)
         setupToolbar()
     }
 
     private fun setupToolbar() {
         with(binding) {
+            blockiesHeader.setAddress(currentSafe)
+            safeAddress.text = currentSafe.asEthereumAddressString().asMiddleEllipsized(4)
             toolbar.inflateMenu(R.menu.main)
             toolbar.setOnMenuItemClickListener {
                 onMenuItemClicked(it.itemId)
                 true
             }
         }
-        viewModel.loadHeaderInfo().observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is Error -> onError(it.throwable)
-                is Loading -> binding.headerProgress.isVisible = it.isLoading
-                is ToolbarSetup -> setToolbarUi(it.safeAddress, it.ensName)
-            }
-        })
-    }
+        viewModel.loadHeaderInfo(currentSafe)
+            .observe(viewLifecycleOwner, Observer {
+                when (it) {
+                    is Error -> onError(it.throwable)
+                    is Loading -> binding.headerProgress.isVisible = it.isLoading
+                    is ENSName -> binding.collapingToolbar.title = it.ensName ?: getString(R.string.safe_label)
 
-    private fun setToolbarUi(address: Solidity.Address, ensName: String?) {
-        with(binding) {
-            blockiesHeader.setAddress(address)
-            collapingToolbar.title = ensName ?: "Safe"
-            safeAddress.text = address.asEthereumAddressString().asMiddleEllipsized(4)
-        }
+                }
+            })
     }
 
     private fun onMenuItemClicked(itemId: Int) {

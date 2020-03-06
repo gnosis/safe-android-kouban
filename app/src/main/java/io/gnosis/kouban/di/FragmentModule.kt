@@ -25,7 +25,7 @@ import org.koin.dsl.module
 val fragmentModule = module {
 
     scope(named<TransactionsFragment>()) {
-        viewModel { TransactionsViewModel(get(), get(), get(), get()) }
+        viewModel { TransactionsViewModel(get(), get(), get()) }
         factory { BaseAdapter(TransactionsFactory(get())) }
     }
 
