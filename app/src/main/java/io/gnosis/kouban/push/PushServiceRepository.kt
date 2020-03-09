@@ -1,7 +1,10 @@
 package io.gnosis.kouban.push
 
+import android.content.Context
+import androidx.navigation.NavDeepLinkBuilder
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
+import io.gnosis.kouban.R
 import io.gnosis.kouban.core.managers.SafeAddressManager
 import io.gnosis.kouban.data.backend.PushServiceApi
 import io.gnosis.kouban.helpers.LocalNotificationManager
@@ -11,6 +14,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 
 class PushServiceRepository(
+    private val context: Context,
     private val localNotificationManager: LocalNotificationManager,
     private val pushServiceApi: PushServiceApi,
     private val prefs: PushPrefs,
@@ -78,99 +82,127 @@ class PushServiceRepository(
         }
     }
 
+    //TODO: different handling of incomming notifications based on type
     fun handlePushMessage(pushMessage: PushMessage) {
 
+        when (pushMessage) {
+            is PushMessage.NewConfirmation -> {
+                showTransactionNotification(pushMessage)
+            }
+            is PushMessage.PendingMultisigTransaction -> {
+                showTransactionNotification(pushMessage)
+            }
+            is PushMessage.ExecutedMultisigTransaction -> {
+                showTransactionNotification(pushMessage)
+            }
+            is PushMessage.IncomingEther -> {
+                showTransactionNotification(pushMessage)
+            }
+            is PushMessage.IncomingToken -> {
+                showTransactionNotification(pushMessage)
+            }
+        }
     }
 
+    private fun showTransactionNotification(pushMessage: PushMessage) {
+        pushMessage.apply {
+            //TODO: get transaction from push message
+            val transaction = null //Transaction
+
+            val intent =
+                NavDeepLinkBuilder(context).setGraph(R.navigation.main_nav_graph).setDestination(R.id.transactionDetailsFragment).setArguments(null)
+                    .createPendingIntent()
+
+            localNotificationManager.show(
+                context.getString(R.string.push_tex_title),
+                context.getString(R.string.push_tx_message)
+            )
+        }
+    }
+
+
+    //TODO: get all relevant fields
     sealed class PushMessage(
         val type: String
     ) {
-        data class SendTransaction(
-            val hash: String,
-            val safe: String,
-            val to: String,
-            val value: String,
-            val data: String,
-            val operation: String,
-            val txGas: String,
-            val dataGas: String,
-            val operationalGas: String,
-            val gasPrice: String,
-            val gasToken: String,
-            val nonce: String,
-            val r: String,
-            val s: String,
-            val v: String
+
+        data class NewConfirmation(
+            val address: String
         ) : PushMessage(TYPE) {
             companion object {
-                const val TYPE = "sendTransaction"
+                const val TYPE = "NEW_CONFIRMATION"
                 fun fromMap(params: Map<String, String>) =
-                    SendTransaction(
-                        params.getOrThrow("hash"),
-                        params.getOrThrow("safe"),
-                        params.getOrThrow("to"),
-                        params.getOrThrow("value"),
-                        params.getOrThrow("data"),
-                        params.getOrThrow("operation"),
-                        params.getOrThrow("txGas"),
-                        params.getOrThrow("dataGas"),
-                        params.getOrThrow("operationalGas"),
-                        params.getOrThrow("gasPrice"),
-                        params.getOrThrow("gasToken"),
-                        params.getOrThrow("nonce"),
-                        params.getOrThrow("r"),
-                        params.getOrThrow("s"),
-                        params.getOrThrow("v")
+                    NewConfirmation(
+                        params.getOrThrow("address")
                     )
             }
         }
 
-        data class ConfirmTransaction(
-            val hash: String,
-            val r: String,
-            val s: String,
-            val v: String
-        ) : PushMessage(TYPE) {
+        data class PendingMultisigTransaction(
+            val address: String
+        ): PushMessage(TYPE) {
             companion object {
-                const val TYPE = "confirmTransaction"
+                const val TYPE = "PENDING_MULTISIG_TRANSACTION"
                 fun fromMap(params: Map<String, String>) =
-                    ConfirmTransaction(
-                        params.getOrThrow("hash"),
-                        params.getOrThrow("r"),
-                        params.getOrThrow("s"),
-                        params.getOrThrow("v")
+                    NewConfirmation(
+                        params.getOrThrow("address")
                     )
             }
         }
 
-        data class RejectTransaction(
-            val hash: String,
-            val r: String,
-            val s: String,
-            val v: String
-        ) : PushMessage(TYPE) {
+        data class ExecutedMultisigTransaction(
+            val address: String
+        ): PushMessage(TYPE) {
             companion object {
-                const val TYPE = "rejectTransaction"
+                const val TYPE = "EXECUTED_MULTISIG_TRANSACTION"
                 fun fromMap(params: Map<String, String>) =
-                    RejectTransaction(
-                        params.getOrThrow("hash"),
-                        params.getOrThrow("r"),
-                        params.getOrThrow("s"),
-                        params.getOrThrow("v")
+                    NewConfirmation(
+                        params.getOrThrow("address")
                     )
             }
         }
+
+        data class IncomingEther(
+            val address: String
+        ): PushMessage(TYPE) {
+            companion object {
+                const val TYPE = "INCOMMING_ETHER"
+                fun fromMap(params: Map<String, String>) =
+                    NewConfirmation(
+                        params.getOrThrow("address")
+                    )
+            }
+        }
+
+        data class IncomingToken(
+            val address: String
+        ): PushMessage(TYPE) {
+            companion object {
+                const val TYPE = "INCOMMING_TOKEN"
+                fun fromMap(params: Map<String, String>) =
+                    NewConfirmation(
+                        params.getOrThrow("address")
+                    )
+            }
+        }
+
 
         companion object {
             fun fromMap(params: Map<String, String>) =
                 when (params["type"]) {
-                    "sendTransaction" -> SendTransaction.fromMap(
+                    NewConfirmation.TYPE -> NewConfirmation.fromMap(
                         params
                     )
-                    "confirmTransaction" -> ConfirmTransaction.fromMap(
+                    PendingMultisigTransaction.TYPE -> PendingMultisigTransaction.fromMap(
                         params
                     )
-                    "rejectTransaction" -> RejectTransaction.fromMap(
+                    ExecutedMultisigTransaction.TYPE -> ExecutedMultisigTransaction.fromMap(
+                        params
+                    )
+                    IncomingEther.TYPE -> IncomingEther.fromMap(
+                        params
+                    )
+                    IncomingToken.TYPE -> IncomingToken.fromMap(
                         params
                     )
                     else -> throw IllegalArgumentException("Unknown push type")
