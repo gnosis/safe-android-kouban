@@ -1,22 +1,81 @@
 package io.gnosis.kouban.push
 
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
+import io.gnosis.kouban.core.managers.SafeAddressManager
 import io.gnosis.kouban.data.backend.PushServiceApi
 import io.gnosis.kouban.helpers.LocalNotificationManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 
 class PushServiceRepository(
     private val localNotificationManager: LocalNotificationManager,
     private val pushServiceApi: PushServiceApi,
-    private val prefs: PushPrefs
+    private val prefs: PushPrefs,
+    private val safeAddressManager: SafeAddressManager
 ) {
 
-    suspend fun registerDevice(token: String) {
-        pushServiceApi.registerDevice(PushServiceApi.DeviceRegistration(prefs.clientId, token))
+    fun checkRegistration() {
+
+        if (!prefs.isDeviceRegistered) {
+            FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    return@OnCompleteListener
+                }
+                // Get new Instance ID token
+                val token = task.result?.token
+                token?.let { token ->
+                    runBlocking(Dispatchers.IO) {
+                        kotlin.runCatching {
+                            registerDevice(token)
+                        }
+                            .onSuccess { prefs.token = token }
+                            .onFailure { prefs.token = null }
+                    }
+                }
+            })
+
+        } else {
+
+            if (!prefs.isSafeRegistered) {
+
+                runBlocking(Dispatchers.IO) {
+                    safeAddressManager.getSafeAddress()?.let { safe ->
+                        kotlin.runCatching {
+                            registerSafe(safe)
+                        }
+                            .onSuccess { prefs.safe = safe }
+                            .onFailure { prefs.token = null }
+                    }
+                }
+            }
+        }
     }
 
-    suspend fun registerSafe(safe: Solidity.Address) {
-        pushServiceApi.registerPushes("rinkeby", safe.asEthereumAddressString(), PushServiceApi.PushesRegistration(prefs.clientId))
+    fun registerDevice(token: String) {
+        runBlocking(Dispatchers.IO) {
+            kotlin.runCatching {
+                pushServiceApi.registerDevice(PushServiceApi.DeviceRegistration(prefs.clientId, token))
+            }.onSuccess {
+                prefs.token = token
+            }.onFailure {
+                prefs.token = null
+            }
+        }
+    }
+
+    fun registerSafe(safe: Solidity.Address) {
+        runBlocking(Dispatchers.IO) {
+            kotlin.runCatching {
+                pushServiceApi.registerPushes("rinkeby", safe.asEthereumAddressString(), PushServiceApi.PushesRegistration(prefs.clientId))
+            }.onSuccess {
+                prefs.safe = safe
+            }.onFailure {
+                prefs.safe = null
+            }
+        }
     }
 
     fun handlePushMessage(pushMessage: PushMessage) {

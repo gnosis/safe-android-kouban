@@ -17,5 +17,5 @@ val appModule = module {
     factory { SafeAddressManager(androidContext()) }
     single { PushPrefs(androidContext()) }
     single { LocalNotificationManager(androidContext()) }
-    single { PushServiceRepository(get(), get(), get()) }
+    single { PushServiceRepository(get(), get(), get(), get()) }
 }

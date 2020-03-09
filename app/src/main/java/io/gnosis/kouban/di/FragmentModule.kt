@@ -49,7 +49,7 @@ val fragmentModule = module {
     }
 
     scope(named<AddressCaptureFragment>()) {
-        viewModel { AddressCaptureViewModel(get()) }
+        viewModel { AddressCaptureViewModel(get(), get()) }
     }
 
     scope(named<AddressCompleteFragment>()) {
