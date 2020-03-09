@@ -12,16 +12,21 @@ import androidx.core.app.NotificationCompat
 import io.gnosis.kouban.R
 
 class LocalNotificationManager(
-    private val context: Context
+    context: Context
 ) {
 
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
 
     init {
-        createNotificationChannel(CHANNEL_ID, context.getString(R.string.channel_tx_notifications_description))
+        createNotificationChannel(context, CHANNEL_ID, context.getString(R.string.channel_tx_notifications_description))
     }
 
-    fun createNotificationChannel(channelId: String, description: String, importance: Int = NotificationManager.IMPORTANCE_HIGH) {
+    private fun createNotificationChannel(
+        context: Context,
+        channelId: String,
+        description: String,
+        importance: Int = NotificationManager.IMPORTANCE_HIGH
+    ) {
         if (Build.VERSION.SDK_INT < 26) {
             return
         }
@@ -42,7 +47,8 @@ class LocalNotificationManager(
         notificationManager?.cancel(id)
     }
 
-    fun builder(
+    private fun builder(
+        context: Context,
         title: String,
         message: String,
         intent: PendingIntent,
@@ -63,21 +69,21 @@ class LocalNotificationManager(
             .setContentIntent(intent)!!
 
 
-    fun show(id: Int, title: String, message: String, intent: Intent, channelId: String? = null) =
-        show(id, title, message, PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT), channelId)
+    fun show(context: Context, id: Int, title: String, message: String, intent: Intent, channelId: String? = null) =
+        show(context, id, title, message, PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT), channelId)
 
-    fun show(id: Int, title: String, message: String, intent: PendingIntent, channelId: String?) {
-        val builder =
-            builder(title, message, intent, channelId ?: CHANNEL_ID)
-        show(id, builder.build())
-    }
+    fun show(context: Context, id: Int, title: String, message: String, intent: PendingIntent, channelId: String?) =
+        builder(context, title, message, intent, channelId ?: CHANNEL_ID).let {
+            show(id, it.build())
+        }
 
     fun show(id: Int, notification: Notification) {
         notificationManager?.notify(id, notification)
     }
 
     @Deprecated("remove when there is enough data to show tx details screen")
-    fun builder(
+    private fun builder(
+        context: Context,
         title: String,
         message: String,
         channelId: String,
@@ -96,11 +102,10 @@ class LocalNotificationManager(
             .setPriority(priority)
 
     @Deprecated("remove when there is enough data to show tx details screen")
-    fun show(title: String, message: String) {
-        val builder =
-            builder(title, message,  CHANNEL_ID)
-        show(0, builder.build())
-    }
+    fun show(context: Context, title: String, message: String) =
+        builder(context, title, message, CHANNEL_ID).let {
+            show(0, it.build())
+        }
 
     companion object {
         private val VIBRATE_PATTERN = longArrayOf(0, 100, 50, 100)

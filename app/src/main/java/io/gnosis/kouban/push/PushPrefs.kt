@@ -3,6 +3,7 @@ package io.gnosis.kouban.push
 import android.content.Context
 import android.content.SharedPreferences
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import java.util.*
@@ -12,7 +13,7 @@ class PushPrefs(context: Context) {
     private val prefs: SharedPreferences
 
     init {
-        prefs = context.getSharedPreferences(PREFS_APP_FILE, Context.MODE_PRIVATE)
+        prefs = context.getSharedPreferences(PREFS_PUSH_NOTIFICATIONS, Context.MODE_PRIVATE)
     }
 
     var clientId: String
@@ -25,9 +26,9 @@ class PushPrefs(context: Context) {
             return value
         }
         set(value) {
-            val editor = prefs.edit()
-            editor.putString(KEY_CLIENT_ID, value)
-            editor.apply()
+            prefs.edit {
+                putString(KEY_CLIENT_ID, value)
+            }
         }
 
     val isDeviceRegistered
@@ -39,22 +40,22 @@ class PushPrefs(context: Context) {
     var token: String?
         get() = prefs.getString(KEY_PUSHES_TOKEN, null)
         set(value) {
-            val editor = prefs.edit()
-            editor.putString(KEY_PUSHES_TOKEN, value)
-            editor.apply()
+            prefs.edit {
+                putString(KEY_PUSHES_TOKEN, value)
+            }
         }
 
     var safe: Solidity.Address?
         get() = prefs.getString(KEY_PUSHES_SAFE, null)?.asEthereumAddress()
         set(value) {
-            val editor = prefs.edit()
-            editor.putString(KEY_PUSHES_SAFE, value?.asEthereumAddressString())
-            editor.apply()
+            prefs.edit {
+                putString(KEY_PUSHES_SAFE, value?.asEthereumAddressString())
+            }
         }
 
     companion object {
 
-        private val PREFS_APP_FILE = "kouban_app_prefs"
+        private val PREFS_PUSH_NOTIFICATIONS = "kouban_push_preferences"
 
         private val KEY_CLIENT_ID = "key_client_id"
         private val KEY_PUSHES_TOKEN = "key_pushes_token"

@@ -11,7 +11,7 @@ interface PushServiceApi {
     @POST("1/observers")
     suspend fun registerDevice(@Body deviceRegistration: DeviceRegistration)
 
-    @POST("1/{network}/1/safes/{safe_address}/observe")
+    @POST("{network}/1/safes/{safe_address}/observe")
     suspend fun registerPushes(
         @Path("network") network: String,
         @Path("safe_address") safeAddress: String,

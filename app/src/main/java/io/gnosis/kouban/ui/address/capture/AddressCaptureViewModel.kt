@@ -21,7 +21,7 @@ class AddressCaptureViewModel(
     fun handleSafeAddress(safeAddress: Solidity.Address) {
         viewModelScope.launch(Dispatchers.IO) {
             safeAddressManager.storeSafeAddress(safeAddress)
-            pushRepo.registerSafe(safeAddress)
+            pushRepo.checkRegistration()
             safeAddressEvents.postValue(SafeAddressUpdated(safeAddress))
         }
     }

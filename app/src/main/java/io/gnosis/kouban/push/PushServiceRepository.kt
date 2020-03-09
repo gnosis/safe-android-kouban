@@ -30,29 +30,21 @@ class PushServiceRepository(
                 }
                 // Get new Instance ID token
                 val token = task.result?.token
-                token?.let { token ->
-                    runBlocking(Dispatchers.IO) {
-                        kotlin.runCatching {
-                            registerDevice(token)
-                        }
-                            .onSuccess { prefs.token = token }
-                            .onFailure { prefs.token = null }
-                    }
+                token?.let {
+                    registerDevice(it)
+                    checkSafeRegistration()
                 }
             })
-
         } else {
+            checkSafeRegistration()
+        }
+    }
 
-            if (!prefs.isSafeRegistered) {
-
-                runBlocking(Dispatchers.IO) {
-                    safeAddressManager.getSafeAddress()?.let { safe ->
-                        kotlin.runCatching {
-                            registerSafe(safe)
-                        }
-                            .onSuccess { prefs.safe = safe }
-                            .onFailure { prefs.token = null }
-                    }
+    private fun checkSafeRegistration() {
+        if (!prefs.isSafeRegistered) {
+            runBlocking(Dispatchers.IO) {
+                safeAddressManager.getSafeAddress()?.let {
+                    registerSafe(it)
                 }
             }
         }
@@ -84,24 +76,7 @@ class PushServiceRepository(
 
     //TODO: different handling of incomming notifications based on type
     fun handlePushMessage(pushMessage: PushMessage) {
-
-        when (pushMessage) {
-            is PushMessage.NewConfirmation -> {
-                showTransactionNotification(pushMessage)
-            }
-            is PushMessage.PendingMultisigTransaction -> {
-                showTransactionNotification(pushMessage)
-            }
-            is PushMessage.ExecutedMultisigTransaction -> {
-                showTransactionNotification(pushMessage)
-            }
-            is PushMessage.IncomingEther -> {
-                showTransactionNotification(pushMessage)
-            }
-            is PushMessage.IncomingToken -> {
-                showTransactionNotification(pushMessage)
-            }
-        }
+        showTransactionNotification(pushMessage)
     }
 
     private fun showTransactionNotification(pushMessage: PushMessage) {
@@ -114,6 +89,7 @@ class PushServiceRepository(
                     .createPendingIntent()
 
             localNotificationManager.show(
+                context,
                 context.getString(R.string.push_tex_title),
                 context.getString(R.string.push_tx_message)
             )
@@ -140,11 +116,11 @@ class PushServiceRepository(
 
         data class PendingMultisigTransaction(
             val address: String
-        ): PushMessage(TYPE) {
+        ) : PushMessage(TYPE) {
             companion object {
                 const val TYPE = "PENDING_MULTISIG_TRANSACTION"
                 fun fromMap(params: Map<String, String>) =
-                    NewConfirmation(
+                    PendingMultisigTransaction(
                         params.getOrThrow("address")
                     )
             }
@@ -152,11 +128,11 @@ class PushServiceRepository(
 
         data class ExecutedMultisigTransaction(
             val address: String
-        ): PushMessage(TYPE) {
+        ) : PushMessage(TYPE) {
             companion object {
                 const val TYPE = "EXECUTED_MULTISIG_TRANSACTION"
                 fun fromMap(params: Map<String, String>) =
-                    NewConfirmation(
+                    ExecutedMultisigTransaction(
                         params.getOrThrow("address")
                     )
             }
@@ -164,11 +140,11 @@ class PushServiceRepository(
 
         data class IncomingEther(
             val address: String
-        ): PushMessage(TYPE) {
+        ) : PushMessage(TYPE) {
             companion object {
-                const val TYPE = "INCOMMING_ETHER"
+                const val TYPE = "INCOMING_ETHER"
                 fun fromMap(params: Map<String, String>) =
-                    NewConfirmation(
+                    IncomingEther(
                         params.getOrThrow("address")
                     )
             }
@@ -176,11 +152,11 @@ class PushServiceRepository(
 
         data class IncomingToken(
             val address: String
-        ): PushMessage(TYPE) {
+        ) : PushMessage(TYPE) {
             companion object {
-                const val TYPE = "INCOMMING_TOKEN"
+                const val TYPE = "INCOMING_TOKEN"
                 fun fromMap(params: Map<String, String>) =
-                    NewConfirmation(
+                    IncomingToken(
                         params.getOrThrow("address")
                     )
             }
@@ -190,21 +166,11 @@ class PushServiceRepository(
         companion object {
             fun fromMap(params: Map<String, String>) =
                 when (params["type"]) {
-                    NewConfirmation.TYPE -> NewConfirmation.fromMap(
-                        params
-                    )
-                    PendingMultisigTransaction.TYPE -> PendingMultisigTransaction.fromMap(
-                        params
-                    )
-                    ExecutedMultisigTransaction.TYPE -> ExecutedMultisigTransaction.fromMap(
-                        params
-                    )
-                    IncomingEther.TYPE -> IncomingEther.fromMap(
-                        params
-                    )
-                    IncomingToken.TYPE -> IncomingToken.fromMap(
-                        params
-                    )
+                    NewConfirmation.TYPE -> NewConfirmation.fromMap(params)
+                    PendingMultisigTransaction.TYPE -> PendingMultisigTransaction.fromMap(params)
+                    ExecutedMultisigTransaction.TYPE -> ExecutedMultisigTransaction.fromMap(params)
+                    IncomingEther.TYPE -> IncomingEther.fromMap(params)
+                    IncomingToken.TYPE -> IncomingToken.fromMap(params)
                     else -> throw IllegalArgumentException("Unknown push type")
                 }
         }

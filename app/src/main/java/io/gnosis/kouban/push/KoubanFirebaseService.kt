@@ -10,12 +10,11 @@ class KoubanFirebaseService : FirebaseMessagingService() {
     private val pushServiceRepo: PushServiceRepository by inject()
 
     override fun onMessageReceived(message: RemoteMessage) {
-        // No data received
-        if (message.data.isEmpty()) return
-        try {
-            pushServiceRepo.handlePushMessage(PushServiceRepository.PushMessage.fromMap(message.data))
-        } catch (e: IllegalArgumentException) {
-            Timber.e(e)
+        message.data.takeUnless { it.isNullOrEmpty() }?.let {
+            runCatching {
+                pushServiceRepo.handlePushMessage(PushServiceRepository.PushMessage.fromMap(it))
+
+            }.onFailure(Timber::e)
         }
     }
 
