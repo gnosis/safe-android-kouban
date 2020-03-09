@@ -1,6 +1,5 @@
-package io.gnosis.kouban.repositories
+package io.gnosis.kouban.push
 
-import io.gnosis.kouban.Prefs
 import io.gnosis.kouban.data.backend.PushServiceApi
 import io.gnosis.kouban.helpers.LocalNotificationManager
 import pm.gnosis.model.Solidity
@@ -9,14 +8,14 @@ import pm.gnosis.utils.asEthereumAddressString
 class PushServiceRepository(
     private val localNotificationManager: LocalNotificationManager,
     private val pushServiceApi: PushServiceApi,
-    private val prefs: Prefs
+    private val prefs: PushPrefs
 ) {
 
     suspend fun registerDevice(token: String) {
         pushServiceApi.registerDevice(PushServiceApi.DeviceRegistration(prefs.clientId, token))
     }
 
-    suspend fun registerPushes(safe: Solidity.Address) {
+    suspend fun registerSafe(safe: Solidity.Address) {
         pushServiceApi.registerPushes("rinkeby", safe.asEthereumAddressString(), PushServiceApi.PushesRegistration(prefs.clientId))
     }
 
@@ -106,9 +105,15 @@ class PushServiceRepository(
         companion object {
             fun fromMap(params: Map<String, String>) =
                 when (params["type"]) {
-                    "sendTransaction" -> SendTransaction.fromMap(params)
-                    "confirmTransaction" -> ConfirmTransaction.fromMap(params)
-                    "rejectTransaction" -> RejectTransaction.fromMap(params)
+                    "sendTransaction" -> SendTransaction.fromMap(
+                        params
+                    )
+                    "confirmTransaction" -> ConfirmTransaction.fromMap(
+                        params
+                    )
+                    "rejectTransaction" -> RejectTransaction.fromMap(
+                        params
+                    )
                     else -> throw IllegalArgumentException("Unknown push type")
                 }
         }

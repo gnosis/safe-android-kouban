@@ -34,7 +34,7 @@
         </activity>
 
         <service
-            android:name=".services.KoubanFirebaseService"
+            android:name="io.gnosis.kouban.push.KoubanFirebaseService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

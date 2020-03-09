@@ -3,11 +3,10 @@ package io.gnosis.kouban.ui
 import android.os.Bundle
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.messaging.FirebaseMessaging
-import io.gnosis.kouban.Prefs
+import io.gnosis.kouban.push.PushPrefs
 import io.gnosis.kouban.databinding.ActivityMainBinding
 import io.gnosis.kouban.core.ui.base.BaseActivity
-import io.gnosis.kouban.repositories.PushServiceRepository
+import io.gnosis.kouban.push.PushServiceRepository
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
@@ -17,7 +16,7 @@ class MainActivity : BaseActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private val prefs: Prefs by inject()
+    private val prefs: PushPrefs by inject()
     private val pushServiceRepo: PushServiceRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +26,7 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (!prefs.pushesRegisteredDevice) {
+        if (!prefs.isDeviceRegistered) {
             FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     return@OnCompleteListener
@@ -39,8 +38,8 @@ class MainActivity : BaseActivity() {
                         kotlin.runCatching {
                             pushServiceRepo.registerDevice(token)
                         }
-                            .onSuccess { prefs.pushesRegisteredDevice = true }
-                            .onFailure { prefs.pushesRegisteredDevice = false }
+                            .onSuccess { prefs.token = token }
+                            .onFailure { prefs.token = null }
                     }
                 }
             })

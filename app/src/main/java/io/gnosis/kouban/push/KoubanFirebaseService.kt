@@ -1,9 +1,7 @@
-package io.gnosis.kouban.services
+package io.gnosis.kouban.push
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import io.gnosis.kouban.Prefs
-import io.gnosis.kouban.repositories.PushServiceRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
@@ -12,7 +10,7 @@ import timber.log.Timber
 class KoubanFirebaseService : FirebaseMessagingService() {
 
     private val pushServiceRepo: PushServiceRepository by inject()
-    private val prefs: Prefs by inject()
+    private val prefs: PushPrefs by inject()
 
     override fun onMessageReceived(message: RemoteMessage) {
         // No data received
@@ -30,9 +28,9 @@ class KoubanFirebaseService : FirebaseMessagingService() {
             kotlin.runCatching {
                 pushServiceRepo.registerDevice(token)
             }.onSuccess {
-                prefs.pushesRegisteredDevice = true
+                prefs.token = token
             }.onFailure {
-                prefs.pushesRegisteredDevice = false
+                prefs.token = null
             }
         }
     }
