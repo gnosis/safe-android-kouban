@@ -7,7 +7,3 @@ export APP_VERSION_CODE=$BUILDKITE_BUILD_NUMBER
 description="$(git describe --tags --always)"
 export APP_VERSION_NAME=${description:1}
 export APP_RELEASE_NOTES=$BUILDKITE_MESSAGE
-
-
-
-
