@@ -60,17 +60,17 @@ class TransactionsViewModel(
                 emit(Loading(false))
                 emit(ENSName(it))
             }
+
         }
 
     private fun withDateLabels(transactions: List<Transaction>): List<Any> =
-        mutableListOf<Any>().apply {
-            transactions.groupBy { it.timestamp.asFormattedDateTime(dateLabelFormatter) }
-                .entries
-                .forEach { (dateLabel, txList) ->
-                    add(dateLabel)
-                    addAll(txList)
-                }
-        }
+        transactions.fold(mutableListOf<Any>(), { withLabels, tx ->
+            withLabels.apply {
+                tx.timestamp.asFormattedDateTime(dateLabelFormatter)
+                    .takeUnless { contains(it) }?.let { add(it) }
+                add(tx)
+            }
+        })
 }
 
 data class ListViewItems(val listItems: List<Any>) : ViewState()
