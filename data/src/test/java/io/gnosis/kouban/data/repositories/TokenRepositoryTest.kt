@@ -1,8 +1,8 @@
 package io.gnosis.kouban.data.repositories
 
-import io.gnosis.instantsafe.data.backend.RelayServiceApi
-import io.gnosis.instantsafe.data.backend.dto.ServiceTokenInfo
-import io.gnosis.instantsafe.data.db.TokenInfoDao
+import io.gnosis.kouban.data.backend.RelayServiceApi
+import io.gnosis.kouban.data.backend.dto.ServiceTokenInfo
+import io.gnosis.kouban.data.db.TokenInfoDao
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
