@@ -16,24 +16,29 @@ import io.gnosis.kouban.data.utils.asMiddleEllipsized
 import io.gnosis.kouban.data.utils.shiftedString
 import io.gnosis.kouban.data.utils.shortChecksumString
 import io.gnosis.kouban.databinding.ItemHeaderBinding
+import io.gnosis.kouban.databinding.ItemLabelBinding
 
 enum class TransactionViewTypes {
-    Header, Transaction
+    Header, Transaction, Label
 }
 
 class TransactionsFactory(private val picasso: Picasso) : BaseFactory<BaseTransactionViewHolder<Any>>() {
 
     override fun newViewHolder(viewBinding: ViewBinding, viewType: Int): BaseTransactionViewHolder<Any> {
-        return when (TransactionViewTypes.values()[viewType]) {
-            TransactionViewTypes.Transaction -> TransactionViewHolder(viewBinding as ItemTransactionBinding, picasso)
-            TransactionViewTypes.Header -> HeaderViewHolder(viewBinding as ItemHeaderBinding)
+        return when (viewType) {
+            TransactionViewTypes.Transaction.ordinal -> TransactionViewHolder(viewBinding as ItemTransactionBinding, picasso)
+            TransactionViewTypes.Header.ordinal -> HeaderViewHolder(viewBinding as ItemHeaderBinding)
+            TransactionViewTypes.Label.ordinal -> LabelViewHolder(viewBinding as ItemLabelBinding)
+            else -> throw UnsupportedViewType("TransactionsFactory $viewType")
         } as BaseTransactionViewHolder<Any>
     }
 
     override fun layout(layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int): ViewBinding {
-        return when (TransactionViewTypes.values()[viewType]) {
-            TransactionViewTypes.Transaction -> ItemTransactionBinding.inflate(layoutInflater, parent, false)
-            TransactionViewTypes.Header -> ItemHeaderBinding.inflate(layoutInflater, parent, false)
+        return when (viewType) {
+            TransactionViewTypes.Transaction.ordinal -> ItemTransactionBinding.inflate(layoutInflater, parent, false)
+            TransactionViewTypes.Header.ordinal -> ItemHeaderBinding.inflate(layoutInflater, parent, false)
+            TransactionViewTypes.Label.ordinal -> ItemLabelBinding.inflate(layoutInflater, parent, false)
+            else -> throw UnsupportedViewType("TransactionsFactory $viewType")
         }
     }
 
@@ -41,7 +46,8 @@ class TransactionsFactory(private val picasso: Picasso) : BaseFactory<BaseTransa
         when (item) {
             is Header -> TransactionViewTypes.Header.ordinal
             is Transaction -> TransactionViewTypes.Transaction.ordinal
-            else -> throw UnsupportedViewType()
+            is String -> TransactionViewTypes.Label.ordinal
+            else -> throw UnsupportedViewType(item.toString())
         }
 
 }

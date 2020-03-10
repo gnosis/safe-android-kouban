@@ -19,6 +19,7 @@ import io.gnosis.kouban.data.repositories.TokenRepository.Companion.ETH_TOKEN_IN
 import io.gnosis.kouban.data.utils.asMiddleEllipsized
 import io.gnosis.kouban.data.utils.shiftedString
 import io.gnosis.kouban.databinding.ItemHeaderBinding
+import io.gnosis.kouban.databinding.ItemLabelBinding
 import io.gnosis.kouban.databinding.ItemTransactionBinding
 import pm.gnosis.utils.asEthereumAddressString
 
@@ -93,5 +94,12 @@ class HeaderViewHolder(private val viewBinding: ItemHeaderBinding) : BaseTransac
 
     override fun bind(item: Header) {
         viewBinding.textTo.setText(item.label)
+    }
+}
+
+class LabelViewHolder(private val viewBinding: ItemLabelBinding) : BaseTransactionViewHolder<String>(viewBinding) {
+
+    override fun bind(item: String) {
+        viewBinding.label.text = item
     }
 }
