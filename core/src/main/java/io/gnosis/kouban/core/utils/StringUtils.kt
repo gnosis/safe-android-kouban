@@ -6,7 +6,6 @@ import android.text.style.UnderlineSpan
 import androidx.core.os.ConfigurationCompat
 import pm.gnosis.utils.*
 import java.math.BigInteger
-import java.math.MathContext
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,9 +26,19 @@ fun String.parseToBigIntegerOrNull(): BigInteger? =
 fun String.parseToBigInteger(): BigInteger =
     if (startsWith("0x")) hexAsBigInteger() else decimalAsBigInteger()
 
-fun Long.asFormattedDateTime(context: Context, dateFormat: String = "dd-MM-yyyy HH:mm"): String =
+fun Long.asFormattedDateTime(context: Context, dateFormat: String = DateFormats.default): String =
     Date().apply { time = this@asFormattedDateTime * 1000 }.let { date ->
         with(SimpleDateFormat(dateFormat, ConfigurationCompat.getLocales(context.resources.configuration)[0])) {
             format(date)
         }
     }
+
+fun Long.asFormattedDateTime(formatter: SimpleDateFormat): String =
+    Date().apply { time = this@asFormattedDateTime * 1000 }.let { date -> formatter.format(date) }
+
+object DateFormats {
+    val transactionList = "dd-MM-yyyy HH:mm"
+    val monthYear = "MMMM, yyyy"
+
+    val default = transactionList
+}

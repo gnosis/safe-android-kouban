@@ -1,6 +1,8 @@
 package io.gnosis.kouban.di
 
+import androidx.core.os.ConfigurationCompat
 import io.gnosis.kouban.core.ui.adapter.BaseAdapter
+import io.gnosis.kouban.core.utils.DateFormats
 import io.gnosis.kouban.data.models.Transaction
 import io.gnosis.kouban.ui.address.capture.AddressCaptureFragment
 import io.gnosis.kouban.ui.address.capture.AddressCaptureViewModel
@@ -18,14 +20,27 @@ import io.gnosis.kouban.ui.transaction.TransactionsViewModel
 import io.gnosis.kouban.ui.transaction.details.TransactionDetailFactory
 import io.gnosis.kouban.ui.transaction.details.TransactionDetailsFragment
 import io.gnosis.kouban.ui.transaction.details.TransactionDetailsViewModel
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 val fragmentModule = module {
 
     scope(named<TransactionsFragment>()) {
-        viewModel { TransactionsViewModel(get(), get(), get()) }
+        viewModel {
+            TransactionsViewModel(
+                get(),
+                get(),
+                get(),
+                SimpleDateFormat(
+                    DateFormats.monthYear,
+                    ConfigurationCompat.getLocales(androidContext().resources.configuration)[0]
+                )
+            )
+        }
         factory { BaseAdapter(TransactionsFactory(get())) }
     }
 
