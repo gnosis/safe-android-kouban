@@ -64,7 +64,7 @@ class TransactionsViewModel(
         }
 
     private fun withDateLabels(transactions: List<Transaction>): List<Any> =
-        transactions.fold(mutableListOf<Any>(), { withLabels, tx ->
+        transactions.fold(mutableListOf(), { withLabels, tx ->
             withLabels.apply {
                 tx.timestamp.asFormattedDateTime(dateLabelFormatter)
                     .takeUnless { contains(it) }?.let { add(it) }
