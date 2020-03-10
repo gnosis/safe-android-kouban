@@ -9,6 +9,7 @@ import io.gnosis.kouban.data.backend.TransactionServiceApi
 import io.gnosis.kouban.data.backend.dto.ServiceTransaction
 import io.gnosis.kouban.data.backend.dto.ServiceTransactionRequest
 import io.gnosis.kouban.data.managers.SearchManager
+import io.gnosis.kouban.data.managers.TransactionTimestampFilter
 import io.gnosis.kouban.data.managers.TransactionTokenSymbolFilter
 import io.gnosis.kouban.data.models.*
 import io.gnosis.kouban.data.utils.asMiddleEllipsized
@@ -67,7 +68,7 @@ class SafeRepository(
 
                 val tokenSymbols = tokenSymbolsPending + tokenSymbolsHistory
                 searchManager.activateFilter(TransactionTokenSymbolFilter(tokenSymbols.distinct(), tokenSymbols.toMutableList()))
-                Unit
+                searchManager.activateFilter(TransactionTimestampFilter(null, null))
             }
         }
 

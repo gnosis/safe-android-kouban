@@ -1,25 +1,44 @@
 package io.gnosis.kouban.ui.filter.transaction
 
+import android.app.DatePickerDialog
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import io.gnosis.kouban.core.ui.adapter.BaseFactory
 import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
+import io.gnosis.kouban.core.ui.adapter.UnsupportedViewType
 import io.gnosis.kouban.data.managers.SearchManager
 import io.gnosis.kouban.data.managers.TransactionTokenSymbolFilter
-import io.gnosis.kouban.databinding.ItemTokenSymolFilterBinding
+import io.gnosis.kouban.databinding.ItemFilterDateBinding
+import io.gnosis.kouban.databinding.ItemFilterTokenSymbolBinding
+import java.util.*
+
+enum class ViewType { TokenSymbol, Date }
 
 class TransactionFilterFactory(private val searchManager: SearchManager) : BaseFactory<BaseTransactionFilterViewHolder<Any>>() {
 
     override fun newViewHolder(viewBinding: ViewBinding, viewType: Int): BaseTransactionFilterViewHolder<Any> {
-        return TokenSymbolFilterViewHolder(
-            searchManager,
-            viewBinding as ItemTokenSymolFilterBinding
-        ) as BaseTransactionFilterViewHolder<Any>
+        return when (viewType) {
+            ViewType.TokenSymbol.ordinal -> TokenSymbolFilterViewHolder(searchManager, viewBinding as ItemFilterTokenSymbolBinding)
+            ViewType.Date.ordinal -> DatePickerFilterViewHolder(viewBinding as ItemFilterDateBinding)
+            else -> throw UnsupportedViewType("TransactionFilterFactory $viewType")
+        } as BaseTransactionFilterViewHolder<Any>
     }
 
     override fun layout(layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int): ViewBinding {
-        return ItemTokenSymolFilterBinding.inflate(layoutInflater, parent, false)
+        return when (viewType) {
+            ViewType.TokenSymbol.ordinal -> ItemFilterTokenSymbolBinding.inflate(layoutInflater, parent, false)
+            ViewType.Date.ordinal -> ItemFilterDateBinding.inflate(layoutInflater, parent, false)
+            else -> throw UnsupportedViewType("TransactionFilterFactory $viewType")
+        }
+    }
+
+    override fun <T> viewTypeFor(item: T): Int {
+        return when (item) {
+            is String -> ViewType.TokenSymbol.ordinal
+            is FilterDates -> ViewType.Date.ordinal
+            else -> throw UnsupportedViewType("TransactionFilterFactory $item")
+        }
     }
 }
 
@@ -29,7 +48,7 @@ abstract class BaseTransactionFilterViewHolder<T : Any>(
 
 class TokenSymbolFilterViewHolder(
     private val searchManager: SearchManager,
-    private val viewBinding: ItemTokenSymolFilterBinding
+    private val viewBinding: ItemFilterTokenSymbolBinding
 ) : BaseTransactionFilterViewHolder<String>(viewBinding) {
 
     override fun bind(item: String) {
@@ -53,5 +72,25 @@ class TokenSymbolFilterViewHolder(
         searchManager.getFilterFor(TransactionTokenSymbolFilter::class.java)?.selectedValue?.add(item)
         viewBinding.tokenSymbolCheckbox.isChecked = true
         viewBinding.tokenSymbolCheckbox.invalidate()
+    }
+}
+
+data class FilterDates(val lowerBound: Date?, val upperBound: Date?)
+
+class DatePickerFilterViewHolder(
+    private val viewBinding: ItemFilterDateBinding
+) : BaseTransactionFilterViewHolder<FilterDates>(viewBinding) {
+
+    override fun bind(item: FilterDates) {
+
+    }
+
+    private fun setFromDateListener(item: FilterDates) {
+        with(viewBinding.dateFrom) {
+            text = item.lowerBound?.toLocaleString() ?: ""
+            setOnClickListener {
+                DatePickerDialog(context).show()
+            }
+        }
     }
 }
