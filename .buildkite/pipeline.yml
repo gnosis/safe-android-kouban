@@ -6,7 +6,7 @@ steps:
       - 'ci/run_unit_tests.sh'
 
   - label: ':rocket: Upload to App Distribution'
-    if: !build.pull_request.draft  #&& build.branch == "master"
+    if: !build.pull_request.draft #&& build.branch == "master"
     commands:
       - 'ci/prepare_env_buildkite.sh'
       - 'ci/upload_app_distribution.sh'
