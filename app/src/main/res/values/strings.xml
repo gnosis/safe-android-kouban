@@ -2,4 +2,7 @@
     <string name="app_name">Kouban</string>
     <string name="filter_menu">Filter</string>
     <string name="transaction_filter_title">Transaction filter</string>
+
+    <string name="channel_tx_notifications_name">Tx Notifications</string>
+    <string name="channel_tx_notifications_description">Notifications about transactions.</string>
 </resources>

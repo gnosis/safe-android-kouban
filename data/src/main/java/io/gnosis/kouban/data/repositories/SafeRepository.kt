@@ -99,7 +99,7 @@ class SafeRepository(
                 JsonRpcApi.JsonRpcRequest(
                     id = 1,
                     method = "eth_getStorageAt",
-                    params = listOf(safe, "0x6c9a6c4a39284e37ed1cf53d337577d14212a4870fb976a4366c693b939918d5", "latest")
+                    params = listOf(safe, FALLBACK_HANDLER_STORAGE_SLOT, "latest")
                 ),
                 JsonRpcApi.JsonRpcRequest(
                     id = 2,
@@ -542,6 +542,8 @@ class SafeRepository(
         val safeMasterCopy_0_1_0 = BuildConfig.SAFE_MASTER_COPY_0_1_0.asEthereumAddress()!!
         val safeMasterCopy_1_0_0 = BuildConfig.SAFE_MASTER_COPY_1_0_0.asEthereumAddress()!!
         val safeMasterCopy_1_1_1 = BuildConfig.SAFE_MASTER_COPY_1_1_1.asEthereumAddress()!!
+
+        private const val FALLBACK_HANDLER_STORAGE_SLOT = BuildConfig.FALLBACK_HANDLER_STORAGE_SLOT
 
         private const val ERC191_BYTE = "19"
         private const val ERC191_VERSION = "01"

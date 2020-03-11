@@ -6,17 +6,22 @@ import androidx.lifecycle.viewModelScope
 import io.gnosis.kouban.core.managers.SafeAddressManager
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.ViewState
+import io.gnosis.kouban.push.PushServiceRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 
-class AddressCaptureViewModel(private val safeAddressManager: SafeAddressManager) : ViewModel() {
+class AddressCaptureViewModel(
+    private val safeAddressManager: SafeAddressManager,
+    private val pushRepo: PushServiceRepository
+    ) : ViewModel() {
 
     val safeAddressEvents = MutableLiveData<ViewState>()
 
     fun handleSafeAddress(safeAddress: Solidity.Address) {
         viewModelScope.launch(Dispatchers.IO) {
             safeAddressManager.storeSafeAddress(safeAddress)
+            pushRepo.checkRegistration()
             safeAddressEvents.postValue(SafeAddressUpdated(safeAddress))
         }
     }

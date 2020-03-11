@@ -2,10 +2,7 @@ package io.gnosis.kouban.data.di
 
 import androidx.room.Room
 import io.gnosis.kouban.data.BuildConfig
-import io.gnosis.kouban.data.backend.JsonRpcApi
-import io.gnosis.kouban.data.backend.MagicApi
-import io.gnosis.kouban.data.backend.RelayServiceApi
-import io.gnosis.kouban.data.backend.TransactionServiceApi
+import io.gnosis.kouban.data.backend.*
 import io.gnosis.kouban.data.db.TokensDatabase
 import io.gnosis.kouban.data.repositories.*
 import okhttp3.OkHttpClient
@@ -56,6 +53,13 @@ val dataModule = module {
             .baseUrl(BuildConfig.MAGIC_SERVICE_URL)
             .build()
             .create(MagicApi::class.java)
+    }
+
+    single<PushServiceApi> {
+        get<Retrofit.Builder>()
+            .baseUrl(PushServiceApi.BASE_URL)
+            .build()
+            .create(PushServiceApi::class.java)
     }
 
     single { Room.databaseBuilder(get(), TokensDatabase::class.java, TokensDatabase.DB_NAME).build() }
