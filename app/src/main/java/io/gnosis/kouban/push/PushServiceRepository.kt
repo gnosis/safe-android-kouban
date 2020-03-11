@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
 import io.gnosis.kouban.R
 import io.gnosis.kouban.core.managers.SafeAddressManager
+import io.gnosis.kouban.data.BuildConfig
 import io.gnosis.kouban.data.backend.PushServiceApi
 import io.gnosis.kouban.helpers.LocalNotificationManager
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +66,7 @@ class PushServiceRepository(
     fun registerSafe(safe: Solidity.Address) {
         runBlocking(Dispatchers.IO) {
             kotlin.runCatching {
-                pushServiceApi.registerPushes("rinkeby", safe.asEthereumAddressString(), PushServiceApi.PushesRegistration(prefs.clientId))
+                pushServiceApi.registerPushes(BLOCKCHAIN_NETWORK, safe.asEthereumAddressString(), PushServiceApi.PushesRegistration(prefs.clientId))
             }.onSuccess {
                 prefs.safe = safe
             }.onFailure {
@@ -174,6 +175,10 @@ class PushServiceRepository(
                     else -> throw IllegalArgumentException("Unknown push type")
                 }
         }
+    }
+
+    companion object {
+        val BLOCKCHAIN_NETWORK = if (BuildConfig.BLOCKCHAIN_CHAIN_ID == 1L) "mainnet" else "rinkeby"
     }
 }
 
