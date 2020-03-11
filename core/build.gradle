@@ -2,14 +2,7 @@ apply from: '../buildsystem/android_library.gradle'
 apply from: '../buildsystem/constants.gradle'
 apply from: '../buildsystem/helpers.gradle'
 apply from: '../buildsystem/test_dependencies.gradle'
-apply plugin: 'kotlin-kapt'
 
-
-android {
-    viewBinding {
-        enabled = true
-    }
-}
 
 dependencies {
     api "androidx.appcompat:appcompat:$versions.androidx_app_compat"
