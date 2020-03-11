@@ -10,6 +10,7 @@ import io.gnosis.kouban.core.ui.adapter.UnsupportedViewType
 import io.gnosis.kouban.core.utils.showDatePickerDialog
 import io.gnosis.kouban.core.utils.underline
 import io.gnosis.kouban.data.managers.SearchManager
+import io.gnosis.kouban.data.managers.TransactionTimestampFilter
 import io.gnosis.kouban.data.managers.TransactionTokenSymbolFilter
 import io.gnosis.kouban.databinding.ItemFilterDateBinding
 import io.gnosis.kouban.databinding.ItemFilterTokenSymbolBinding
@@ -28,7 +29,7 @@ class TransactionFilterFactory(
     override fun newViewHolder(viewBinding: ViewBinding, viewType: Int): BaseTransactionFilterViewHolder<Any> {
         return when (viewType) {
             ViewType.TokenSymbol.ordinal -> TokenSymbolFilterViewHolder(searchManager, viewBinding as ItemFilterTokenSymbolBinding)
-            ViewType.Date.ordinal -> DatePickerFilterViewHolder(viewBinding as ItemFilterDateBinding, dateFormat)
+            ViewType.Date.ordinal -> DatePickerFilterViewHolder(viewBinding as ItemFilterDateBinding, searchManager, dateFormat)
             else -> throw UnsupportedViewType("TransactionFilterFactory $viewType")
         } as BaseTransactionFilterViewHolder<Any>
     }
@@ -87,22 +88,44 @@ data class FilterDates(val lowerBound: Date?, val upperBound: Date?)
 
 class DatePickerFilterViewHolder(
     private val viewBinding: ItemFilterDateBinding,
+    private val searchManager: SearchManager,
     private val dateFormat: SimpleDateFormat
 ) : BaseTransactionFilterViewHolder<FilterDates>(viewBinding) {
 
     override fun bind(item: FilterDates) {
         setFromDateListener(item)
+        setToDateListener(item)
         with(viewBinding) {
-            dateFromClearButton.setOnClickListener { dateFrom.text = null }
+            dateFromClearButton.setOnClickListener {
+                dateFrom.text = null
+                searchManager.getFilterFor(TransactionTimestampFilter::class.java)?.lowerBound = null
+            }
+            dateToClearButton.setOnClickListener {
+                dateTo.text = null
+                searchManager.getFilterFor(TransactionTimestampFilter::class.java)?.upperBound = null
+            }
         }
     }
 
     private fun setFromDateListener(item: FilterDates) {
         with(viewBinding.dateFrom) {
-            text = item.lowerBound?.toLocaleString()
+            item.lowerBound?.let { text = dateFormat.format(it) }
             setOnClickListener {
                 showDatePickerDialog(it.context, text?.toString().toDate()) { date ->
-                    text = dateFormat.format(date).underline()
+                    text = dateFormat.format(date)
+                    searchManager.getFilterFor(TransactionTimestampFilter::class.java)?.lowerBound = date
+                }
+            }
+        }
+    }
+
+    private fun setToDateListener(item: FilterDates) {
+        with(viewBinding.dateTo) {
+            item.upperBound?.let { text = dateFormat.format(it) }
+            setOnClickListener {
+                showDatePickerDialog(it.context, text?.toString().toDate()) { date ->
+                    text = dateFormat.format(date)
+                    searchManager.getFilterFor(TransactionTimestampFilter::class.java)?.upperBound = date
                 }
             }
         }

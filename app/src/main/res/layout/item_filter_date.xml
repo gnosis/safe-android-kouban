@@ -9,12 +9,14 @@
 
     <TextView
         android:id="@+id/date_from"
+        style="@style/DarkText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
+        android:gravity="center_vertical"
+        android:hint="@string/transaction_filter_date_from_hint"
         android:paddingHorizontal="16dp"
-        android:hint="From:"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/date_from_clear_button"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,10 +42,12 @@
 
     <TextView
         android:id="@+id/date_to"
+        style="@style/DarkText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:hint="@string/transaction_filter_date_to_hint"
         android:paddingHorizontal="16dp"
-        android:hint="to:"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/date_to_clear_button"
         app:layout_constraintStart_toEndOf="@id/vertical_middle"
