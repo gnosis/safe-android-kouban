@@ -1,6 +1,7 @@
 package io.gnosis.kouban.data.managers
 
 import io.gnosis.kouban.data.models.Transaction
+import io.gnosis.kouban.data.models.TransactionType
 import io.gnosis.kouban.data.repositories.TokenRepository
 import java.util.*
 
@@ -86,4 +87,15 @@ data class TransactionTimestampFilter(
         lowerBound = null
         upperBound = null
     }
+}
+
+
+data class TransactionTypeFilter(
+    override val availableValues: List<TransactionType>,
+    override val selectedValue: MutableList<TransactionType>
+) : SelectionFilter<Transaction>() {
+
+    override fun apply(item: Transaction): Boolean =
+        selectedValue.isNotEmpty() && selectedValue.contains(item.type)
+
 }

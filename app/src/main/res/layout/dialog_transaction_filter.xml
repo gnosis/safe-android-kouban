@@ -25,6 +25,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title"
-        tools:listitem="@layout/item_filter_token_symbol" />
+        tools:listitem="@layout/item_filter_checkbox" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
