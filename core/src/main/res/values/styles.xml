@@ -59,4 +59,7 @@
         <item name="android:lineSpacingExtra">3sp</item>
     </style>
 
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
 </resources>

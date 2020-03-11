@@ -1,6 +1,5 @@
 package io.gnosis.kouban.ui.filter.transaction
 
-import android.app.DatePickerDialog
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
@@ -8,13 +7,11 @@ import io.gnosis.kouban.core.ui.adapter.BaseFactory
 import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
 import io.gnosis.kouban.core.ui.adapter.UnsupportedViewType
 import io.gnosis.kouban.core.utils.showDatePickerDialog
-import io.gnosis.kouban.core.utils.underline
 import io.gnosis.kouban.data.managers.SearchManager
 import io.gnosis.kouban.data.managers.TransactionTimestampFilter
 import io.gnosis.kouban.data.managers.TransactionTokenSymbolFilter
 import io.gnosis.kouban.databinding.ItemFilterDateBinding
 import io.gnosis.kouban.databinding.ItemFilterTokenSymbolBinding
-import pm.gnosis.svalinn.common.utils.snackbar
 import java.text.SimpleDateFormat
 import java.util.*
 
