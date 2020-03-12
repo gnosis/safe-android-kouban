@@ -26,6 +26,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.util.*
 
 val fragmentModule = module {
 
@@ -35,10 +36,7 @@ val fragmentModule = module {
                 get(),
                 get(),
                 get(),
-                SimpleDateFormat(
-                    DateFormats.monthYear,
-                    ConfigurationCompat.getLocales(androidContext().resources.configuration)[0]
-                )
+                SimpleDateFormat(DateFormats.monthYear, get<Locale>())
             )
         }
         factory { BaseAdapter(TransactionsFactory(get())) }
@@ -58,7 +56,14 @@ val fragmentModule = module {
 
     scope(named<TransactionFilterDialog>()) {
         viewModel { TransactionFilterViewModel(get()) }
-        factory { BaseAdapter(TransactionFilterFactory(get())) }
+        factory {
+            BaseAdapter(
+                TransactionFilterFactory(
+                    get(),
+                    SimpleDateFormat(DateFormats.datePicker, get<Locale>())
+                )
+            )
+        }
     }
 
     scope(named<TransactionDetailsFragment>()) {

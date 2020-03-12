@@ -7,7 +7,7 @@
     android:layout_height="wrap_content">
 
     <CheckedTextView
-        android:id="@+id/token_symbol_checkbox"
+        android:id="@+id/checkbox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:checkMark="@drawable/ic_checkmark_selectable"

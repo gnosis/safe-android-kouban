@@ -1,6 +1,7 @@
 package io.gnosis.kouban.data.managers
 
 import io.gnosis.kouban.data.models.Transaction
+import io.gnosis.kouban.data.models.TransactionType
 import io.gnosis.kouban.data.repositories.TokenRepository
 import java.util.*
 
@@ -8,8 +9,11 @@ class SearchManager {
 
     private val activeFilters = mutableListOf<Filter<Any>>()
 
-    fun <T : Any, F : Filter<T>> activateFilter(newFilter: F) =
-        activeFilters.add(newFilter as Filter<Any>)
+    fun <T : Any, F : Filter<T>> activateFilter(newFilter: F) {
+        if (activeFilters.find { it.type() == newFilter.type() } == null) {
+            activeFilters.add(newFilter as Filter<Any>)
+        }
+    }
 
     fun <T : Any> filter(input: List<T>) =
         activeFilters.takeUnless { it.isEmpty() }
@@ -74,13 +78,24 @@ data class TransactionTimestampFilter(
 ) : BoundaryFilter<Transaction>() {
 
     override fun apply(item: Transaction): Boolean {
-//        return item.timestamp > lowerBound?.time
-        return true
+        return with(item.timestampAsDate()) {
+            (upperBound == null || before(upperBound)) && (lowerBound == null || after(lowerBound))
+        }
     }
 
     override fun clear() {
         lowerBound = null
         upperBound = null
     }
+}
+
+
+data class TransactionTypeFilter(
+    override val availableValues: List<TransactionType>,
+    override val selectedValue: MutableList<TransactionType>
+) : SelectionFilter<Transaction>() {
+
+    override fun apply(item: Transaction): Boolean =
+        selectedValue.isNotEmpty() && selectedValue.contains(item.type)
 
 }

@@ -28,7 +28,10 @@ data class Transaction(
     val dataInfo: DataInfo?,
     val type: TransactionType,
     val state: TransactionState
-) : Parcelable
+) : Parcelable {
+
+    fun timestampAsDate(): Date = Date().apply { time = timestamp * 1000 }
+}
 
 @Parcelize
 data class TransferInfo(

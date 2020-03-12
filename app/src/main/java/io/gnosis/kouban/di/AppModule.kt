@@ -1,5 +1,6 @@
 package io.gnosis.kouban.di
 
+import androidx.core.os.ConfigurationCompat
 import com.squareup.picasso.Picasso
 import io.gnosis.kouban.push.PushPrefs
 import io.gnosis.kouban.core.managers.SafeAddressManager
@@ -18,4 +19,5 @@ val appModule = module {
     single { PushPrefs(androidContext()) }
     single { LocalNotificationManager(androidContext()) }
     single { PushServiceRepository(get(), get(), get(), get(), get()) }
+    single { ConfigurationCompat.getLocales(androidContext().resources.configuration)[0] }
 }
