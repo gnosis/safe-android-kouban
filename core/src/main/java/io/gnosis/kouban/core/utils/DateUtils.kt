@@ -2,8 +2,8 @@ package io.gnosis.kouban.core.utils
 
 import android.app.DatePickerDialog
 import android.content.Context
-import android.widget.DatePicker
 import androidx.core.os.ConfigurationCompat
+import io.gnosis.kouban.core.R
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,6 +34,7 @@ fun showDatePickerDialog(context: Context, date: Date? = null, onDatePicked: (Da
     with(startDate) {
         DatePickerDialog(
             context,
+            R.style.DialogTheme,
             datePickedListener,
             get(Calendar.YEAR),
             get(Calendar.MONTH),
