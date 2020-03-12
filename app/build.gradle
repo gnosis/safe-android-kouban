@@ -22,6 +22,7 @@ android {
             applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
             minifyEnabled false
+            resValue "string", "app_name", "Kouban Rinkeby"
             firebaseAppDistribution {
                 releaseNotes = getKey("APP_RELEASE_NOTES")
                 groups = getKey("FIREBASE_GROUP")
@@ -33,13 +34,14 @@ android {
             versionNameSuffix "-mainnet"
             minifyEnabled false
             signingConfig signingConfigs.debug
-
+            resValue "string", "app_name", "Kouban Mainnet"
             firebaseAppDistribution {
                 releaseNotes=getKey("APP_RELEASE_NOTES")
                 groups=getKey("FIREBASE_GROUP")
             }
         }
         release {
+            resValue "string", "app_name", "Kouban"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
