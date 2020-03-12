@@ -3,4 +3,7 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+
+    <color name="rinkeby">#f2994a</color>
+    <color name="mainnet">#3DDC84</color>
 </resources>
