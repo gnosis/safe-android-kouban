@@ -2,9 +2,8 @@
 <layer-list
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@color/safe_green" />
+    <item android:drawable="@color/ic_launcher_background" />
 
-    <!--TODO: replace splash icon -->
     <item android:gravity="center">
         <bitmap
             android:gravity="center"

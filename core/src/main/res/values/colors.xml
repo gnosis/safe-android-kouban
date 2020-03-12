@@ -12,6 +12,8 @@
     <color name="tomato">#ff3b30</color>
     <color name="safe_green">#008c73</color>
     <color name="mediumGrey">#b2b5b2</color>
+    <color name="background_list">#E7EAE7</color>
+    <color name="light_grey">#E8E8E8</color>
     <color name="colorPrimary">#008577</color>
     <color name="colorSecondary">#5D6D74</color>
     <color name="secondaryText">@color/colorSecondary</color>
