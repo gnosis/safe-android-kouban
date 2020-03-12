@@ -48,7 +48,7 @@ class AddressCaptureFragment : BaseFragment<FragmentAddressCaptureBinding>() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == QR_SCAN_REQUEST_CODE && requestCode == Activity.RESULT_OK) {
+        if (requestCode == QR_SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             QRCodeScanActivity.handleResult(QR_SCAN_REQUEST_CODE, resultCode, data) { safeAddressString ->
                 viewModel.handleSafeAddress(safeAddressString.asEthereumAddress()!!)
             }
