@@ -65,6 +65,7 @@ class AddressCaptureFragment : BaseFragment<FragmentAddressCaptureBinding>() {
                     )
                 is SafeAddressUpdated -> {
                     with(binding) {
+                        addressInput.updateAddress(viewState.safeAddress)
                         connectSafeAddressStatusIcon.isVisible = viewState.safeAddress != null
                         connectSafeAddressStatusText.isVisible = viewState.safeAddress != null
                     }
