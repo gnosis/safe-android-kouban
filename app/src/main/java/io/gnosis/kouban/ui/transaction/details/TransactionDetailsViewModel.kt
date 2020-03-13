@@ -1,8 +1,6 @@
 package io.gnosis.kouban.ui.transaction.details
 
-import android.text.Spannable
 import android.text.SpannableString
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
@@ -12,20 +10,18 @@ import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
 import io.gnosis.kouban.data.repositories.SafeRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import io.gnosis.kouban.core.ui.base.Error
-import io.gnosis.kouban.core.utils.asFormattedDateTime
-import io.gnosis.kouban.data.models.SafeTx
-import io.gnosis.kouban.data.models.ServiceSafeTx
-import io.gnosis.kouban.data.models.Transaction
-import io.gnosis.kouban.data.models.TransactionType
+import io.gnosis.kouban.core.utils.parseToBigInteger
+import io.gnosis.kouban.data.models.*
 import io.gnosis.kouban.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.gnosis.kouban.data.utils.shiftedString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asDecimalString
+import pm.gnosis.utils.hexStringToByteArray
+import java.math.BigInteger
 
 class TransactionDetailsViewModel(
-    private val transaction: Transaction,
+    private val transactionHash: String,
     private val safeRepository: SafeRepository,
     private val addressManager: SafeAddressManager
 ) : ViewModel() {
@@ -34,7 +30,7 @@ class TransactionDetailsViewModel(
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
             runCatching {
                 emit(Loading(true))
-                addressManager.getSafeAddress() to safeRepository.loadTransaction(transaction.txHash!!)
+                addressManager.getSafeAddress() to safeRepository.loadTransaction(transactionHash)
             }.onSuccess {
                 emit(Loading(false))
                 emit(TransactionDetails(it.toDetails()))
@@ -45,30 +41,51 @@ class TransactionDetailsViewModel(
         }
 
     private fun Pair<Solidity.Address?, ServiceSafeTx>.toDetails(): List<Any> {
-        return listOf(
-            first!!,
-            second.tx.buildTransactionTypeView(first),
-            second.tx.to,
-            LabelDescription(
-                R.string.transaction_details_network_fees_label,
-                SpannableString(second.execInfo.fees.shiftedString(ETH_TOKEN_INFO.decimals, decimalsToDisplay = ETH_TOKEN_INFO.decimals))
-            ),
-            LabelDate(R.string.transaction_details_timestamp_label, dateInSecs = transaction.timestamp),
-            Link(transaction.executionHash!!, R.string.view_transaction_on),
-            LabelDescription(R.string.transaction_details_raw_data_label, SpannableString(second.tx.data))
-        )
+        val decodedData = decode(second.tx)
+        return mutableListOf<Any>().apply {
+            add(first!!)
+            add(second.buildTransactionTypeView(first, decodedData))
+            add(second.tx.to)
+            add(
+                LabelDescription(
+                    R.string.transaction_details_network_fees_label,
+                    SpannableString(second.execInfo.fees.shiftedString(ETH_TOKEN_INFO.decimals, decimalsToDisplay = ETH_TOKEN_INFO.decimals))
+                )
+            )
+            add(LabelDescription(R.string.transaction_details_operation_label, SpannableString(second.tx.operation.name)))
+            add(LabelDescription(R.string.transaction_details_value_label, SpannableString(second.tx.value.asDecimalString())))
+            add(Link(transactionHash, R.string.view_transaction_on))
+            add(LabelDescription(R.string.transaction_details_raw_data_label, SpannableString(second.tx.data)))
+        }
     }
 
-    private fun SafeTx.buildTransactionTypeView(currentSafe: Solidity.Address?): TransactionTypeView =
+    private fun ServiceSafeTx.buildTransactionTypeView(currentSafe: Solidity.Address?, decodedData: DecodedData): TransactionTypeView =
         TransactionTypeView(
             currentSafe!!,
-            to,
-            transaction.type,
-            transaction.dataInfo,
-            transaction.transferInfo
+            tx.to,
+            TransactionType.Outgoing, // the only one that the backend has info for at them moment
+            decodedData.toDataInfo(tx),
+            null // Transfers
         )
 
+    private fun DecodedData.toDataInfo(safeTx: SafeTx): DataInfo {
+        return DataInfo(safeTx.value, dataLength?.toInt(), null)
+    }
 
+    private fun decode(safeTx: SafeTx): DecodedData {
+        val data = safeTx.data.hexStringToByteArray()
+
+        val dataLength = Solidity.UInt256(data.size.toBigInteger()).encodePacked()
+        val dataEncoded = Solidity.Bytes(data).encodePacked()
+
+        return DecodedData(safeTx.value, dataLength, dataEncoded)
+    }
+
+    private data class DecodedData(
+        val value: BigInteger,
+        val dataLength: String?,
+        val dataEncoded: String
+    )
 }
 
 data class TransactionDetails(
