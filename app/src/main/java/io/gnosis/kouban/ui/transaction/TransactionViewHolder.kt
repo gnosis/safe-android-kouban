@@ -58,7 +58,7 @@ class TransactionViewHolder(
         textDescription.isVisible = false
         textTokenAmount.text = root.context.getString(
             R.string.transaction_token_amount_label,
-            transferInfo.amount.shiftedString(transferInfo.decimals, 3),
+            transferInfo.amount.shiftedString(transferInfo.decimals, DECIMALS),
             transferInfo.tokenSymbol
         )
         imageTokenLogo.setTransactionIcon(picasso, transferInfo.tokenIconUrl)
@@ -67,7 +67,7 @@ class TransactionViewHolder(
     private fun ItemTransactionBinding.setDataInfo(dataInfo: DataInfo) {
         textTokenAmount.text = root.context.getString(
             R.string.transaction_token_amount_label,
-            dataInfo.ethValue.shiftedString(ETH_TOKEN_INFO.decimals, 3),
+            dataInfo.ethValue.shiftedString(ETH_TOKEN_INFO.decimals, DECIMALS),
             ETH_TOKEN_INFO.symbol
         )
         textDescription.isVisible = true
@@ -85,6 +85,10 @@ class TransactionViewHolder(
             setColorFilter(ContextCompat.getColor(root.context, color), android.graphics.PorterDuff.Mode.SRC_IN)
             setImageResource(drawable)
         }
+    }
+
+    companion object {
+        const val DECIMALS = 5
     }
 }
 

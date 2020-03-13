@@ -1,6 +1,8 @@
 package io.gnosis.kouban.data.models
 
 import android.os.Parcelable
+import com.squareup.moshi.JsonClass
+import io.gnosis.kouban.data.backend.adapter.DecimalNumber
 import io.gnosis.kouban.data.utils.SolidityAddressParceler
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.TypeParceler
@@ -34,8 +36,10 @@ data class Transaction(
 }
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class TransferInfo(
     val tokenSymbol: String,
+    @DecimalNumber
     val amount: BigInteger,
     val decimals: Int,
     val tokenIconUrl: String?
