@@ -32,7 +32,9 @@ class TransactionDetailsViewModel(
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
             runCatching {
                 emit(Loading(true))
-                addressManager.getSafeAddress() to safeRepository.loadTransaction(transactionHash)
+                (addressManager.getSafeAddress() ?: throw IllegalStateException("Safe Address must not be null")) to safeRepository.loadTransaction(
+                    transactionHash
+                )
             }.onSuccess {
                 emit(Loading(false))
                 emit(TransactionDetails(it.toDetails()))
@@ -42,10 +44,10 @@ class TransactionDetailsViewModel(
             }
         }
 
-    private fun Pair<Solidity.Address?, ServiceSafeTx>.toDetails(): List<Any> {
+    private fun Pair<Solidity.Address, ServiceSafeTx>.toDetails(): List<Any> {
         val decodedData = decode(second.tx)
         return mutableListOf<Any>().apply {
-            add(first!!)
+            add(first)
             add(second.buildTransactionTypeView(first, decodedData))
             add(second.tx.to)
             add(
