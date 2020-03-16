@@ -65,9 +65,9 @@ class TransactionDetailsViewModel(
         TransactionTypeView(
             currentSafe!!,
             tx.to,
-            TransactionType.Outgoing, // the only one that the backend has info for at them moment
+            TransactionType.Outgoing, // FIXME the only one that the backend has info for at them moment
             decodedData.toDataInfo(tx),
-            null // Transfers
+            null // FIXME Transfers
         )
 
     private fun DecodedData.toDataInfo(safeTx: SafeTx): DataInfo {
