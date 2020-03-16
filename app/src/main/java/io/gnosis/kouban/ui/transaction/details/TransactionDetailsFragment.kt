@@ -22,7 +22,7 @@ import pm.gnosis.svalinn.common.utils.snackbar
 class TransactionDetailsFragment : BaseFragment<FragmentTransactionDetailsBinding>() {
 
     private val navArgs by navArgs<TransactionDetailsFragmentArgs>()
-    private val viewModel by currentScope.viewModel<TransactionDetailsViewModel>(this) { parametersOf(navArgs.transaction) }
+    private val viewModel by currentScope.viewModel<TransactionDetailsViewModel>(this) { parametersOf(navArgs.transactionHash) }
     private val adapter by currentScope.inject<BaseAdapter<BaseDetailViewHolder<Any>>>()
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionDetailsBinding =

@@ -67,7 +67,7 @@ val fragmentModule = module {
     }
 
     scope(named<TransactionDetailsFragment>()) {
-        viewModel { (transaction: Transaction) -> TransactionDetailsViewModel(transaction.txHash!!, get(), get()) }
+        viewModel { (transactionHash: String) -> TransactionDetailsViewModel(transactionHash, get(), get()) }
         factory { BaseAdapter(TransactionDetailFactory()) }
     }
 }

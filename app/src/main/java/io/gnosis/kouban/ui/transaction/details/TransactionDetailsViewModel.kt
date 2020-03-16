@@ -6,15 +6,17 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import io.gnosis.kouban.R
 import io.gnosis.kouban.core.managers.SafeAddressManager
+import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
+import io.gnosis.kouban.data.models.DataInfo
+import io.gnosis.kouban.data.models.SafeTx
+import io.gnosis.kouban.data.models.ServiceSafeTx
+import io.gnosis.kouban.data.models.TransactionType
 import io.gnosis.kouban.data.repositories.SafeRepository
-import kotlinx.coroutines.Dispatchers
-import io.gnosis.kouban.core.ui.base.Error
-import io.gnosis.kouban.core.utils.parseToBigInteger
-import io.gnosis.kouban.data.models.*
 import io.gnosis.kouban.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.gnosis.kouban.data.utils.shiftedString
+import kotlinx.coroutines.Dispatchers
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.hexStringToByteArray
@@ -54,7 +56,7 @@ class TransactionDetailsViewModel(
             )
             add(LabelDescription(R.string.transaction_details_operation_label, SpannableString(second.tx.operation.name)))
             add(LabelDescription(R.string.transaction_details_value_label, SpannableString(second.tx.value.asDecimalString())))
-            add(Link(transactionHash, R.string.view_transaction_on))
+            second.txHash?.let { add(Link(it, R.string.view_transaction_on)) }
             add(LabelDescription(R.string.transaction_details_raw_data_label, SpannableString(second.tx.data)))
         }
     }

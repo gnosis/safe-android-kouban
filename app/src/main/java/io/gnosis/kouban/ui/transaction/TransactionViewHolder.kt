@@ -43,7 +43,7 @@ class TransactionViewHolder(
                 with(item) {
                     txHash?.let {
                         root.findNavController()
-                            .navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(item))
+                            .navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(it))
                     } ?: executionHash?.let { executionHash ->
                         with(view.context) {
                             openUrl(getString(R.string.etherscan_transaction_url, executionHash))
