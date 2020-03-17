@@ -192,7 +192,7 @@ class SafeRepository(
                 val deploymentArgs = GnosisSafe.Setup.decodeArguments(deploymentArgsEncoded)
                 SafeInfoDeployment(
                     deploymentMastercopy,
-                    deploymentArgs.fallbackhandler,
+                    Solidity.Address(BigInteger.ZERO),
                     deploymentArgs._owners.items,
                     deploymentArgs._threshold.value
                 )
