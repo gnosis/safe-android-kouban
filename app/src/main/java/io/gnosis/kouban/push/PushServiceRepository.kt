@@ -33,7 +33,8 @@ class PushServiceRepository(
                 val token = task.result?.token
                 token?.let {
                     registerDevice(it)
-                    checkSafeRegistration()
+                    if (prefs.isDeviceRegistered)
+                        checkSafeRegistration()
                 }
             })
         } else {
