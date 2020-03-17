@@ -11,6 +11,7 @@ import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
 import io.gnosis.kouban.core.utils.asFormattedDateTime
 import io.gnosis.kouban.core.utils.openUrl
 import io.gnosis.kouban.core.utils.setTransactionIcon
+import io.gnosis.kouban.data.BuildConfig
 import io.gnosis.kouban.data.models.DataInfo
 import io.gnosis.kouban.data.models.Transaction
 import io.gnosis.kouban.data.models.TransactionType
@@ -46,7 +47,7 @@ class TransactionViewHolder(
                             .navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(it))
                     } ?: executionHash?.let { executionHash ->
                         with(view.context) {
-                            openUrl(getString(R.string.etherscan_transaction_url, executionHash))
+                            openUrl(BuildConfig.BLOCK_EXPLORER_TX.format(executionHash))
                         }
                     }
                 }
