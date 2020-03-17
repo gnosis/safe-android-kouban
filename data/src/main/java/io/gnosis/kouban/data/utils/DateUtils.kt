@@ -11,3 +11,7 @@ fun Date.onlyDate(): Date =
         calendar.set(Calendar.MILLISECOND, 0)
         calendar.time
     }
+
+fun Date.afterOrEqual(other: Date?): Boolean = this == other || this.after(other)
+
+fun Date.beforeOrEqual(other: Date?): Boolean = this == other || this.before(other)
