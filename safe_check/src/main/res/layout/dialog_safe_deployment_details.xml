@@ -136,14 +136,23 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/threshold_label"
         tools:text="2 of the 2 owners need to confirm" />
 
 
-
+    <TextView
+        android:id="@+id/etherscan_link"
+        style="@style/DarkText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/threshold"
+        tools:text="View on Etherscan.io" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

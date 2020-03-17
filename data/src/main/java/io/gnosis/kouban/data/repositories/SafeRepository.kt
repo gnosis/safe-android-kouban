@@ -182,6 +182,7 @@ class SafeRepository(
             safeMasterCopy_1_1_1 -> {
                 val deploymentArgs = GnosisSafeV1.Setup.decodeArguments(deploymentArgsEncoded)
                 SafeInfoDeployment(
+                    txHash!!,
                     deploymentMastercopy,
                     deploymentArgs.fallbackhandler,
                     deploymentArgs._owners.items,
@@ -191,6 +192,7 @@ class SafeRepository(
             else -> {
                 val deploymentArgs = GnosisSafe.Setup.decodeArguments(deploymentArgsEncoded)
                 SafeInfoDeployment(
+                    txHash!!,
                     deploymentMastercopy,
                     deploymentArgs.fallbackhandler,
                     deploymentArgs._owners.items,
