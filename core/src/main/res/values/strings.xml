@@ -73,4 +73,5 @@
     <string name="transaction_filter_token_symbol_label">Token symbol filter</string>
     <string name="transaction_filter_timestamp_label">Timestamp filter</string>
     <string name="transaction_filter_transaction_type_label">Type filter</string>
+    <string name="transaction_clear_filters_button">Clear filters</string>
 </resources>

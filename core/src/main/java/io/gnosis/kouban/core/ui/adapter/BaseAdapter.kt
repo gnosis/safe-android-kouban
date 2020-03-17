@@ -33,6 +33,10 @@ class BaseAdapter<VH>(
     override fun onBindViewHolder(holder: VH, position: Int) {
         holder.bind(items[position])
     }
+
+    fun notifyAllChanged() {
+        notifyItemRangeChanged(0, items.size)
+    }
 }
 
 class UnsupportedItem : Throwable()
