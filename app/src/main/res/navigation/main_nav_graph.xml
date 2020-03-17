@@ -21,8 +21,8 @@
             android:id="@+id/action_transactionsFragment_to_safeCheckFragment"
             app:destination="@id/safeCheckFragment"
             app:enterAnim="@anim/enter_from_bottom"
-            app:exitAnim="@anim/exit_to_bottom"
-            app:popEnterAnim="@anim/enter_from_bottom"
+            app:exitAnim="@anim/exit_to_top"
+            app:popEnterAnim="@anim/enter_from_top"
             app:popExitAnim="@anim/exit_to_bottom" />
         <action
             android:id="@+id/action_transactionsFragment_to_transactionDetailsFragment"
