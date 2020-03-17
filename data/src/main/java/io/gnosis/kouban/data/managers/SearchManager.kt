@@ -43,16 +43,11 @@ interface Filter<in T> {
 abstract class SelectionFilter<in T> : Filter<T> {
     abstract val availableValues: List<*>
     abstract val selectedValue: MutableList<*>
-
-    override fun clear() {
-        selectedValue.clear()
-    }
 }
 
 abstract class BoundaryFilter<in T> : Filter<T> {
     abstract val lowerBound: Any?
     abstract val upperBound: Any?
-
 }
 
 data class TransactionTokenSymbolFilter(
@@ -69,6 +64,10 @@ data class TransactionTokenSymbolFilter(
     private fun Transaction.usesSelectedToken(): Boolean =
         selectedValue.contains(this.transferInfo?.tokenSymbol)
 
+    override fun clear() {
+        selectedValue.clear()
+        selectedValue.addAll(availableValues)
+    }
 }
 
 data class TransactionTimestampFilter(
@@ -97,5 +96,10 @@ data class TransactionTypeFilter(
 
     override fun apply(item: Transaction): Boolean =
         selectedValue.isNotEmpty() && selectedValue.contains(item.type)
+
+    override fun clear() {
+        selectedValue.clear()
+        selectedValue.addAll(availableValues)
+    }
 
 }

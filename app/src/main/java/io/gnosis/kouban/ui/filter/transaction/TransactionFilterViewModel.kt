@@ -6,7 +6,7 @@ import io.gnosis.kouban.R
 import io.gnosis.kouban.core.ui.base.ViewState
 import io.gnosis.kouban.data.managers.*
 
-class TransactionFilterViewModel(searchManager: SearchManager) : ViewModel() {
+class TransactionFilterViewModel(private val searchManager: SearchManager) : ViewModel() {
 
     val viewStates = MutableLiveData<ViewState>()
     private val tokenSymbolFilter: TransactionTokenSymbolFilter? = searchManager.getFilterFor(TransactionTokenSymbolFilter::class.java)
@@ -14,7 +14,7 @@ class TransactionFilterViewModel(searchManager: SearchManager) : ViewModel() {
     private val transactionTypeFilter: TransactionTypeFilter? = searchManager.getFilterFor(TransactionTypeFilter::class.java)
 
     init {
-        viewStates.postValue(TokenSymbols(buildList()))
+        viewStates.postValue(FiltersReady(buildList()))
     }
 
     private fun buildList(): List<Any> {
@@ -33,6 +33,12 @@ class TransactionFilterViewModel(searchManager: SearchManager) : ViewModel() {
             }
         }
     }
+
+    fun clearFilters() {
+        searchManager.clearAllFilters()
+        viewStates.postValue(FiltersCleared)
+    }
 }
 
-data class TokenSymbols(val possibleValues: List<Any>) : ViewState()
+data class FiltersReady(val filters: List<Any>) : ViewState()
+object FiltersCleared : ViewState()

@@ -26,16 +26,19 @@ class TransactionFilterDialog : BaseBottomSheetFragment<DialogTransactionFilterB
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding.filters) {
-            this.adapter = this@TransactionFilterDialog.adapter
+            adapter = this@TransactionFilterDialog.adapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
             setHasFixedSize(true)
         }
+        binding.clearFiltersButton.setOnClickListener {
+            viewModel.clearFilters()
+        }
+
         viewModel.viewStates.observe(viewLifecycleOwner, Observer {
             when (it) {
-                is TokenSymbols -> {
-                    adapter.setItemsUnsafe(it.possibleValues)
-                }
+                is FiltersReady -> adapter.setItemsUnsafe(it.filters)
+                is FiltersCleared -> adapter.notifyAllChanged()
             }
         })
     }
