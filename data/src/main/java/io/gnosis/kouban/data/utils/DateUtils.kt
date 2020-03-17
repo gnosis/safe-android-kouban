@@ -12,6 +12,6 @@ fun Date.onlyDate(): Date =
         calendar.time
     }
 
-fun Date.afterOrEqual(other: Date?): Boolean = this == other || this.after(other)
+fun Date.afterOrEqual(other: Date?): Boolean = other != null && (this == other || this.after(other))
 
-fun Date.beforeOrEqual(other: Date?): Boolean = this == other || this.before(other)
+fun Date.beforeOrEqual(other: Date?): Boolean = other != null && (this == other || this.before(other))
