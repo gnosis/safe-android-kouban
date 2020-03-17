@@ -57,7 +57,8 @@
     <string name="transaction_details_type_label">Type</string>
     <string name="transaction_details_network_fees_label">Network Fees</string>
     <string name="transaction_details_raw_data_label">Raw Data</string>
-    <string name="transaction_details_timestamp_label">Timestamp</string>
+    <string name="transaction_details_operation_label">Operation</string>
+    <string name="transaction_details_value_label">Value</string>
 
     <string name="view_transaction_on">View transaction on Etherscan.io</string>
 

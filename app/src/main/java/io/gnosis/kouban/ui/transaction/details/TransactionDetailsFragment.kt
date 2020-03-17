@@ -18,11 +18,12 @@ import org.koin.androidx.scope.currentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import pm.gnosis.svalinn.common.utils.snackbar
+import timber.log.Timber
 
 class TransactionDetailsFragment : BaseFragment<FragmentTransactionDetailsBinding>() {
 
     private val navArgs by navArgs<TransactionDetailsFragmentArgs>()
-    private val viewModel by currentScope.viewModel<TransactionDetailsViewModel>(this) { parametersOf(navArgs.transaction) }
+    private val viewModel by currentScope.viewModel<TransactionDetailsViewModel>(this) { parametersOf(navArgs.transactionHash) }
     private val adapter by currentScope.inject<BaseAdapter<BaseDetailViewHolder<Any>>>()
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionDetailsBinding =
@@ -46,7 +47,10 @@ class TransactionDetailsFragment : BaseFragment<FragmentTransactionDetailsBindin
             when (it) {
                 is TransactionDetails -> adapter.setItemsUnsafe(it.details)
                 is Loading -> binding.swipeToRefresh.isRefreshing = it.isLoading
-                is Error -> snackbar(view!!, R.string.error_unknown)
+                is Error -> {
+                    Timber.e(it.throwable)
+                    snackbar(view!!, R.string.error_unknown)
+                }
             }
         })
     }
