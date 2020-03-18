@@ -50,7 +50,7 @@
     <string name="transaction_token_amount_label">%1$s %2$s</string>
     <string name="transaction_byte_label">(%d bytes)</string>
 
-    <string name="pending_label">Pending</string>
+    <string name="pending_label">Waiting for confirmation</string>
     <string name="history_label">History</string>
 
     <string name="safe_label">Safe</string>

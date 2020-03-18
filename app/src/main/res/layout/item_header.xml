@@ -13,4 +13,4 @@
     android:paddingVertical="8dp"
     android:singleLine="true"
     android:textSize="18sp"
-    tools:text="Pending" />
+    tools:text="Waiting for confirmation" />
