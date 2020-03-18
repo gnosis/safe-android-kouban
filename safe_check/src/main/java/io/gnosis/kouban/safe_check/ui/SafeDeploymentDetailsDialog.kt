@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import io.gnosis.kouban.core.ui.base.BaseBottomSheetDialogFragment
 import io.gnosis.kouban.core.utils.formatEthAddress
+import io.gnosis.kouban.core.utils.setupLink
+import io.gnosis.kouban.data.BuildConfig
 import io.gnosis.kouban.data.models.SafeInfoDeployment
 import io.gnosis.kouban.data.repositories.SafeRepository
 import io.gnosis.kouban.safe_check.R
@@ -45,6 +47,7 @@ class SafeDeploymentDetailsDialog : BaseBottomSheetDialogFragment<DialogSafeDepl
         binding.fallbackHandlerImage.setAddress(deploymentInfo.fallbackHandler)
         addOwners(deploymentInfo.owners)
         binding.threshold.text = getString(R.string.required_confirmations_value, deploymentInfo.threshold, deploymentInfo.owners.size)
+        binding.etherscanLink.setupLink(BuildConfig.BLOCK_EXPLORER_TX.format(deploymentInfo.txHash), getString(R.string.view_transaction_on))
     }
 
     private fun addOwners(owners: List<Solidity.Address>) {

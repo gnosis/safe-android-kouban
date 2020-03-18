@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import io.gnosis.kouban.core.R
+import io.gnosis.kouban.data.BuildConfig
 import pm.gnosis.svalinn.common.utils.appendText
 import pm.gnosis.svalinn.common.utils.openUrl
 import timber.log.Timber
@@ -42,5 +43,5 @@ fun TextView.setupEtherscanTransactionUrl(transactionHash: String, @StringRes st
 }
 
 fun TextView.setupEtherscanTransactionUrl(transactionHash: String, text: String) {
-    setupLink(context.getString(R.string.etherscan_transaction_url, transactionHash), text)
+    setupLink(BuildConfig.BLOCK_EXPLORER_TX.format(transactionHash), text)
 }
