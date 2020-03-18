@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'com.google.firebase.appdistribution'
+apply plugin: 'com.google.firebase.crashlytics'
 
 
 android {
@@ -83,6 +84,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
 
     implementation "com.google.firebase:firebase-messaging:$versions.firebase_messaging"
+    implementation "com.google.firebase:firebase-crashlytics:$versions.firebase_crashlytics"
 
     implementation project(":core")
     implementation project(":safe_check")
