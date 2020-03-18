@@ -3,6 +3,9 @@ package io.gnosis.kouban.data.managers
 import io.gnosis.kouban.data.models.Transaction
 import io.gnosis.kouban.data.models.TransactionType
 import io.gnosis.kouban.data.repositories.TokenRepository
+import io.gnosis.kouban.data.utils.afterOrEqual
+import io.gnosis.kouban.data.utils.beforeOrEqual
+import io.gnosis.kouban.data.utils.onlyDate
 import java.util.*
 
 class SearchManager {
@@ -76,11 +79,10 @@ data class TransactionTimestampFilter(
 
 ) : BoundaryFilter<Transaction>() {
 
-    override fun apply(item: Transaction): Boolean {
-        return with(item.timestampAsDate()) {
-            (upperBound == null || before(upperBound)) && (lowerBound == null || after(lowerBound))
+    override fun apply(item: Transaction): Boolean =
+        with(item.timestampAsDate().onlyDate()) {
+            (upperBound == null || beforeOrEqual(upperBound)) && (lowerBound == null || afterOrEqual(lowerBound))
         }
-    }
 
     override fun clear() {
         lowerBound = null
