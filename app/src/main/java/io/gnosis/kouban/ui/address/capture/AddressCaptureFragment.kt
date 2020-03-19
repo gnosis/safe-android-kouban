@@ -50,7 +50,10 @@ class AddressCaptureFragment : BaseFragment<FragmentAddressCaptureBinding>() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == QR_SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             QRCodeScanActivity.handleResult(QR_SCAN_REQUEST_CODE, resultCode, data) { safeAddressString ->
-                viewModel.handleSafeAddress(safeAddressString.asEthereumAddress()!!)
+                safeAddressString.asEthereumAddress()?.let { safeAddress ->
+                    binding.addressInput.updateAddress(safeAddress)
+                    viewModel.handleSafeAddress(safeAddress)
+                }
             }
         }
     }
@@ -65,7 +68,6 @@ class AddressCaptureFragment : BaseFragment<FragmentAddressCaptureBinding>() {
                     )
                 is SafeAddressUpdated -> {
                     with(binding) {
-                        addressInput.updateAddress(viewState.safeAddress)
                         connectSafeAddressStatusIcon.isVisible = viewState.safeAddress != null
                         connectSafeAddressStatusText.isVisible = viewState.safeAddress != null
                     }
