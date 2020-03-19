@@ -29,6 +29,7 @@
     <string name="button_label_complete">Proceed with this Address</string>
 
     <string name="error_address_not_set">There was a problem setting the address</string>
+    <string name="error_invalid_safe">Invalid safe</string>
     <string name="error_unknown">Unknown error occurred</string>
 
     <string name="connect_title">Connect to a Safe</string>

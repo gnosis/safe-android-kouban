@@ -13,6 +13,7 @@ import io.gnosis.kouban.core.R
 import io.gnosis.kouban.databinding.FragmentAddressCaptureBinding
 import io.gnosis.kouban.core.ui.base.BaseFragment
 import io.gnosis.kouban.core.ui.base.Error
+import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.ui.onboarding.OnboardingFragmentDirections
 import io.gnosis.kouban.qrscanner.QRCodeScanActivity
 import org.koin.androidx.scope.currentScope
@@ -20,6 +21,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import timber.log.Timber
 
 class AddressCaptureFragment : BaseFragment<FragmentAddressCaptureBinding>() {
 
@@ -75,8 +77,10 @@ class AddressCaptureFragment : BaseFragment<FragmentAddressCaptureBinding>() {
                 is Error -> {
                     val stringId = when (viewState.throwable) {
                         is AddressNotSet -> R.string.error_address_not_set
+                        is InvalidSafeAddress -> R.string.error_invalid_safe
                         else -> R.string.error_unknown
                     }
+                    Timber.e(viewState.throwable)
                     view?.let { view -> snackbar(view, stringId) }
                 }
             }

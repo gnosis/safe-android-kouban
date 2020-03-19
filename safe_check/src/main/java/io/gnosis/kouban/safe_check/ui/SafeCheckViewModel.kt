@@ -33,10 +33,10 @@ class SafeCheckViewModel(
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
             emit(Loading(true))
 
-            kotlin.runCatching {
+            runCatching {
 
                 if (safeDeploymentInfo == null)
-                    kotlin.runCatching {
+                    runCatching {
                         safeRepository.loadSafeDeploymentParams(address)
                     }.onSuccess {
                         safeDeploymentInfo = it
@@ -44,7 +44,7 @@ class SafeCheckViewModel(
                         emit(Error(it))
                     }
 
-                kotlin.runCatching {
+                runCatching {
                     val safeInfo = safeRepository.loadSafeInfo(address)
                     val ensName = ensRepository.resolve(address)
 
