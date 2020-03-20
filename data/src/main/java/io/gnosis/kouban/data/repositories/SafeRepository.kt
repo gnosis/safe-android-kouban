@@ -74,6 +74,30 @@ class SafeRepository(
             }
         }
 
+    suspend fun checkSafe(address: Solidity.Address): Boolean {
+        val responses = jsonRpcApi.post(listOf(buildMasterCopyRequest(address, 0)))
+        return isSupported(responses[0].result?.asEthereumAddress())
+    }
+
+    private fun buildMasterCopyRequest(address: Solidity.Address, id: Int = 0) =
+        JsonRpcApi.JsonRpcRequest(
+            id = id,
+            method = "eth_getStorageAt",
+            params = listOf(address, BigInteger.ZERO.toHexString(), "latest")
+        )
+
+    private fun buildThresholdRequest(address: Solidity.Address, id: Int = 0) =
+        JsonRpcApi.JsonRpcRequest(
+            id = id,
+            method = "eth_call",
+            params = listOf(
+                mapOf(
+                    "to" to address,
+                    "data" to GnosisSafe.GetThreshold.encode()
+                ), "latest"
+            )
+        )
+
     suspend fun loadTokenBalances(safe: Solidity.Address): List<Balance> =
         transactionServiceApi.loadBalances(safe.asEthereumAddressChecksumString()).map {
             val tokenAddress = it.tokenAddress ?: TokenRepository.ETH_ADDRESS
@@ -94,11 +118,7 @@ class SafeRepository(
     suspend fun loadSafeInfo(safe: Solidity.Address): SafeInfo {
         val responses = jsonRpcApi.post(
             listOf(
-                JsonRpcApi.JsonRpcRequest(
-                    id = 0,
-                    method = "eth_getStorageAt",
-                    params = listOf(safe, BigInteger.ZERO.toHexString(), "latest")
-                ),
+                buildMasterCopyRequest(safe, 0),
                 JsonRpcApi.JsonRpcRequest(
                     id = 1,
                     method = "eth_getStorageAt",
@@ -114,16 +134,7 @@ class SafeRepository(
                         ), "latest"
                     )
                 ),
-                JsonRpcApi.JsonRpcRequest(
-                    id = 3,
-                    method = "eth_call",
-                    params = listOf(
-                        mapOf(
-                            "to" to safe,
-                            "data" to GnosisSafe.GetThreshold.encode()
-                        ), "latest"
-                    )
-                ),
+                buildThresholdRequest(safe, 3),
                 JsonRpcApi.JsonRpcRequest(
                     id = 4,
                     method = "eth_call",
@@ -547,6 +558,15 @@ class SafeRepository(
         val safeMasterCopy_0_1_0 = BuildConfig.SAFE_MASTER_COPY_0_1_0.asEthereumAddress()!!
         val safeMasterCopy_1_0_0 = BuildConfig.SAFE_MASTER_COPY_1_0_0.asEthereumAddress()!!
         val safeMasterCopy_1_1_1 = BuildConfig.SAFE_MASTER_COPY_1_1_1.asEthereumAddress()!!
+
+        fun isSupported(masterCopy: Solidity.Address?) =
+            supportedContracts.contains(masterCopy)
+
+        private val supportedContracts = listOf(
+            safeMasterCopy_0_1_0,
+            safeMasterCopy_1_0_0,
+            safeMasterCopy_1_1_1
+        )
 
         private const val FALLBACK_HANDLER_STORAGE_SLOT = BuildConfig.FALLBACK_HANDLER_STORAGE_SLOT
 
