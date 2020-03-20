@@ -5,7 +5,6 @@ import io.gnosis.kouban.data.BuildConfig
 import io.gnosis.kouban.data.backend.*
 import io.gnosis.kouban.data.db.TokensDatabase
 import io.gnosis.kouban.data.repositories.*
-import io.gnosis.kouban.data.utils.DateFormats
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
 import pm.gnosis.mnemonic.Bip39
@@ -76,7 +75,7 @@ val dataModule = module {
     single<FingerprintHelper> { AndroidFingerprintHelper(get()) }
 
     single {
-        SafeRepository(get(), get(), get(), get(), get(), get(), get(), get(), SimpleDateFormat(DateFormats.backend, get<Locale>()))
+        SafeRepository(get(), get(), get(), get(), get(), get(), get(), get())
     }
 
     single {

@@ -16,6 +16,4 @@ fun Date.afterOrEqual(other: Date?): Boolean = other != null && (this == other |
 
 fun Date.beforeOrEqual(other: Date?): Boolean = other != null && (this == other || this.before(other))
 
-object DateFormats {
-    const val backend = "yyyy-MM-dd'T'HH:mm:ssX"
-}
+fun String.formatBackendDate() = this.replace("Z", "").replace("T", ", ").split(".").first()

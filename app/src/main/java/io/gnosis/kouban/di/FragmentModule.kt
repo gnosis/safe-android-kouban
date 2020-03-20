@@ -66,8 +66,7 @@ val fragmentModule = module {
             TransactionDetailsViewModel(
                 transactionHash,
                 get(),
-                get(),
-                SimpleDateFormat(DateFormats.txDetails, get<Locale>())
+                get()
             )
         }
         factory { BaseAdapter(TransactionDetailFactory()) }

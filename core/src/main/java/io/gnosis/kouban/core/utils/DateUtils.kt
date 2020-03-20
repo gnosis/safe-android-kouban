@@ -47,7 +47,6 @@ object DateFormats {
     const val transactionList = "dd-MM-yyyy HH:mm"
     const val monthYear = "MMMM, yyyy"
     const val datePicker = "yyyy.MM.dd"
-    const val txDetails = "yyyy.MM.dd 'at' HH:mm:ss z"
 
     const val default = transactionList
 }

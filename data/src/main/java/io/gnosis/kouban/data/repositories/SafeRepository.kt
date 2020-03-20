@@ -13,10 +13,8 @@ import io.gnosis.kouban.data.managers.TransactionTimestampFilter
 import io.gnosis.kouban.data.managers.TransactionTokenSymbolFilter
 import io.gnosis.kouban.data.managers.TransactionTypeFilter
 import io.gnosis.kouban.data.models.*
-import io.gnosis.kouban.data.utils.asMiddleEllipsized
+import io.gnosis.kouban.data.utils.*
 import io.gnosis.kouban.data.utils.nullOnThrow
-import io.gnosis.kouban.data.utils.performCall
-import io.gnosis.kouban.data.utils.shiftedString
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -36,8 +34,7 @@ class SafeRepository(
     private val magicApi: MagicApi,
     private val searchManager: SearchManager,
     private val preferencesManager: PreferencesManager,
-    private val tokensRepository: TokenRepository,
-    private val backendDateFormat: SimpleDateFormat
+    private val tokensRepository: TokenRepository
 ) {
 
     private val accountPrefs = context.getSharedPreferences(ACC_PREF_NAME, Context.MODE_PRIVATE)
@@ -347,8 +344,8 @@ class SafeRepository(
             confirmations = confirmations.map { confirmation ->
                 confirmation.owner.asEthereumAddress()!! to confirmation.signature
             },
-            executionDate = executionDate?.let { runCatching { backendDateFormat.parse(it) }.getOrNull() },
-            submissionDate = runCatching { backendDateFormat.parse(submissionDate) }.getOrNull(),
+            executionDate = executionDate?.formatBackendDate(),
+            submissionDate = submissionDate.formatBackendDate(),
             executed = isExecuted,
             txHash = transactionHash
         )
