@@ -75,4 +75,8 @@
     <string name="transaction_filter_timestamp_label">Timestamp filter</string>
     <string name="transaction_filter_transaction_type_label">Type filter</string>
     <string name="transaction_clear_filters_button">Clear filters</string>
+
+    <string name="address_clipboard_success">Address copied to clipboard</string>
+    <string name="share_address">Share address</string>
+
 </resources>

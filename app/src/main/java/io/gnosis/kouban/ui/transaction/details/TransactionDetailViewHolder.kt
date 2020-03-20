@@ -1,5 +1,7 @@
 package io.gnosis.kouban.ui.transaction.details
 
+import android.content.ClipboardManager
+import android.content.Context
 import android.text.Spannable
 import android.text.SpannableString
 import androidx.annotation.StringRes
@@ -11,6 +13,7 @@ import io.gnosis.kouban.core.R
 import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
 import io.gnosis.kouban.core.utils.asFormattedDateTime
 import io.gnosis.kouban.core.utils.formatEthAddress
+import io.gnosis.kouban.core.utils.parseEthereumAddress
 import io.gnosis.kouban.core.utils.setupEtherscanTransactionUrl
 import io.gnosis.kouban.data.models.DataInfo
 import io.gnosis.kouban.data.models.TransactionType
@@ -22,6 +25,8 @@ import io.gnosis.kouban.databinding.ItemDetailsLabelDescriptionBinding
 import io.gnosis.kouban.databinding.ItemDetailsTransactionTypeBinding
 import io.gnosis.kouban.databinding.ItemTransactionDetailsLinkBinding
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.copyToClipboard
+import pm.gnosis.svalinn.common.utils.snackbar
 
 abstract class BaseDetailViewHolder<T>(viewBinding: ViewBinding) : BaseViewHolder<T>(viewBinding)
 
@@ -112,6 +117,12 @@ class AddressDetailsViewHolder(
 
     override fun bind(item: Solidity.Address) {
         with(viewBinding) {
+            viewBinding.root.setOnLongClickListener { view ->
+                view.context.copyToClipboard(view.context.getString(R.string.share_address), item.toString()) {
+                    snackbar(view, R.string.address_clipboard_success)
+                }
+                true
+            }
             addressImage.setAddress(item)
             address.text = item.formatEthAddress(root.context)
         }
