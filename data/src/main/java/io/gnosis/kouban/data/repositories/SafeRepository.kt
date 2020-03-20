@@ -74,18 +74,9 @@ class SafeRepository(
             }
         }
 
-    suspend fun checkSafe(address: Solidity.Address): Pair<Solidity.Address?, Boolean> {
-        val responses = jsonRpcApi.post(
-            listOf(
-                buildMasterCopyRequest(address, 0),
-                buildThresholdRequest(address, 1)
-            )
-        )
-
-        val masterCopy = responses[0].result?.asEthereumAddress()
-        val threshold = runCatching { GnosisSafe.GetThreshold.decode(responses[1].result!!).param0.value }.getOrDefault(BigInteger.ZERO)
-
-        return (masterCopy to (threshold > NO_EXTENSION_THRESHOLD))
+    suspend fun checkSafe(address: Solidity.Address): Boolean {
+        val responses = jsonRpcApi.post(listOf(buildMasterCopyRequest(address, 0)))
+        return isSupported(responses[0].result?.asEthereumAddress())
     }
 
     private fun buildMasterCopyRequest(address: Solidity.Address, id: Int = 0) =
@@ -563,8 +554,6 @@ class SafeRepository(
     private fun ByteArray.toAddress() = Solidity.Address(this.asBigInteger())
 
     companion object {
-
-        private val NO_EXTENSION_THRESHOLD = BigInteger.ONE
 
         val safeMasterCopy_0_1_0 = BuildConfig.SAFE_MASTER_COPY_0_1_0.asEthereumAddress()!!
         val safeMasterCopy_1_0_0 = BuildConfig.SAFE_MASTER_COPY_1_0_0.asEthereumAddress()!!

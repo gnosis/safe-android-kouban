@@ -24,8 +24,8 @@ class AddressCaptureViewModel(
     fun handleSafeAddress(safeAddress: Solidity.Address) {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching { safeRepository.checkSafe(safeAddress) }
-                .onSuccess { (masterCopyAddress, isValid) ->
-                    if (masterCopyAddress != null && isValid && SafeRepository.isSupported(masterCopyAddress)) {
+                .onSuccess { isValid ->
+                    if (isValid) {
                         safeAddressManager.storeSafeAddress(safeAddress)
                         pushRepo.checkRegistration()
                         safeAddressEvents.postValue(SafeAddressUpdated(safeAddress))
