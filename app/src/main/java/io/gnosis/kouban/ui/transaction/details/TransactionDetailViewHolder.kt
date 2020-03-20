@@ -11,10 +11,7 @@ import androidx.core.view.isVisible
 import androidx.viewbinding.ViewBinding
 import io.gnosis.kouban.core.R
 import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
-import io.gnosis.kouban.core.utils.asFormattedDateTime
-import io.gnosis.kouban.core.utils.formatEthAddress
-import io.gnosis.kouban.core.utils.parseEthereumAddress
-import io.gnosis.kouban.core.utils.setupEtherscanTransactionUrl
+import io.gnosis.kouban.core.utils.*
 import io.gnosis.kouban.data.models.DataInfo
 import io.gnosis.kouban.data.models.TransactionType
 import io.gnosis.kouban.data.models.TransferInfo
@@ -62,6 +59,29 @@ class LabelDateViewHolder(
             label.setText(item.label)
             item.date?.let { description.text = it }
             item.dateInSecs?.let { description.text = it.asFormattedDateTime(root.context) }
+        }
+    }
+}
+
+class LabelHash(
+    @StringRes val label: Int,
+    val hash: String
+)
+
+class LabelHashViewHolder(
+    private val viewBinding: ItemDetailsLabelDescriptionBinding
+) : BaseDetailViewHolder<LabelHash>(viewBinding) {
+
+    override fun bind(item: LabelHash) {
+        with(viewBinding) {
+            label.setText(item.label)
+            description.text = item.hash.formatHash(root.context, startLength = 6)
+        }
+        viewBinding.root.setOnLongClickListener { view ->
+            view.context.copyToClipboard(view.context.getString(R.string.share_hash), item.hash) {
+                snackbar(view, R.string.hash_clipboard_success)
+            }
+            true
         }
     }
 }
@@ -124,7 +144,7 @@ class AddressDetailsViewHolder(
                 true
             }
             addressImage.setAddress(item)
-            address.text = item.formatEthAddress(root.context)
+            address.text = item.formatEthAddress(root.context, startLength = 6)
         }
     }
 }

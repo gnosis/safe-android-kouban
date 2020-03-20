@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="8dp">
+    android:layout_margin="8dp"
+    android:elevation="6dp"
+    app:cardCornerRadius="6dp">
 
-    <TextView
-        android:id="@+id/label"
-        style="@style/DarkText"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Label" />
+        android:background="?attr/selectableItemBackground"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp">
 
-    <TextView
-        android:id="@+id/description"
-        style="@style/LightText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Description" />
+        <TextView
+            android:id="@+id/label"
+            style="@style/DarkText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Label" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/description"
+            style="@style/LightText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Description" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

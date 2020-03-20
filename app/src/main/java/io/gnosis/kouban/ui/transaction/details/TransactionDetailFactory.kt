@@ -20,6 +20,7 @@ class TransactionDetailFactory : BaseFactory<BaseDetailViewHolder<Any>>() {
             ViewType.LabelDescription.ordinal -> LabelDescriptionViewHolder(viewBinding as ItemDetailsLabelDescriptionBinding)
             ViewType.Link.ordinal -> LinkViewHolder(viewBinding as ItemTransactionDetailsLinkBinding)
             ViewType.TransactionType.ordinal -> TransactionTypeViewHolder(viewBinding as ItemDetailsTransactionTypeBinding)
+            ViewType.Hash.ordinal -> LabelHashViewHolder(viewBinding as ItemDetailsLabelDescriptionBinding)
             else -> throw UnsupportedViewType()
         } as BaseDetailViewHolder<Any>
     }
@@ -27,7 +28,12 @@ class TransactionDetailFactory : BaseFactory<BaseDetailViewHolder<Any>>() {
     override fun layout(layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int): ViewBinding {
         return when (viewType) {
             ViewType.Address.ordinal -> ItemDetailsAddressBinding.inflate(layoutInflater, parent, false)
-            ViewType.LabelDate.ordinal, ViewType.LabelDescription.ordinal -> ItemDetailsLabelDescriptionBinding.inflate(layoutInflater, parent, false)
+            ViewType.LabelDate.ordinal, ViewType.LabelDescription.ordinal, ViewType.Hash.ordinal ->
+                ItemDetailsLabelDescriptionBinding.inflate(
+                    layoutInflater,
+                    parent,
+                    false
+                )
             ViewType.Link.ordinal -> ItemTransactionDetailsLinkBinding.inflate(layoutInflater, parent, false)
             ViewType.TransactionType.ordinal -> ItemDetailsTransactionTypeBinding.inflate(layoutInflater, parent, false)
             else -> throw UnsupportedViewType()
@@ -41,6 +47,7 @@ class TransactionDetailFactory : BaseFactory<BaseDetailViewHolder<Any>>() {
             is LabelDescription -> ViewType.LabelDescription.ordinal
             is Link -> ViewType.Link.ordinal
             is TransactionTypeView -> ViewType.TransactionType.ordinal
+            is LabelHash -> ViewType.Hash.ordinal
             else -> throw UnsupportedViewType(item.toString())
         }
     }
@@ -50,6 +57,7 @@ class TransactionDetailFactory : BaseFactory<BaseDetailViewHolder<Any>>() {
         LabelDate,
         LabelDescription,
         Link,
-        TransactionType
+        TransactionType,
+        Hash
     }
 }
