@@ -31,7 +31,6 @@
             android:id="@+id/tx_details"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/background_list"
             tools:listitem="@layout/item_details_address" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

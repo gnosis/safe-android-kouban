@@ -17,10 +17,7 @@ import io.gnosis.kouban.data.models.TransactionType
 import io.gnosis.kouban.data.models.TransferInfo
 import io.gnosis.kouban.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.gnosis.kouban.data.utils.shiftedString
-import io.gnosis.kouban.databinding.ItemDetailsAddressBinding
-import io.gnosis.kouban.databinding.ItemDetailsLabelDescriptionBinding
-import io.gnosis.kouban.databinding.ItemDetailsTransactionTypeBinding
-import io.gnosis.kouban.databinding.ItemTransactionDetailsLinkBinding
+import io.gnosis.kouban.databinding.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -69,11 +66,11 @@ class LabelHash(
 )
 
 class LabelHashViewHolder(
-    private val viewBinding: ItemDetailsLabelDescriptionBinding
+    private val viewBinding: ItemDetailsHashBinding
 ) : BaseDetailViewHolder<LabelHash>(viewBinding) {
 
     override fun bind(item: LabelHash) {
-        with(viewBinding) {
+        with(viewBinding.labelDescriptionLayout) {
             label.setText(item.label)
             description.text = item.hash.formatHash(root.context, startLength = 6)
         }

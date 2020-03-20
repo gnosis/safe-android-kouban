@@ -5,10 +5,7 @@ import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import io.gnosis.kouban.core.ui.adapter.BaseFactory
 import io.gnosis.kouban.core.ui.adapter.UnsupportedViewType
-import io.gnosis.kouban.databinding.ItemDetailsAddressBinding
-import io.gnosis.kouban.databinding.ItemDetailsLabelDescriptionBinding
-import io.gnosis.kouban.databinding.ItemDetailsTransactionTypeBinding
-import io.gnosis.kouban.databinding.ItemTransactionDetailsLinkBinding
+import io.gnosis.kouban.databinding.*
 import pm.gnosis.model.Solidity
 
 class TransactionDetailFactory : BaseFactory<BaseDetailViewHolder<Any>>() {
@@ -20,7 +17,7 @@ class TransactionDetailFactory : BaseFactory<BaseDetailViewHolder<Any>>() {
             ViewType.LabelDescription.ordinal -> LabelDescriptionViewHolder(viewBinding as ItemDetailsLabelDescriptionBinding)
             ViewType.Link.ordinal -> LinkViewHolder(viewBinding as ItemTransactionDetailsLinkBinding)
             ViewType.TransactionType.ordinal -> TransactionTypeViewHolder(viewBinding as ItemDetailsTransactionTypeBinding)
-            ViewType.Hash.ordinal -> LabelHashViewHolder(viewBinding as ItemDetailsLabelDescriptionBinding)
+            ViewType.Hash.ordinal -> LabelHashViewHolder(viewBinding as ItemDetailsHashBinding)
             else -> throw UnsupportedViewType()
         } as BaseDetailViewHolder<Any>
     }
@@ -28,12 +25,13 @@ class TransactionDetailFactory : BaseFactory<BaseDetailViewHolder<Any>>() {
     override fun layout(layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int): ViewBinding {
         return when (viewType) {
             ViewType.Address.ordinal -> ItemDetailsAddressBinding.inflate(layoutInflater, parent, false)
-            ViewType.LabelDate.ordinal, ViewType.LabelDescription.ordinal, ViewType.Hash.ordinal ->
+            ViewType.LabelDate.ordinal, ViewType.LabelDescription.ordinal ->
                 ItemDetailsLabelDescriptionBinding.inflate(
                     layoutInflater,
                     parent,
                     false
                 )
+            ViewType.Hash.ordinal -> ItemDetailsHashBinding.inflate(layoutInflater, parent, false)
             ViewType.Link.ordinal -> ItemTransactionDetailsLinkBinding.inflate(layoutInflater, parent, false)
             ViewType.TransactionType.ordinal -> ItemDetailsTransactionTypeBinding.inflate(layoutInflater, parent, false)
             else -> throw UnsupportedViewType()
