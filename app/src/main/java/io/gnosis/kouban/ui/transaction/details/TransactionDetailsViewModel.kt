@@ -57,7 +57,12 @@ class TransactionDetailsViewModel(
             add(
                 LabelDescription(
                     R.string.transaction_details_network_fees_label,
-                    SpannableString(second.execInfo.fees.shiftedString(ETH_TOKEN_INFO.decimals, decimalsToDisplay = ETH_TOKEN_INFO.decimals))
+                    SpannableString(
+                        second.execInfo.fees.shiftedString(
+                            ETH_TOKEN_INFO.decimals,
+                            decimalsToDisplay = ETH_TOKEN_INFO.decimals
+                        ) + " ${ETH_TOKEN_INFO.symbol}"
+                    )
                 )
             )
             second.submissionDate?.let { dateTimeZoneFormat.format(it) }?.let {
@@ -67,7 +72,16 @@ class TransactionDetailsViewModel(
                 add(LabelDescription(R.string.transaction_details_execution_date_label, SpannableString(it)))
             }
             add(LabelDescription(R.string.transaction_details_operation_label, SpannableString(second.tx.operation.name)))
-            add(LabelDescription(R.string.transaction_details_value_label, SpannableString(second.tx.value.asDecimalString())))
+            add(
+                LabelDescription(
+                    R.string.transaction_details_value_label, SpannableString(
+                        second.tx.value.shiftedString(
+                            ETH_TOKEN_INFO.decimals,
+                            decimalsToDisplay = ETH_TOKEN_INFO.decimals
+                        ) + " ${ETH_TOKEN_INFO.symbol}"
+                    )
+                )
+            )
             second.txHash?.let {
                 add(LabelHash(R.string.transaction_details_transaction_hash_label, it))
                 add(Link(it, R.string.view_transaction_on))
