@@ -1,6 +1,9 @@
 package io.gnosis.kouban.push
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Browser
 import androidx.navigation.NavDeepLinkBuilder
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
@@ -9,11 +12,14 @@ import io.gnosis.kouban.core.managers.SafeAddressManager
 import io.gnosis.kouban.data.BuildConfig
 import io.gnosis.kouban.data.backend.PushServiceApi
 import io.gnosis.kouban.helpers.LocalNotificationManager
+import io.gnosis.kouban.ui.MainActivity
+import io.gnosis.kouban.ui.transaction.details.TransactionDetailsFragmentArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
+import io.gnosis.kouban.core.utils.openUrl
 
 class PushServiceRepository(
     private val context: Context,
@@ -68,7 +74,11 @@ class PushServiceRepository(
     fun registerSafe(safe: Solidity.Address) {
         runBlocking(Dispatchers.IO) {
             kotlin.runCatching {
-                pushServiceApi.registerPushes(BLOCKCHAIN_NETWORK, safe.asEthereumAddressChecksumString(), PushServiceApi.PushesRegistration(prefs.clientId))
+                pushServiceApi.registerPushes(
+                    BLOCKCHAIN_NETWORK,
+                    safe.asEthereumAddressChecksumString(),
+                    PushServiceApi.PushesRegistration(prefs.clientId)
+                )
             }.onSuccess {
                 prefs.safe = safe
             }.onFailure {
@@ -83,22 +93,64 @@ class PushServiceRepository(
     }
 
     private fun showTransactionNotification(pushMessage: PushMessage) {
-        pushMessage.apply {
-            //TODO: get transaction from push message
-            val transaction = null //Transaction
 
-            val intent =
-                NavDeepLinkBuilder(context).setGraph(R.navigation.main_nav_graph).setDestination(R.id.transactionDetailsFragment).setArguments(null)
-                    .createPendingIntent()
+        lateinit var title: String
+        lateinit var text: String
+        lateinit var hash: String
 
-            localNotificationManager.show(
-                context,
-                context.getString(R.string.push_tex_title),
-                context.getString(R.string.push_tx_message)
+        when (pushMessage) {
+            is PushMessage.NewConfirmation -> {
+                hash = pushMessage.txHash
+                title = context.getString(R.string.push_tx_new_confirmation)
+                text = pushMessage.address.asEthereumAddressString()
+            }
+            is PushMessage.PendingMultisigTransaction -> {
+                hash = pushMessage.txHash
+                title = context.getString(R.string.push_tx_multisig_pending)
+                text = pushMessage.address.asEthereumAddressString()
+            }
+            is PushMessage.ExecutedMultisigTransaction -> {
+                hash = pushMessage.txHash
+                title = context.getString(R.string.push_tx_multisig_executed)
+                text = pushMessage.address.asEthereumAddressString()
+            }
+            is PushMessage.IncomingEther -> {
+                hash = pushMessage.txHash
+                title = context.getString(R.string.push_tx_incoming_ether)
+                text = pushMessage.address.asEthereumAddressString()
+            }
+            is PushMessage.IncomingToken -> {
+                hash = pushMessage.txHash
+                title = context.getString(R.string.push_tx_incoming_token)
+                text = pushMessage.address.asEthereumAddressString()
+            }
+        }
+
+        if (pushMessage is PushMessage.IncomingToken || pushMessage is PushMessage.IncomingEther) {
+
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(BuildConfig.BLOCK_EXPLORER_TX.format(hash))
             )
+                .putExtra(
+                    Browser.EXTRA_APPLICATION_ID,
+                    context.packageName
+                )
+
+            localNotificationManager.show(context, 0, title, text, intent)
+
+        } else {
+
+            val intent = NavDeepLinkBuilder(context)
+                .setComponentName(MainActivity::class.java)
+                .setGraph(R.navigation.main_nav_graph)
+                .setDestination(R.id.transactionDetailsFragment)
+                .setArguments(TransactionDetailsFragmentArgs(hash).toBundle())
+                .createPendingIntent()
+
+            localNotificationManager.show(context, 0, title, text, intent, null)
         }
     }
-
 
     //TODO: get all relevant fields
     sealed class PushMessage(
@@ -106,65 +158,74 @@ class PushServiceRepository(
     ) {
 
         data class NewConfirmation(
-            val address: String
+            val address: String,
+            val txHash: String
         ) : PushMessage(TYPE) {
             companion object {
                 const val TYPE = "NEW_CONFIRMATION"
                 fun fromMap(params: Map<String, String>) =
                     NewConfirmation(
-                        params.getOrThrow("address")
+                        params.getOrThrow("address"),
+                        params.getOrThrow("txHash")
                     )
             }
         }
 
         data class PendingMultisigTransaction(
-            val address: String
+            val address: String,
+            val txHash: String
         ) : PushMessage(TYPE) {
             companion object {
                 const val TYPE = "PENDING_MULTISIG_TRANSACTION"
                 fun fromMap(params: Map<String, String>) =
                     PendingMultisigTransaction(
-                        params.getOrThrow("address")
+                        params.getOrThrow("address"),
+                        params.getOrThrow("txHash")
                     )
             }
         }
 
         data class ExecutedMultisigTransaction(
-            val address: String
+            val address: String,
+            val txHash: String
         ) : PushMessage(TYPE) {
             companion object {
                 const val TYPE = "EXECUTED_MULTISIG_TRANSACTION"
                 fun fromMap(params: Map<String, String>) =
                     ExecutedMultisigTransaction(
-                        params.getOrThrow("address")
+                        params.getOrThrow("address"),
+                        params.getOrThrow("txHash")
                     )
             }
         }
 
         data class IncomingEther(
-            val address: String
+            val address: String,
+            val txHash: String
         ) : PushMessage(TYPE) {
             companion object {
                 const val TYPE = "INCOMING_ETHER"
                 fun fromMap(params: Map<String, String>) =
                     IncomingEther(
-                        params.getOrThrow("address")
+                        params.getOrThrow("address"),
+                        params.getOrThrow("txHash")
                     )
             }
         }
 
         data class IncomingToken(
-            val address: String
+            val address: String,
+            val txHash: String
         ) : PushMessage(TYPE) {
             companion object {
                 const val TYPE = "INCOMING_TOKEN"
                 fun fromMap(params: Map<String, String>) =
                     IncomingToken(
-                        params.getOrThrow("address")
+                        params.getOrThrow("address"),
+                        params.getOrThrow("txHash")
                     )
             }
         }
-
 
         companion object {
             fun fromMap(params: Map<String, String>) =
