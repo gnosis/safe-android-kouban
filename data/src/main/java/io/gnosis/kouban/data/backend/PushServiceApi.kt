@@ -1,6 +1,7 @@
 package io.gnosis.kouban.data.backend
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import io.gnosis.kouban.data.BuildConfig
 import retrofit2.Call
 import retrofit2.http.Body
@@ -18,6 +19,7 @@ interface PushServiceApi {
         @Body pushesRegistration: PushesRegistration
     )
 
+    @JsonClass(generateAdapter = true)
     data class DeviceRegistration(
         @Json(name = "client_id")
         val clientId: String,
@@ -25,6 +27,7 @@ interface PushServiceApi {
         val pushToken: String
     )
 
+    @JsonClass(generateAdapter = true)
     data class PushesRegistration(
         @Json(name = "client_id")
         val clientId: String
