@@ -15,7 +15,7 @@ interface PushServiceApi {
     @POST("{network}/1/safes/{safe_address}/observe")
     suspend fun registerPushes(
         @Path("network") network: String,
-        @Path("safe_address") safeAddress: String,
+        @Path("safe_address") safeChecksumAddress: String,
         @Body pushesRegistration: PushesRegistration
     )
 

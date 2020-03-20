@@ -11,6 +11,7 @@ import io.gnosis.kouban.data.backend.PushServiceApi
 import io.gnosis.kouban.helpers.LocalNotificationManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 
@@ -67,7 +68,7 @@ class PushServiceRepository(
     fun registerSafe(safe: Solidity.Address) {
         runBlocking(Dispatchers.IO) {
             kotlin.runCatching {
-                pushServiceApi.registerPushes(BLOCKCHAIN_NETWORK, safe.asEthereumAddressString(), PushServiceApi.PushesRegistration(prefs.clientId))
+                pushServiceApi.registerPushes(BLOCKCHAIN_NETWORK, safe.asEthereumAddressChecksumString(), PushServiceApi.PushesRegistration(prefs.clientId))
             }.onSuccess {
                 prefs.safe = safe
             }.onFailure {
