@@ -15,3 +15,7 @@ fun Date.onlyDate(): Date =
 fun Date.afterOrEqual(other: Date?): Boolean = other != null && (this == other || this.after(other))
 
 fun Date.beforeOrEqual(other: Date?): Boolean = other != null && (this == other || this.before(other))
+
+object DateFormats {
+    const val backend = "yyyy-MM-dd'T'HH:mm:ssX"
+}

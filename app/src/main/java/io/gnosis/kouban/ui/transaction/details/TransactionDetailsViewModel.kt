@@ -21,11 +21,13 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.hexStringToByteArray
 import java.math.BigInteger
+import java.text.SimpleDateFormat
 
 class TransactionDetailsViewModel(
     private val transactionHash: String,
     private val safeRepository: SafeRepository,
-    private val addressManager: SafeAddressManager
+    private val addressManager: SafeAddressManager,
+    private val dateTimeZoneFormat: SimpleDateFormat
 ) : ViewModel() {
 
     fun load() =
@@ -56,6 +58,12 @@ class TransactionDetailsViewModel(
                     SpannableString(second.execInfo.fees.shiftedString(ETH_TOKEN_INFO.decimals, decimalsToDisplay = ETH_TOKEN_INFO.decimals))
                 )
             )
+            second.submissionDate?.let { dateTimeZoneFormat.format(it) }?.let {
+                add(LabelDescription(R.string.transaction_details_submission_date_label, SpannableString(it)))
+            }
+            second.executionDate?.let { dateTimeZoneFormat.format(it) }?.let {
+                add(LabelDescription(R.string.transaction_details_execution_date_label, SpannableString(it)))
+            }
             add(LabelDescription(R.string.transaction_details_operation_label, SpannableString(second.tx.operation.name)))
             add(LabelDescription(R.string.transaction_details_value_label, SpannableString(second.tx.value.asDecimalString())))
             second.txHash?.let { add(Link(it, R.string.view_transaction_on)) }

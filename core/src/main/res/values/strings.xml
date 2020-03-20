@@ -60,6 +60,8 @@
     <string name="transaction_details_raw_data_label">Raw Data</string>
     <string name="transaction_details_operation_label">Operation</string>
     <string name="transaction_details_value_label">Value</string>
+    <string name="transaction_details_submission_date_label">Submission date</string>
+    <string name="transaction_details_execution_date_label">Execution date</string>
 
     <string name="view_transaction_on">View transaction on Etherscan.io</string>
 

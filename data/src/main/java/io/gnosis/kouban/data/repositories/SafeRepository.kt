@@ -26,6 +26,7 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.*
 import java.math.BigInteger
+import java.text.SimpleDateFormat
 
 class SafeRepository(
     context: Context,
@@ -35,7 +36,8 @@ class SafeRepository(
     private val magicApi: MagicApi,
     private val searchManager: SearchManager,
     private val preferencesManager: PreferencesManager,
-    private val tokensRepository: TokenRepository
+    private val tokensRepository: TokenRepository,
+    private val backendDateFormat: SimpleDateFormat
 ) {
 
     private val accountPrefs = context.getSharedPreferences(ACC_PREF_NAME, Context.MODE_PRIVATE)
@@ -345,6 +347,8 @@ class SafeRepository(
             confirmations = confirmations.map { confirmation ->
                 confirmation.owner.asEthereumAddress()!! to confirmation.signature
             },
+            executionDate = executionDate?.let { backendDateFormat.parse(it) },
+            submissionDate = backendDateFormat.parse(submissionDate),
             executed = isExecuted,
             txHash = transactionHash
         )
