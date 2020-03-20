@@ -347,8 +347,8 @@ class SafeRepository(
             confirmations = confirmations.map { confirmation ->
                 confirmation.owner.asEthereumAddress()!! to confirmation.signature
             },
-            executionDate = executionDate?.let { backendDateFormat.parse(it) },
-            submissionDate = backendDateFormat.parse(submissionDate),
+            executionDate = executionDate?.let { runCatching { backendDateFormat.parse(it) }.getOrNull() },
+            submissionDate = runCatching { backendDateFormat.parse(submissionDate) }.getOrNull(),
             executed = isExecuted,
             txHash = transactionHash
         )
