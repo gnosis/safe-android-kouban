@@ -64,7 +64,7 @@
             android:id="@+id/connect_safe_address_status_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/selectable_background"
+            android:background="@drawable/background_selectable"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_check_circle_green_24dp"
             tools:visibility="visible" />
