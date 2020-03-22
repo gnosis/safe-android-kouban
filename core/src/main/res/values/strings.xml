@@ -81,6 +81,4 @@
 
     <string name="hash_clipboard_success">Hash copied to clipboard</string>
     <string name="share_hash">Share hash</string>
-
-
 </resources>
