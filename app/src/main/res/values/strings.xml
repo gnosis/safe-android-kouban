@@ -9,4 +9,6 @@
     <string name="push_tx_multisig_executed">Executed Multisig Transaction</string>
     <string name="push_tx_incoming_ether">Incoming Ether</string>
     <string name="push_tx_incoming_token">Incoming Token</string>
+
+    <string name="select_token_hint">Select token for balance widget</string>
 </resources>
