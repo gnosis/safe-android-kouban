@@ -1,12 +1,8 @@
 package io.gnosis.kouban.ui.transaction.details
 
-import android.content.ClipboardManager
-import android.content.Context
 import android.text.Spannable
-import android.text.SpannableString
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.viewbinding.ViewBinding
 import io.gnosis.kouban.core.R
@@ -72,7 +68,7 @@ class LabelHashViewHolder(
     override fun bind(item: LabelHash) {
         with(viewBinding.labelDescriptionLayout) {
             label.setText(item.label)
-            description.text = item.hash.formatHash(root.context, startLength = 6)
+            description.text = item.hash.formatHash(root.context, prefixLength = 6)
         }
         viewBinding.root.setOnLongClickListener { view ->
             view.context.copyToClipboard(view.context.getString(R.string.share_hash), item.hash) {
@@ -141,7 +137,7 @@ class AddressDetailsViewHolder(
                 true
             }
             addressImage.setAddress(item)
-            address.text = item.formatEthAddress(root.context, startLength = 6)
+            address.text = item.formatEthAddress(root.context, prefixLength = 6)
         }
     }
 }
