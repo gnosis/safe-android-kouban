@@ -15,3 +15,5 @@ fun Date.onlyDate(): Date =
 fun Date.afterOrEqual(other: Date?): Boolean = other != null && (this == other || this.after(other))
 
 fun Date.beforeOrEqual(other: Date?): Boolean = other != null && (this == other || this.before(other))
+
+fun String.formatBackendDate() = this.replace("Z", "").replace("T", ", ").split(".").first()

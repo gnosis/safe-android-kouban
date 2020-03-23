@@ -8,5 +8,7 @@ data class ServiceSafeTx(
     val execInfo: SafeTxExecInfo,
     val confirmations: List<Pair<Solidity.Address, String?>>,
     val executed: Boolean,
+    val executionDate: String?,
+    val submissionDate: String,
     val txHash: String?
 )

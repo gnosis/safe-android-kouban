@@ -9,6 +9,7 @@ import io.gnosis.kouban.core.managers.SafeAddressManager
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
+import io.gnosis.kouban.core.utils.formatEthAddress
 import io.gnosis.kouban.data.models.DataInfo
 import io.gnosis.kouban.data.models.SafeTx
 import io.gnosis.kouban.data.models.ServiceSafeTx
@@ -19,8 +20,10 @@ import io.gnosis.kouban.data.utils.shiftedString
 import kotlinx.coroutines.Dispatchers
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asDecimalString
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexStringToByteArray
 import java.math.BigInteger
+import java.text.SimpleDateFormat
 
 class TransactionDetailsViewModel(
     private val transactionHash: String,
@@ -53,13 +56,37 @@ class TransactionDetailsViewModel(
             add(
                 LabelDescription(
                     R.string.transaction_details_network_fees_label,
-                    SpannableString(second.execInfo.fees.shiftedString(ETH_TOKEN_INFO.decimals, decimalsToDisplay = ETH_TOKEN_INFO.decimals))
+                    SpannableString(
+                        second.execInfo.fees.shiftedString(
+                            ETH_TOKEN_INFO.decimals,
+                            decimalsToDisplay = ETH_TOKEN_INFO.decimals
+                        ) + " ${ETH_TOKEN_INFO.symbol}"
+                    )
                 )
             )
+
+            add(LabelDescription(R.string.transaction_details_submission_date_label, SpannableString(second.submissionDate)))
+            second.executionDate?.let {
+                add(LabelDescription(R.string.transaction_details_execution_date_label, SpannableString(it)))
+            }
             add(LabelDescription(R.string.transaction_details_operation_label, SpannableString(second.tx.operation.name)))
-            add(LabelDescription(R.string.transaction_details_value_label, SpannableString(second.tx.value.asDecimalString())))
-            second.txHash?.let { add(Link(it, R.string.view_transaction_on)) }
-            add(LabelDescription(R.string.transaction_details_raw_data_label, SpannableString(second.tx.data)))
+            add(
+                LabelDescription(
+                    R.string.transaction_details_value_label, SpannableString(
+                        second.tx.value.shiftedString(
+                            ETH_TOKEN_INFO.decimals,
+                            decimalsToDisplay = ETH_TOKEN_INFO.decimals
+                        ) + " ${ETH_TOKEN_INFO.symbol}"
+                    )
+                )
+            )
+            second.txHash?.let {
+                add(LabelHash(R.string.transaction_details_transaction_hash_label, it))
+                add(Link(it, R.string.view_transaction_on))
+            }
+            second.tx.data.takeUnless { it.isNullOrEmpty() }?.let {
+                add(LabelDescription(R.string.transaction_details_raw_data_label, SpannableString(it)))
+            }
         }
     }
 

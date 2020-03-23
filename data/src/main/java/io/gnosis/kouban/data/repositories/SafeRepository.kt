@@ -13,10 +13,8 @@ import io.gnosis.kouban.data.managers.TransactionTimestampFilter
 import io.gnosis.kouban.data.managers.TransactionTokenSymbolFilter
 import io.gnosis.kouban.data.managers.TransactionTypeFilter
 import io.gnosis.kouban.data.models.*
-import io.gnosis.kouban.data.utils.asMiddleEllipsized
+import io.gnosis.kouban.data.utils.*
 import io.gnosis.kouban.data.utils.nullOnThrow
-import io.gnosis.kouban.data.utils.performCall
-import io.gnosis.kouban.data.utils.shiftedString
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -26,6 +24,7 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.*
 import java.math.BigInteger
+import java.text.SimpleDateFormat
 
 class SafeRepository(
     context: Context,
@@ -345,6 +344,8 @@ class SafeRepository(
             confirmations = confirmations.map { confirmation ->
                 confirmation.owner.asEthereumAddress()!! to confirmation.signature
             },
+            executionDate = executionDate?.formatBackendDate(),
+            submissionDate = submissionDate.formatBackendDate(),
             executed = isExecuted,
             txHash = transactionHash
         )

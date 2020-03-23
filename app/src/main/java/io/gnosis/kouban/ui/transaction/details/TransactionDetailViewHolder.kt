@@ -1,27 +1,22 @@
 package io.gnosis.kouban.ui.transaction.details
 
 import android.text.Spannable
-import android.text.SpannableString
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.viewbinding.ViewBinding
 import io.gnosis.kouban.core.R
 import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
-import io.gnosis.kouban.core.utils.asFormattedDateTime
-import io.gnosis.kouban.core.utils.formatEthAddress
-import io.gnosis.kouban.core.utils.setupEtherscanTransactionUrl
+import io.gnosis.kouban.core.utils.*
 import io.gnosis.kouban.data.models.DataInfo
 import io.gnosis.kouban.data.models.TransactionType
 import io.gnosis.kouban.data.models.TransferInfo
 import io.gnosis.kouban.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.gnosis.kouban.data.utils.shiftedString
-import io.gnosis.kouban.databinding.ItemDetailsAddressBinding
-import io.gnosis.kouban.databinding.ItemDetailsLabelDescriptionBinding
-import io.gnosis.kouban.databinding.ItemDetailsTransactionTypeBinding
-import io.gnosis.kouban.databinding.ItemTransactionDetailsLinkBinding
+import io.gnosis.kouban.databinding.*
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.copyToClipboard
+import pm.gnosis.svalinn.common.utils.snackbar
 
 abstract class BaseDetailViewHolder<T>(viewBinding: ViewBinding) : BaseViewHolder<T>(viewBinding)
 
@@ -57,6 +52,29 @@ class LabelDateViewHolder(
             label.setText(item.label)
             item.date?.let { description.text = it }
             item.dateInSecs?.let { description.text = it.asFormattedDateTime(root.context) }
+        }
+    }
+}
+
+class LabelHash(
+    @StringRes val label: Int,
+    val hash: String
+)
+
+class LabelHashViewHolder(
+    private val viewBinding: ItemDetailsHashBinding
+) : BaseDetailViewHolder<LabelHash>(viewBinding) {
+
+    override fun bind(item: LabelHash) {
+        with(viewBinding.labelDescriptionLayout) {
+            label.setText(item.label)
+            description.text = item.hash.formatHash(root.context, prefixLength = 6)
+        }
+        viewBinding.root.setOnLongClickListener { view ->
+            view.context.copyToClipboard(view.context.getString(R.string.share_hash), item.hash) {
+                snackbar(view, R.string.hash_clipboard_success)
+            }
+            true
         }
     }
 }
@@ -112,8 +130,14 @@ class AddressDetailsViewHolder(
 
     override fun bind(item: Solidity.Address) {
         with(viewBinding) {
+            viewBinding.root.setOnLongClickListener { view ->
+                view.context.copyToClipboard(view.context.getString(R.string.share_address), item.toString()) {
+                    snackbar(view, R.string.address_clipboard_success)
+                }
+                true
+            }
             addressImage.setAddress(item)
-            address.text = item.formatEthAddress(root.context)
+            address.text = item.formatEthAddress(root.context, prefixLength = 6)
         }
     }
 }
