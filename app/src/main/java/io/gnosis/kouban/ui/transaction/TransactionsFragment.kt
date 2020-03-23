@@ -6,7 +6,9 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import io.gnosis.kouban.core.ui.base.BaseFragment
 import io.gnosis.kouban.databinding.FragmentTransactionsBinding
 import io.gnosis.kouban.core.ui.adapter.BaseAdapter
@@ -37,7 +39,10 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            list.layoutManager = LinearLayoutManager(context)
+            list.layoutManager = FlexboxLayoutManager(context).apply {
+                flexDirection = FlexDirection.ROW
+                justifyContent = JustifyContent.CENTER
+            }
             list.adapter = adapter
 
             swipeToRefresh.setOnRefreshListener {

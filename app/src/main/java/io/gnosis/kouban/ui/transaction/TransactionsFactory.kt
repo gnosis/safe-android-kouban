@@ -10,16 +10,18 @@ import io.gnosis.kouban.databinding.ItemTransactionBinding
 import io.gnosis.kouban.core.ui.adapter.BaseFactory
 import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
 import io.gnosis.kouban.core.ui.adapter.UnsupportedViewType
+import io.gnosis.kouban.data.managers.Filter
 import io.gnosis.kouban.data.models.ServiceSafeTx
 import io.gnosis.kouban.data.models.Transaction
 import io.gnosis.kouban.data.utils.asMiddleEllipsized
 import io.gnosis.kouban.data.utils.shiftedString
 import io.gnosis.kouban.data.utils.shortChecksumString
+import io.gnosis.kouban.databinding.ItemFilterBinding
 import io.gnosis.kouban.databinding.ItemHeaderBinding
 import io.gnosis.kouban.databinding.ItemLabelBinding
 
 enum class TransactionViewTypes {
-    Header, Transaction, Label
+    Header, Transaction, Label, Filter
 }
 
 class TransactionsFactory(private val picasso: Picasso) : BaseFactory<BaseTransactionViewHolder<Any>>() {
@@ -29,6 +31,7 @@ class TransactionsFactory(private val picasso: Picasso) : BaseFactory<BaseTransa
             TransactionViewTypes.Transaction.ordinal -> TransactionViewHolder(viewBinding as ItemTransactionBinding, picasso)
             TransactionViewTypes.Header.ordinal -> HeaderViewHolder(viewBinding as ItemHeaderBinding)
             TransactionViewTypes.Label.ordinal -> LabelViewHolder(viewBinding as ItemLabelBinding)
+            TransactionViewTypes.Filter.ordinal -> FilterViewHolder(viewBinding as ItemFilterBinding)
             else -> throw UnsupportedViewType("TransactionsFactory $viewType")
         } as BaseTransactionViewHolder<Any>
     }
@@ -38,6 +41,7 @@ class TransactionsFactory(private val picasso: Picasso) : BaseFactory<BaseTransa
             TransactionViewTypes.Transaction.ordinal -> ItemTransactionBinding.inflate(layoutInflater, parent, false)
             TransactionViewTypes.Header.ordinal -> ItemHeaderBinding.inflate(layoutInflater, parent, false)
             TransactionViewTypes.Label.ordinal -> ItemLabelBinding.inflate(layoutInflater, parent, false)
+            TransactionViewTypes.Filter.ordinal -> ItemFilterBinding.inflate(layoutInflater, parent, false)
             else -> throw UnsupportedViewType("TransactionsFactory $viewType")
         }
     }
@@ -47,6 +51,7 @@ class TransactionsFactory(private val picasso: Picasso) : BaseFactory<BaseTransa
             is Header -> TransactionViewTypes.Header.ordinal
             is Transaction -> TransactionViewTypes.Transaction.ordinal
             is String -> TransactionViewTypes.Label.ordinal
+            is FilterView<*> -> TransactionViewTypes.Filter.ordinal
             else -> throw UnsupportedViewType(item.toString())
         }
 

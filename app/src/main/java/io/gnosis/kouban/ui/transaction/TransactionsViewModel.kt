@@ -9,6 +9,8 @@ import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
 import io.gnosis.kouban.core.utils.asFormattedDateTime
 import io.gnosis.kouban.data.managers.SearchManager
+import io.gnosis.kouban.data.managers.TransactionTokenSymbolFilter
+import io.gnosis.kouban.data.managers.TransactionTypeFilter
 import io.gnosis.kouban.data.models.Transaction
 import io.gnosis.kouban.data.repositories.EnsRepository
 import io.gnosis.kouban.data.repositories.SafeRepository
@@ -34,6 +36,23 @@ class TransactionsViewModel(
                 .onSuccess {
                     emit(Loading(false))
                     val listItems = mutableListOf<Any>().apply {
+                        searchManager.getFilterFor(TransactionTokenSymbolFilter::class.java)?.let { tokenFilter ->
+                            tokenFilter.availableValues.forEach { availableValue ->
+                                add(FilterView(availableValue, availableValue, R.drawable.ic_check_black_24dp) {
+                                    if (tokenFilter.selectedValue.contains(it)) tokenFilter.selectedValue.remove(it)
+                                    else tokenFilter.selectedValue.add(it)
+                                })
+                            }
+                        }
+                        searchManager.getFilterFor(TransactionTypeFilter::class.java)?.let { typeFilter ->
+                            typeFilter.availableValues.forEach { availableValue ->
+                                add(FilterView(availableValue, availableValue.name, R.drawable.ic_check_black_24dp) {
+                                    if (typeFilter.selectedValue.contains(it)) typeFilter.selectedValue.remove(it)
+                                    else typeFilter.selectedValue.add(it)
+                                })
+                            }
+                        }
+
                         searchManager.filter(it.pending).takeUnless { it.isEmpty() }?.let { transactions ->
                             add(Header(R.string.pending_label))
                             addAll(withDateLabels(transactions))

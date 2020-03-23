@@ -1,7 +1,12 @@
 package io.gnosis.kouban.ui.transaction
 
+import android.app.admin.DevicePolicyManager
+import android.service.autofill.OnClickAction
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import androidx.viewbinding.ViewBinding
@@ -12,6 +17,7 @@ import io.gnosis.kouban.core.utils.asFormattedDateTime
 import io.gnosis.kouban.core.utils.openUrl
 import io.gnosis.kouban.core.utils.setTransactionIcon
 import io.gnosis.kouban.data.BuildConfig
+import io.gnosis.kouban.data.managers.Filter
 import io.gnosis.kouban.data.models.DataInfo
 import io.gnosis.kouban.data.models.Transaction
 import io.gnosis.kouban.data.models.TransactionType
@@ -19,6 +25,7 @@ import io.gnosis.kouban.data.models.TransferInfo
 import io.gnosis.kouban.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.gnosis.kouban.data.utils.asMiddleEllipsized
 import io.gnosis.kouban.data.utils.shiftedString
+import io.gnosis.kouban.databinding.ItemFilterBinding
 import io.gnosis.kouban.databinding.ItemHeaderBinding
 import io.gnosis.kouban.databinding.ItemLabelBinding
 import io.gnosis.kouban.databinding.ItemTransactionBinding
@@ -106,5 +113,26 @@ class LabelViewHolder(private val viewBinding: ItemLabelBinding) : BaseTransacti
 
     override fun bind(item: String) {
         viewBinding.label.text = item
+    }
+}
+
+data class FilterView<T>(
+    val value: T,
+    val label : String,
+    @DrawableRes val drawableId: Int,
+    val onClickAction: (T) -> Unit
+)
+
+class FilterViewHolder(
+    private val viewBinding: ItemFilterBinding
+) : BaseTransactionViewHolder<FilterView<Any>>(viewBinding) {
+
+    override fun bind(item: FilterView<Any>) {
+        with(viewBinding.chip) {
+            text = item.label
+            chipIcon = ResourcesCompat.getDrawable(resources, item.drawableId, context.theme)
+            setOnCheckedChangeListener { buttonView, isChecked -> item.onClickAction(item.value) }
+//            setOnClickListener { item.onClickAction(item.value) }
+        }
     }
 }

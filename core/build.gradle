@@ -21,6 +21,8 @@ dependencies {
     api "androidx.lifecycle:lifecycle-extensions:${versions.androidx_lifecycle}"
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.androidx_lifecycle}"
 
+    api "com.google.android:flexbox:${versions.android_flexbox_layout}"
+
     api "org.koin:koin-android:$versions.koin"
     api "org.koin:koin-androidx-scope:$versions.koin"
     api "org.koin:koin-androidx-viewmodel:$versions.koin"
