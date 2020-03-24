@@ -3,8 +3,10 @@ package io.gnosis.kouban.ui.balances
 import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.RemoteViews
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +38,7 @@ import org.koin.androidx.scope.currentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.getColorCompat
 
 class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnTokenClickedListener {
 
@@ -50,6 +53,9 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
 
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val appWidgetId = intent?.extras?.getInt(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
@@ -59,7 +65,7 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
         // This way, if the user backs-out of the Activity before reaching the end,
         // the App Widget host is notified that the configuration was cancelled and
         // the App Widget will not be added.
-        setResult(Activity.RESULT_OK, Intent().apply {
+        setResult(Activity.RESULT_CANCELED, Intent().apply {
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         })
@@ -71,12 +77,20 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
             swipeToRefresh.setOnRefreshListener {
                 viewModel.loadBalancesForCurrentSafe()
             }
+
+            fab.setColorFilter(getColorCompat(R.color.white), PorterDuff.Mode.SRC_IN)
+            fab.setOnClickListener {
+                viewModel.onTokenSelectionSubmitted()
+            }
         }
-        
+
         viewModel.init()
+        viewModel.loadingEvents.observe(this, Observer {
+            binding.swipeToRefresh.isRefreshing = it.isLoading
+        })
         viewModel.events.observe(this, Observer {
 
-            when(it) {
+            when (it) {
 
                 is Error -> {
                     if (it.throwable is NoSafeAddressSet) {
@@ -110,6 +124,17 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
             }
         })
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
 
     override fun onTokenClicked(token: TokenRepository.TokenInfo?) {
         viewModel.onTokenSelected(token)
@@ -146,7 +171,7 @@ class BalanceItemViewHolder(
 
             root.setOnClickListener {
                 tokenItemRadio.isChecked = !tokenItemRadio.isChecked
-                tokenClickListener.onTokenClicked(if(tokenItemRadio.isChecked) item.tokenInfo else null)
+                tokenClickListener.onTokenClicked(if (tokenItemRadio.isChecked) item.tokenInfo else null)
             }
         }
     }
@@ -159,6 +184,7 @@ class BalancesViewModel(
 ) : ViewModel() {
 
     val events = MutableLiveData<ViewState>()
+    val loadingEvents = MutableLiveData<Loading>()
     private lateinit var safeAddress: Solidity.Address
     private var selectedToken: TokenRepository.TokenInfo? = null
 
@@ -179,17 +205,17 @@ class BalancesViewModel(
     fun loadBalancesForCurrentSafe() {
         viewModelScope.launch(Dispatchers.IO) {
 
-            events.postValue(Loading(true))
+            loadingEvents.postValue(Loading(true))
 
             kotlin.runCatching {
                 safeRepository.loadTokenBalances(safeAddress)
             }
                 .onSuccess {
-                    events.postValue(Loading(false))
+                    loadingEvents.postValue(Loading(false))
                     events.postValue(TokenBalances(it))
                 }
                 .onFailure {
-                    events.postValue(Loading(false))
+                    loadingEvents.postValue(Loading(false))
                     events.postValue(Error(it))
                 }
         }
