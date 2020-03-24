@@ -24,6 +24,7 @@ import io.gnosis.kouban.R
 import io.gnosis.kouban.data.utils.asMiddleEllipsized
 import io.gnosis.kouban.ui.filter.transaction.TransactionFilterDialog
 import pm.gnosis.utils.asEthereumAddressString
+import java.util.logging.Filter
 
 class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
 
@@ -46,11 +47,12 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
             list.adapter = adapter
 
             swipeToRefresh.setOnRefreshListener {
-                load(currentSafe)
+                viewModel.loadTransactionsOf(currentSafe)
             }
         }
-        load(currentSafe)
+        viewModel.loadTransactionsOf(currentSafe)
         setupToolbar()
+        bind()
     }
 
     private fun setupToolbar() {
@@ -81,18 +83,21 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
             )
             R.id.transaction_filter -> {
                 TransactionFilterDialog().apply {
-                    onDismissCallback = { load(navArgs.safeAddress.asEthereumAddress()!!) }
+                    onDismissCallback = { viewModel.loadTransactionsOf(navArgs.safeAddress.asEthereumAddress()!!) }
                 }.show(childFragmentManager, TransactionFilterDialog::class.java.simpleName)
             }
         }
     }
 
-    private fun load(address: Solidity.Address) {
-        viewModel.loadTransactionsOf(address).observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is Loading -> binding.swipeToRefresh.isRefreshing = it.isLoading
-                is ListViewItems -> adapter.setItemsUnsafe(it.listItems)
-                is Error -> onError(it.throwable)
+    private fun bind() {
+        viewModel.viewState.observe(viewLifecycleOwner, Observer {
+            with(binding.swipeToRefresh) {
+                isRefreshing = false
+                when (it) {
+                    is Loading -> binding.swipeToRefresh.isRefreshing = it.isLoading
+                    is ListViewItems -> adapter.setItemsUnsafe(it.listItems)
+                    is Error -> onError(it.throwable)
+                }
             }
         })
     }

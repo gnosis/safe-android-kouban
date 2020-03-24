@@ -1,26 +1,24 @@
 package io.gnosis.kouban.ui.transaction
 
-import android.app.admin.DevicePolicyManager
-import android.service.autofill.OnClickAction
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import androidx.viewbinding.ViewBinding
 import com.squareup.picasso.Picasso
-import io.gnosis.kouban.core.R
 import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
 import io.gnosis.kouban.core.utils.asFormattedDateTime
 import io.gnosis.kouban.core.utils.openUrl
 import io.gnosis.kouban.core.utils.setTransactionIcon
 import io.gnosis.kouban.data.BuildConfig
-import io.gnosis.kouban.data.managers.Filter
+import io.gnosis.kouban.data.managers.SearchManager
+import io.gnosis.kouban.data.managers.TransactionTimestampFilter
 import io.gnosis.kouban.data.models.DataInfo
 import io.gnosis.kouban.data.models.Transaction
 import io.gnosis.kouban.data.models.TransactionType
+import io.gnosis.kouban.core.R
 import io.gnosis.kouban.data.models.TransferInfo
 import io.gnosis.kouban.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.gnosis.kouban.data.utils.asMiddleEllipsized
@@ -30,6 +28,7 @@ import io.gnosis.kouban.databinding.ItemHeaderBinding
 import io.gnosis.kouban.databinding.ItemLabelBinding
 import io.gnosis.kouban.databinding.ItemTransactionBinding
 import pm.gnosis.utils.asEthereumAddressString
+import java.util.*
 
 abstract class BaseTransactionViewHolder<T>(viewBinding: ViewBinding) : BaseViewHolder<T>(viewBinding)
 
@@ -116,23 +115,50 @@ class LabelViewHolder(private val viewBinding: ItemLabelBinding) : BaseTransacti
     }
 }
 
-data class FilterView<T>(
+data class CheckFilterView<T>(
     val value: T,
-    val label : String,
+    val label: String,
     @DrawableRes val drawableId: Int,
-    val onClickAction: (T) -> Unit
+    val toggleValue: (T) -> Boolean
 )
 
-class FilterViewHolder(
-    private val viewBinding: ItemFilterBinding
-) : BaseTransactionViewHolder<FilterView<Any>>(viewBinding) {
+data class DateFilterView(
+    @StringRes val label: Int,
+    val onCleared: () -> Unit,
+    val onDateSelect: (Date) -> Unit
+)
 
-    override fun bind(item: FilterView<Any>) {
+class CheckFilterViewHolder(
+    private val viewBinding: ItemFilterBinding
+) : BaseTransactionViewHolder<CheckFilterView<Any>>(viewBinding) {
+
+    override fun bind(item: CheckFilterView<Any>) {
         with(viewBinding.chip) {
+            isCheckable = true
             text = item.label
             chipIcon = ResourcesCompat.getDrawable(resources, item.drawableId, context.theme)
-            setOnCheckedChangeListener { buttonView, isChecked -> item.onClickAction(item.value) }
-//            setOnClickListener { item.onClickAction(item.value) }
+            setOnClickListener {
+                isChecked = item.toggleValue(item.value)
+                invalidate()
+            }
         }
     }
 }
+
+class DateFilterViewHolder(
+    private val viewBinding: ItemFilterBinding,
+    private val searchManager: SearchManager
+) : BaseTransactionViewHolder<DateFilterView>(viewBinding) {
+
+    override fun bind(item: DateFilterView) {
+        with(viewBinding.chip) {
+            isCheckable = false
+            chipIcon = ResourcesCompat.getDrawable(resources, R.drawable.ic_date_range_black_24dp, context.theme)
+            searchManager.getFilterFor(TransactionTimestampFilter::class.java)?.let {
+
+            }
+        }
+    }
+}
+
+

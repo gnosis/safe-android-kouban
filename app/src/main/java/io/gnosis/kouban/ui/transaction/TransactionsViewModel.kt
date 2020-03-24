@@ -1,22 +1,23 @@
 package io.gnosis.kouban.ui.transaction
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import io.gnosis.kouban.R
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
 import io.gnosis.kouban.core.utils.asFormattedDateTime
 import io.gnosis.kouban.data.managers.SearchManager
+import io.gnosis.kouban.data.managers.TransactionTimestampFilter
 import io.gnosis.kouban.data.managers.TransactionTokenSymbolFilter
 import io.gnosis.kouban.data.managers.TransactionTypeFilter
 import io.gnosis.kouban.data.models.Transaction
 import io.gnosis.kouban.data.repositories.EnsRepository
 import io.gnosis.kouban.data.repositories.SafeRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 import java.text.SimpleDateFormat
+import java.util.*
 
 class TransactionsViewModel(
     private val safeRepository: SafeRepository,
@@ -25,33 +26,20 @@ class TransactionsViewModel(
     private val dateLabelFormatter: SimpleDateFormat
 ) : ViewModel() {
 
-    fun loadTransactionsOf(address: Solidity.Address) =
-        liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
-            emit(Loading(true))
+    val viewState = MutableLiveData<ViewState>()
+
+    fun loadTransactionsOf(address: Solidity.Address) {
+        viewModelScope.launch(Dispatchers.IO) {
+            viewState.postValue(Loading(true))
             runCatching { safeRepository.getTransactions(address) }
                 .onFailure {
-                    emit(Loading(false))
-                    emit(Error(it))
+                    viewState.postValue(Error(it))
                 }
                 .onSuccess {
-                    emit(Loading(false))
                     val listItems = mutableListOf<Any>().apply {
-                        searchManager.getFilterFor(TransactionTokenSymbolFilter::class.java)?.let { tokenFilter ->
-                            tokenFilter.availableValues.forEach { availableValue ->
-                                add(FilterView(availableValue, availableValue, R.drawable.ic_check_black_24dp) {
-                                    if (tokenFilter.selectedValue.contains(it)) tokenFilter.selectedValue.remove(it)
-                                    else tokenFilter.selectedValue.add(it)
-                                })
-                            }
-                        }
-                        searchManager.getFilterFor(TransactionTypeFilter::class.java)?.let { typeFilter ->
-                            typeFilter.availableValues.forEach { availableValue ->
-                                add(FilterView(availableValue, availableValue.name, R.drawable.ic_check_black_24dp) {
-                                    if (typeFilter.selectedValue.contains(it)) typeFilter.selectedValue.remove(it)
-                                    else typeFilter.selectedValue.add(it)
-                                })
-                            }
-                        }
+                        tokenSymbolFilters(address)
+                        transactionTypeFilters(address)
+                        dateFilters(address)
 
                         searchManager.filter(it.pending).takeUnless { it.isEmpty() }?.let { transactions ->
                             add(Header(R.string.pending_label))
@@ -63,9 +51,60 @@ class TransactionsViewModel(
                             addAll(withDateLabels(transactions))
                         }
                     }
-                    emit(ListViewItems(listItems))
+                    viewState.postValue(ListViewItems(listItems))
                 }
         }
+    }
+
+    private fun MutableList<Any>.transactionTypeFilters(address: Solidity.Address) {
+        searchManager.getFilterFor(TransactionTypeFilter::class.java)?.let { typeFilter ->
+            typeFilter.availableValues.forEach { availableValue ->
+                add(CheckFilterView(availableValue, availableValue.name, R.drawable.ic_check_black_24dp) {
+                    if (typeFilter.selectedValue.contains(it)) {
+                        typeFilter.selectedValue.remove(it)
+                        false
+                    } else {
+                        typeFilter.selectedValue.add(it)
+                        true
+                    }.also { applyFilters(address) }
+                })
+            }
+        }
+    }
+
+    private fun MutableList<Any>.tokenSymbolFilters(address: Solidity.Address) {
+        searchManager.getFilterFor(TransactionTokenSymbolFilter::class.java)?.let { tokenFilter ->
+            tokenFilter.availableValues.forEach { availableValue ->
+                add(CheckFilterView(availableValue, availableValue, R.drawable.ic_check_black_24dp) {
+                    if (tokenFilter.selectedValue.contains(it)) {
+                        tokenFilter.selectedValue.remove(it)
+                        false
+                    } else {
+                        tokenFilter.selectedValue.add(it)
+                        true
+                    }.also { applyFilters(address) }
+                })
+            }
+        }
+    }
+
+    private fun MutableList<Any>.dateFilters(address: Solidity.Address) {
+//        searchManager.getFilterFor()
+        add(DateFilterView(R.string.transaction_filter_date_from_hint, {
+
+        }) { fromDate ->
+            searchManager.getFilterFor(TransactionTimestampFilter::class.java)?.lowerBound = fromDate
+            applyFilters(address)
+        })
+        add(DateFilterView(R.string.transaction_filter_date_to_hint, {}) { toDate ->
+            searchManager.getFilterFor(TransactionTimestampFilter::class.java)?.upperBound = toDate
+            applyFilters(address)
+        })
+    }
+
+    private fun applyFilters(address: Solidity.Address) {
+        loadTransactionsOf(address)
+    }
 
     fun loadHeaderInfo(address: Solidity.Address) =
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
@@ -79,7 +118,6 @@ class TransactionsViewModel(
                 emit(Loading(false))
                 emit(ENSName(it))
             }
-
         }
 
     private fun withDateLabels(transactions: List<Transaction>): List<Any> =
