@@ -3,4 +3,10 @@
 
     <string name="channel_tx_notifications_name">Tx Notifications</string>
     <string name="channel_tx_notifications_description">Notifications about transactions.</string>
+
+    <string name="push_tx_new_confirmation">New confirmation</string>
+    <string name="push_tx_multisig_pending">Pending Multisig Transaction</string>
+    <string name="push_tx_multisig_executed">Executed Multisig Transaction</string>
+    <string name="push_tx_incoming_ether">Incoming Ether</string>
+    <string name="push_tx_incoming_token">Incoming Token</string>
 </resources>

@@ -66,9 +66,6 @@
 
     <string name="view_transaction_on">View transaction on Etherscan.io</string>
 
-    <string name="push_tx_message">You have a transaction</string>
-    <string name="push_tex_title">Transaction</string>
-
     <string name="transaction_filter_title">Filter Transactions</string>
 
     <string name="transaction_filter_date_from_hint">From:</string>
