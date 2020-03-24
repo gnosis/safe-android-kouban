@@ -57,6 +57,11 @@
                 android:resource="@xml/balances_widget_provider_info" />
         </receiver>
 
+        <service
+            android:name=".ui.balances.BalancesWidgetProvider$UpdateService"
+            android:exported="false">
+        </service>
+
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

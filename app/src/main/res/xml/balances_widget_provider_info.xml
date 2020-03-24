@@ -1,11 +1,11 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:minWidth="80dp"
-    android:minHeight="40dp"
+    android:minWidth="200dp"
+    android:minHeight="80dp"
 
-    android:minResizeWidth="20dp"
-    android:minResizeHeight="20dp"
+    android:minResizeWidth="80dp"
+    android:minResizeHeight="60dp"
 
-    android:updatePeriodMillis="0"
+    android:updatePeriodMillis="600000"
 
 
     android:initialLayout="@layout/widget_balances"

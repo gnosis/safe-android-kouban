@@ -1,6 +1,7 @@
 package io.gnosis.kouban.ui.balances
 
 import android.app.Activity
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -26,6 +27,7 @@ import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
+import io.gnosis.kouban.core.utils.CircleTransformation
 import io.gnosis.kouban.core.utils.setTransactionIcon
 import io.gnosis.kouban.data.models.Balance
 import io.gnosis.kouban.data.repositories.SafeRepository
@@ -33,8 +35,10 @@ import io.gnosis.kouban.data.repositories.TokenRepository
 import io.gnosis.kouban.data.utils.shiftedString
 import io.gnosis.kouban.databinding.ItemTokenBinding
 import io.gnosis.kouban.databinding.WidgetBalancesConfigureBinding
+import io.gnosis.kouban.ui.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.currentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -46,7 +50,7 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
 
     private val viewModel by currentScope.viewModel<BalancesViewModel>(this)
     private val adapter by currentScope.inject<BaseAdapter<BalanceItemViewHolder, Balance>> { parametersOf(this) }
-
+    private val picasso: Picasso by inject()
     private val binding by lazy { WidgetBalancesConfigureBinding.inflate(layoutInflater) }
 
 
@@ -122,14 +126,49 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
                 is TokenSelectionSubmitted -> {
 
                     val appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(this)
-                    RemoteViews(packageName, R.layout.widget_balances).also { views ->
-                        appWidgetManager.updateAppWidget(appWidgetId, views)
+
+                    // Create an Intent to launch ExampleActivity
+                    val pendingIntent: PendingIntent = Intent(this, MainActivity::class.java)
+                        .let { intent ->
+                            PendingIntent.getActivity(this, 0, intent, 0)
+                        }
+
+                    picasso.load(it.token.tokenInfo.icon)
+                    val tokenIconRessource = when {
+                        it.token.tokenInfo.icon == "local::ethereum" -> {
+                            io.gnosis.kouban.core.R.drawable.ic_ethereum_logo
+                        }
+                        it.token.tokenInfo.icon?.startsWith("local::") == true -> {
+                            io.gnosis.kouban.core.R.drawable.circle_background
+                        }
+                        !it.token.tokenInfo.icon.isNullOrBlank() ->
+                            null
+                        else ->
+                            io.gnosis.kouban.core.R.drawable.circle_background
                     }
 
-                    val resultValue = Intent().apply {
-                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                    // Get the layout for the App Widget and attach an on-click listener
+                    // to the button
+                    val views: RemoteViews = RemoteViews(
+                        packageName,
+                        R.layout.widget_balances
+                    ).apply {
+                        setOnClickPendingIntent(R.id.token_item_icon, pendingIntent)
+                        setTextViewText(R.id.token_item_symbol, it.token.tokenInfo.symbol)
+                        setTextViewText(R.id.safe_balance, it.token.balance.shiftedString(it.token.tokenInfo.decimals, 5))
+                        if (tokenIconRessource != null)
+                            setImageViewResource(R.id.token_item_icon, tokenIconRessource)
+                        else
+                            picasso
+                                .load(it.token.tokenInfo.icon)
+                                .transform(CircleTransformation).into(this, R.id.token_item_icon, intArrayOf(appWidgetId))
                     }
-                    setResult(Activity.RESULT_OK, resultValue)
+                    // Tell the AppWidgetManager to perform an update on the current app widget
+                    appWidgetManager?.updateAppWidget(appWidgetId, views)
+
+                    setResult(Activity.RESULT_OK, Intent().apply {
+                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                    })
                     finish()
                 }
             }
@@ -147,7 +186,7 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
             }
         }
 
-    override fun onTokenClicked(token: TokenRepository.TokenInfo?) {
+    override fun onTokenClicked(token: Balance?) {
         viewModel.onTokenSelected(token)
     }
 }
@@ -158,7 +197,7 @@ class BalancesItemFactory(
 ) : BaseFactory<BalanceItemViewHolder>() {
 
     interface OnTokenClickedListener {
-        fun onTokenClicked(token: TokenRepository.TokenInfo?)
+        fun onTokenClicked(tokenBalance: Balance?)
     }
 
     override fun newViewHolder(viewBinding: ViewBinding, viewType: Int) =
@@ -182,7 +221,7 @@ class BalanceItemViewHolder(
 
             root.setOnClickListener {
                 tokenItemRadio.isChecked = !tokenItemRadio.isChecked
-                tokenClickListener.onTokenClicked(if (tokenItemRadio.isChecked) item.tokenInfo else null)
+                tokenClickListener.onTokenClicked(if (tokenItemRadio.isChecked) item else null)
             }
         }
     }
@@ -200,7 +239,7 @@ class BalancesViewModel(
 
     private var widgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var safeAddress: Solidity.Address
-    private var selectedToken: TokenRepository.TokenInfo? = null
+    private var selectedToken: Balance? = null
 
     fun init(widgetId: Int) {
         this.widgetId = widgetId
@@ -236,17 +275,17 @@ class BalancesViewModel(
         }
     }
 
-    fun onTokenSelected(token: TokenRepository.TokenInfo?) {
+    fun onTokenSelected(tokenBalance: Balance?) {
         viewModelScope.launch(Dispatchers.IO) {
-            selectedToken = token
-            events.postValue(TokenSelection(token))
+            selectedToken = tokenBalance
+            events.postValue(TokenSelection(tokenBalance))
         }
     }
 
     fun onTokenSelectionSubmitted() {
         viewModelScope.launch(Dispatchers.IO) {
             selectedToken?.let {
-                widgetPrefs.saveTokenForWidget(it.address, widgetId)
+                widgetPrefs.saveTokenForWidget(it.tokenInfo.address, widgetId)
                 events.postValue(TokenSelectionSubmitted(it))
             }
         }
@@ -258,11 +297,11 @@ data class TokenBalances(
 ) : ViewState()
 
 data class TokenSelectionSubmitted(
-    val token: TokenRepository.TokenInfo
+    val token: Balance
 ) : ViewState()
 
 data class TokenSelection(
-    val token: TokenRepository.TokenInfo?
+    val token: Balance?
 ) : ViewState()
 
 class NoSafeAddressSet : Throwable()
