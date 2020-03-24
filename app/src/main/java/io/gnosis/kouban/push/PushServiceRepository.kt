@@ -19,7 +19,6 @@ import kotlinx.coroutines.runBlocking
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
-import io.gnosis.kouban.core.utils.openUrl
 
 class PushServiceRepository(
     private val context: Context,
@@ -153,14 +152,12 @@ class PushServiceRepository(
     }
 
     //TODO: get all relevant fields
-    sealed class PushMessage(
-        val type: String
-    ) {
+    sealed class PushMessage {
 
         data class NewConfirmation(
             val address: String,
             val txHash: String
-        ) : PushMessage(TYPE) {
+        ) : PushMessage() {
             companion object {
                 const val TYPE = "NEW_CONFIRMATION"
                 fun fromMap(params: Map<String, String>) =
@@ -174,7 +171,7 @@ class PushServiceRepository(
         data class PendingMultisigTransaction(
             val address: String,
             val txHash: String
-        ) : PushMessage(TYPE) {
+        ) : PushMessage() {
             companion object {
                 const val TYPE = "PENDING_MULTISIG_TRANSACTION"
                 fun fromMap(params: Map<String, String>) =
@@ -188,7 +185,7 @@ class PushServiceRepository(
         data class ExecutedMultisigTransaction(
             val address: String,
             val txHash: String
-        ) : PushMessage(TYPE) {
+        ) : PushMessage() {
             companion object {
                 const val TYPE = "EXECUTED_MULTISIG_TRANSACTION"
                 fun fromMap(params: Map<String, String>) =
@@ -202,7 +199,7 @@ class PushServiceRepository(
         data class IncomingEther(
             val address: String,
             val txHash: String
-        ) : PushMessage(TYPE) {
+        ) : PushMessage() {
             companion object {
                 const val TYPE = "INCOMING_ETHER"
                 fun fromMap(params: Map<String, String>) =
@@ -216,7 +213,7 @@ class PushServiceRepository(
         data class IncomingToken(
             val address: String,
             val txHash: String
-        ) : PushMessage(TYPE) {
+        ) : PushMessage() {
             companion object {
                 const val TYPE = "INCOMING_TOKEN"
                 fun fromMap(params: Map<String, String>) =
