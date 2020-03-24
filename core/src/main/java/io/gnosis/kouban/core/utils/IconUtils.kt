@@ -2,6 +2,8 @@ package io.gnosis.kouban.core.utils
 
 import android.graphics.*
 import android.widget.ImageView
+import android.widget.RemoteViews
+import androidx.annotation.IdRes
 import androidx.core.view.setPadding
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
@@ -30,6 +32,28 @@ fun ImageView.setTransactionIcon(picasso: Picasso, icon: String?) {
             setImageResource(R.drawable.circle_background)
     }
 }
+
+fun RemoteViews.setTransactionIcon(@IdRes imageViewId: Int, picasso: Picasso, icon: String?, appWidgetIds: IntArray) {
+    setViewPadding(imageViewId, 0, 0, 0, 0)
+    when {
+        icon == "local::ethereum" -> {
+            setImageViewResource(imageViewId, R.drawable.ic_ethereum_logo)
+        }
+        icon?.startsWith("local::") == true -> {
+            setImageViewResource(imageViewId, R.drawable.circle_background)
+        }
+        !icon.isNullOrBlank() ->
+            picasso
+                .load(icon)
+                .placeholder(R.drawable.circle_background)
+                .error(R.drawable.circle_background)
+                .transform(CircleTransformation)
+                .into(this, imageViewId, appWidgetIds)
+        else ->
+            setImageViewResource(imageViewId, R.drawable.circle_background)
+    }
+}
+
 
 object CircleTransformation: Transformation {
     override fun key() = "Circle Transformation"

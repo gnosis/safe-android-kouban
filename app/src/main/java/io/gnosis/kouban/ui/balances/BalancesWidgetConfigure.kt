@@ -27,11 +27,9 @@ import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
-import io.gnosis.kouban.core.utils.CircleTransformation
 import io.gnosis.kouban.core.utils.setTransactionIcon
 import io.gnosis.kouban.data.models.Balance
 import io.gnosis.kouban.data.repositories.SafeRepository
-import io.gnosis.kouban.data.repositories.TokenRepository
 import io.gnosis.kouban.data.utils.shiftedString
 import io.gnosis.kouban.databinding.ItemTokenBinding
 import io.gnosis.kouban.databinding.WidgetBalancesConfigureBinding
@@ -132,21 +130,6 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
                         .let { intent ->
                             PendingIntent.getActivity(this, 0, intent, 0)
                         }
-
-                    picasso.load(it.token.tokenInfo.icon)
-                    val tokenIconRessource = when {
-                        it.token.tokenInfo.icon == "local::ethereum" -> {
-                            io.gnosis.kouban.core.R.drawable.ic_ethereum_logo
-                        }
-                        it.token.tokenInfo.icon?.startsWith("local::") == true -> {
-                            io.gnosis.kouban.core.R.drawable.circle_background
-                        }
-                        !it.token.tokenInfo.icon.isNullOrBlank() ->
-                            null
-                        else ->
-                            io.gnosis.kouban.core.R.drawable.circle_background
-                    }
-
                     // Get the layout for the App Widget and attach an on-click listener
                     // to the button
                     val views: RemoteViews = RemoteViews(
@@ -156,12 +139,7 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
                         setOnClickPendingIntent(R.id.token_item_icon, pendingIntent)
                         setTextViewText(R.id.token_item_symbol, it.token.tokenInfo.symbol)
                         setTextViewText(R.id.safe_balance, it.token.balance.shiftedString(it.token.tokenInfo.decimals, 5))
-                        if (tokenIconRessource != null)
-                            setImageViewResource(R.id.token_item_icon, tokenIconRessource)
-                        else
-                            picasso
-                                .load(it.token.tokenInfo.icon)
-                                .transform(CircleTransformation).into(this, R.id.token_item_icon, intArrayOf(appWidgetId))
+                        setTransactionIcon(R.id.token_item_icon, picasso, it.token.tokenInfo.icon, intArrayOf(appWidgetId))
                     }
                     // Tell the AppWidgetManager to perform an update on the current app widget
                     appWidgetManager?.updateAppWidget(appWidgetId, views)
