@@ -54,7 +54,7 @@ class BalancesWidgetProvider : AppWidgetProvider() {
 
                     token?.let { token ->
 
-                        // Create an Intent to launch ExampleActivity
+                        // Create an Intent to launch App
                         val pendingIntent: PendingIntent = Intent(this@UpdateService, MainActivity::class.java)
                             .let { intent ->
                                 PendingIntent.getActivity(this@UpdateService, 0, intent, 0)

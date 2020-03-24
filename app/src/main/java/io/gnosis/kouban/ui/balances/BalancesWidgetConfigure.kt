@@ -125,7 +125,7 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
 
                     val appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(this)
 
-                    // Create an Intent to launch ExampleActivity
+                    // Create an Intent to launch App
                     val pendingIntent: PendingIntent = Intent(this, MainActivity::class.java)
                         .let { intent ->
                             PendingIntent.getActivity(this, 0, intent, 0)
