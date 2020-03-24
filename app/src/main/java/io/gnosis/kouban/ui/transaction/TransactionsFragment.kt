@@ -1,30 +1,29 @@
 package io.gnosis.kouban.ui.transaction
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.lifecycle.*
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
-import io.gnosis.kouban.core.ui.base.BaseFragment
-import io.gnosis.kouban.databinding.FragmentTransactionsBinding
+import io.gnosis.kouban.R
 import io.gnosis.kouban.core.ui.adapter.BaseAdapter
-import io.gnosis.kouban.core.ui.base.Loading
+import io.gnosis.kouban.core.ui.base.BaseFragment
 import io.gnosis.kouban.core.ui.base.Error
+import io.gnosis.kouban.core.ui.base.Loading
+import io.gnosis.kouban.data.utils.asMiddleEllipsized
+import io.gnosis.kouban.databinding.FragmentTransactionsBinding
 import org.koin.androidx.scope.currentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
-import timber.log.Timber
-import io.gnosis.kouban.R
-import io.gnosis.kouban.data.utils.asMiddleEllipsized
-import io.gnosis.kouban.ui.filter.transaction.TransactionFilterDialog
 import pm.gnosis.utils.asEthereumAddressString
-import java.util.logging.Filter
+import timber.log.Timber
 
 class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
 
@@ -81,11 +80,6 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
             R.id.safe_check -> findNavController().navigate(
                 TransactionsFragmentDirections.actionTransactionsFragmentToSafeCheckFragment(navArgs.safeAddress)
             )
-            R.id.transaction_filter -> {
-                TransactionFilterDialog().apply {
-                    onDismissCallback = { viewModel.loadTransactionsOf(navArgs.safeAddress.asEthereumAddress()!!) }
-                }.show(childFragmentManager, TransactionFilterDialog::class.java.simpleName)
-            }
         }
     }
 
@@ -94,7 +88,7 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
             with(binding.swipeToRefresh) {
                 isRefreshing = false
                 when (it) {
-                    is Loading -> binding.swipeToRefresh.isRefreshing = it.isLoading
+                    is Loading -> isRefreshing = it.isLoading
                     is ListViewItems -> adapter.setItemsUnsafe(it.listItems)
                     is Error -> onError(it.throwable)
                 }

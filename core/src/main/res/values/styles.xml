@@ -71,7 +71,6 @@
 
     <style name="ChipFilter" parent="Widget.MaterialComponents.Chip.Entry">
         <item name="android:textColor">@color/dark_grey</item>
-<!--        <item name="chipIconTint">@color/dark_grey</item>-->
-
+        <item name="chipIconTint">@color/dark_grey</item>
     </style>
 </resources>
