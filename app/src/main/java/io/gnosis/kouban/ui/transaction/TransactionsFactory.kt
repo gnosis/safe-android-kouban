@@ -12,12 +12,16 @@ import io.gnosis.kouban.data.models.Transaction
 import io.gnosis.kouban.databinding.ItemFilterBinding
 import io.gnosis.kouban.databinding.ItemHeaderBinding
 import io.gnosis.kouban.databinding.ItemLabelBinding
+import java.text.SimpleDateFormat
 
 enum class TransactionViewTypes {
     Header, Transaction, Label, CheckFilter, DateFilter
 }
 
-class TransactionsFactory(private val picasso: Picasso, private val searchManager: SearchManager) : BaseFactory<BaseTransactionViewHolder<Any>>() {
+class TransactionsFactory(
+    private val picasso: Picasso,
+    private val dateFormat: SimpleDateFormat
+) : BaseFactory<BaseTransactionViewHolder<Any>>() {
 
     override fun newViewHolder(viewBinding: ViewBinding, viewType: Int): BaseTransactionViewHolder<Any> {
         return when (viewType) {
@@ -25,7 +29,7 @@ class TransactionsFactory(private val picasso: Picasso, private val searchManage
             TransactionViewTypes.Header.ordinal -> HeaderViewHolder(viewBinding as ItemHeaderBinding)
             TransactionViewTypes.Label.ordinal -> LabelViewHolder(viewBinding as ItemLabelBinding)
             TransactionViewTypes.CheckFilter.ordinal -> CheckFilterViewHolder(viewBinding as ItemFilterBinding)
-            TransactionViewTypes.DateFilter.ordinal -> DateFilterViewHolder(viewBinding as ItemFilterBinding, searchManager)
+            TransactionViewTypes.DateFilter.ordinal -> DateFilterViewHolder(viewBinding as ItemFilterBinding, dateFormat)
             else -> throw UnsupportedViewType("TransactionsFactory $viewType")
         } as BaseTransactionViewHolder<Any>
     }

@@ -19,6 +19,7 @@ import io.gnosis.kouban.data.models.DataInfo
 import io.gnosis.kouban.data.models.Transaction
 import io.gnosis.kouban.data.models.TransactionType
 import io.gnosis.kouban.core.R
+import io.gnosis.kouban.core.utils.showDatePickerDialog
 import io.gnosis.kouban.data.models.TransferInfo
 import io.gnosis.kouban.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.gnosis.kouban.data.utils.asMiddleEllipsized
@@ -28,6 +29,7 @@ import io.gnosis.kouban.databinding.ItemHeaderBinding
 import io.gnosis.kouban.databinding.ItemLabelBinding
 import io.gnosis.kouban.databinding.ItemTransactionBinding
 import pm.gnosis.utils.asEthereumAddressString
+import java.text.SimpleDateFormat
 import java.util.*
 
 abstract class BaseTransactionViewHolder<T>(viewBinding: ViewBinding) : BaseViewHolder<T>(viewBinding)
@@ -122,12 +124,6 @@ data class CheckFilterView<T>(
     val toggleValue: (T) -> Boolean
 )
 
-data class DateFilterView(
-    @StringRes val label: Int,
-    val onCleared: () -> Unit,
-    val onDateSelect: (Date) -> Unit
-)
-
 class CheckFilterViewHolder(
     private val viewBinding: ItemFilterBinding
 ) : BaseTransactionViewHolder<CheckFilterView<Any>>(viewBinding) {
@@ -135,27 +131,43 @@ class CheckFilterViewHolder(
     override fun bind(item: CheckFilterView<Any>) {
         with(viewBinding.chip) {
             isCheckable = true
+            isCloseIconVisible = false
             text = item.label
             chipIcon = ResourcesCompat.getDrawable(resources, item.drawableId, context.theme)
             setOnClickListener {
                 isChecked = item.toggleValue(item.value)
                 invalidate()
             }
+            setOnCloseIconClickListener(null)
         }
     }
 }
 
+data class DateFilterView(
+    @StringRes val label: Int,
+    val initialValue: Date?,
+    val onCleared: () -> Unit,
+    val onDateSelect: (Date) -> Unit
+)
+
 class DateFilterViewHolder(
     private val viewBinding: ItemFilterBinding,
-    private val searchManager: SearchManager
+    private val dateFormat: SimpleDateFormat
 ) : BaseTransactionViewHolder<DateFilterView>(viewBinding) {
 
     override fun bind(item: DateFilterView) {
         with(viewBinding.chip) {
             isCheckable = false
+            isCloseIconVisible = true
+            text = context.getString(item.label, item.initialValue?.let(dateFormat::format).orEmpty())
             chipIcon = ResourcesCompat.getDrawable(resources, R.drawable.ic_date_range_black_24dp, context.theme)
-            searchManager.getFilterFor(TransactionTimestampFilter::class.java)?.let {
-
+            setOnClickListener {
+                showDatePickerDialog(context, item.initialValue) { pickedDate ->
+                    item.onDateSelect(pickedDate)
+                }
+            }
+            setOnCloseIconClickListener {
+                item.onCleared()
             }
         }
     }

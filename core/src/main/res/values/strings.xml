@@ -85,5 +85,7 @@
     <string name="hash_clipboard_success">Hash copied to clipboard</string>
     <string name="share_hash">Share hash</string>
 
+    <string name="transaction_date_from_chip">From: %1$s</string>
+    <string name="transaction_date_to_chip">To: %1$s</string>
 
 </resources>

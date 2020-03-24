@@ -34,7 +34,7 @@ val fragmentModule = module {
                 SimpleDateFormat(DateFormats.monthYear, get<Locale>())
             )
         }
-        factory { BaseAdapter(TransactionsFactory(get(), get())) }
+        factory { BaseAdapter(TransactionsFactory(get(), SimpleDateFormat(DateFormats.datePicker, get<Locale>()))) }
     }
 
     scope(named<SplashFragment>()) {

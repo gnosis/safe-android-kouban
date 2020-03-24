@@ -89,17 +89,22 @@ class TransactionsViewModel(
     }
 
     private fun MutableList<Any>.dateFilters(address: Solidity.Address) {
-//        searchManager.getFilterFor()
-        add(DateFilterView(R.string.transaction_filter_date_from_hint, {
-
-        }) { fromDate ->
-            searchManager.getFilterFor(TransactionTimestampFilter::class.java)?.lowerBound = fromDate
-            applyFilters(address)
-        })
-        add(DateFilterView(R.string.transaction_filter_date_to_hint, {}) { toDate ->
-            searchManager.getFilterFor(TransactionTimestampFilter::class.java)?.upperBound = toDate
-            applyFilters(address)
-        })
+        searchManager.getFilterFor(TransactionTimestampFilter::class.java)?.let { dateFilter ->
+            add(DateFilterView(R.string.transaction_date_from_chip, dateFilter.lowerBound, {
+                dateFilter.lowerBound = null
+                applyFilters(address)
+            }) { fromDate ->
+                searchManager.getFilterFor(TransactionTimestampFilter::class.java)?.lowerBound = fromDate
+                applyFilters(address)
+            })
+            add(DateFilterView(R.string.transaction_date_to_chip, dateFilter.upperBound, {
+                dateFilter.upperBound = null
+                applyFilters(address)
+            }) { toDate ->
+                searchManager.getFilterFor(TransactionTimestampFilter::class.java)?.upperBound = toDate
+                applyFilters(address)
+            })
+        }
     }
 
     private fun applyFilters(address: Solidity.Address) {
