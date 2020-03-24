@@ -49,7 +49,8 @@
         android:layout_gravity="bottom|right|end"
         android:layout_margin="12dp"
         android:tint="@color/white"
-        android:backgroundTint="@color/colorPrimary"
+        app:backgroundTint="@color/dark_grey"
+        android:enabled="false"
         app:srcCompat="@drawable/ic_check_black_24dp" />
 
 

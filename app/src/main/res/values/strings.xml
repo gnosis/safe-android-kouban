@@ -11,4 +11,5 @@
     <string name="push_tx_incoming_token">Incoming Token</string>
 
     <string name="select_token_hint">Select token for balance widget</string>
+    <string name="error_widget_configure">Error configuring widget</string>
 </resources>

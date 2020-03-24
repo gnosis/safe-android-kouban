@@ -3,6 +3,7 @@ package io.gnosis.kouban.ui.balances
 import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -39,6 +40,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
+import pm.gnosis.svalinn.common.utils.snackbar
 
 class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnTokenClickedListener {
 
@@ -67,7 +69,6 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
         // the App Widget will not be added.
         setResult(Activity.RESULT_CANCELED, Intent().apply {
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         })
 
         with(binding) {
@@ -84,7 +85,7 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
             }
         }
 
-        viewModel.init()
+        viewModel.init(appWidgetId)
         viewModel.loadingEvents.observe(this, Observer {
             binding.swipeToRefresh.isRefreshing = it.isLoading
         })
@@ -94,18 +95,28 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
 
                 is Error -> {
                     if (it.throwable is NoSafeAddressSet) {
-
+                        snackbar(binding.root, getString(R.string.error_address_not_set))
                     } else {
-
+                        snackbar(binding.root, getString(R.string.error_widget_configure))
                     }
+                    finish()
                 }
 
                 is TokenBalances -> {
                     adapter.setItemsUnsafe(it.balances)
                 }
 
-                is TokenSelectionCanceled -> {
-                    finish()
+                is TokenSelection -> {
+                    with(binding) {
+                        if (it.token != null) {
+                            fab.isEnabled = true
+                            fab.backgroundTintList = ColorStateList.valueOf(getColorCompat(R.color.colorPrimary))
+
+                        } else {
+                            fab.isEnabled = false
+                            fab.backgroundTintList = ColorStateList.valueOf(getColorCompat(R.color.dark_grey))
+                        }
+                    }
                 }
 
                 is TokenSelectionSubmitted -> {
@@ -180,15 +191,19 @@ class BalanceItemViewHolder(
 
 class BalancesViewModel(
     private val safeRepository: SafeRepository,
-    private val addressManager: SafeAddressManager
+    private val addressManager: SafeAddressManager,
+    private val widgetPrefs: BalancesWidgetPrefs
 ) : ViewModel() {
 
     val events = MutableLiveData<ViewState>()
     val loadingEvents = MutableLiveData<Loading>()
+
+    private var widgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var safeAddress: Solidity.Address
     private var selectedToken: TokenRepository.TokenInfo? = null
 
-    fun init() {
+    fun init(widgetId: Int) {
+        this.widgetId = widgetId
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
                 safeAddress = addressManager.getSafeAddress()!!
@@ -224,18 +239,16 @@ class BalancesViewModel(
     fun onTokenSelected(token: TokenRepository.TokenInfo?) {
         viewModelScope.launch(Dispatchers.IO) {
             selectedToken = token
-        }
-    }
-
-    fun onTokenSelectionCanceled() {
-        viewModelScope.launch(Dispatchers.IO) {
-            events.postValue(TokenSelectionCanceled())
+            events.postValue(TokenSelection(token))
         }
     }
 
     fun onTokenSelectionSubmitted() {
         viewModelScope.launch(Dispatchers.IO) {
-            events.postValue(TokenSelectionSubmitted(selectedToken!!))
+            selectedToken?.let {
+                widgetPrefs.saveTokenForWidget(it.address, widgetId)
+                events.postValue(TokenSelectionSubmitted(it))
+            }
         }
     }
 }
@@ -248,7 +261,9 @@ data class TokenSelectionSubmitted(
     val token: TokenRepository.TokenInfo
 ) : ViewState()
 
-class TokenSelectionCanceled : ViewState()
+data class TokenSelection(
+    val token: TokenRepository.TokenInfo?
+) : ViewState()
 
 class NoSafeAddressSet : Throwable()
 

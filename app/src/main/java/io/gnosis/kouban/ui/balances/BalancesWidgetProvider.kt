@@ -46,10 +46,6 @@ class BalancesWidgetProvider : AppWidgetProvider() {
             return super.onStartCommand(intent, flags, startId)
         }
 
-        override fun onStart(intent: Intent?, startId: Int) {
-            super.onStart(intent, startId)
-        }
-
         override fun onBind(intent: Intent?): IBinder? {
             return null
         }
