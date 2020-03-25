@@ -45,8 +45,6 @@ fun RemoteViews.setTransactionIcon(@IdRes imageViewId: Int, picasso: Picasso, ic
         !icon.isNullOrBlank() ->
             picasso
                 .load(icon)
-                .placeholder(R.drawable.circle_background)
-                .error(R.drawable.circle_background)
                 .transform(CircleTransformation)
                 .into(this, imageViewId, appWidgetIds)
         else ->

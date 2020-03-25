@@ -15,6 +15,7 @@ import io.gnosis.kouban.core.utils.setTransactionIcon
 import io.gnosis.kouban.data.repositories.SafeRepository
 import io.gnosis.kouban.data.utils.shiftedString
 import io.gnosis.kouban.ui.SplashActivity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
@@ -41,7 +42,7 @@ class BalancesWidgetProvider : AppWidgetProvider() {
             val appWidgetManager = AppWidgetManager.getInstance(this)
             val appWidgetIds = intent?.getSerializableExtra(EXTRA_WIDGET_IDS) as IntArray
 
-            runBlocking {
+            runBlocking(Dispatchers.IO) {
 
                 val safe = addressManager.getSafeAddress()!!
                 val balances = safeRepository.loadTokenBalances(safe)
