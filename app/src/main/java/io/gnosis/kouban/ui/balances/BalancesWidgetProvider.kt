@@ -14,7 +14,7 @@ import io.gnosis.kouban.core.managers.SafeAddressManager
 import io.gnosis.kouban.core.utils.setTransactionIcon
 import io.gnosis.kouban.data.repositories.SafeRepository
 import io.gnosis.kouban.data.utils.shiftedString
-import io.gnosis.kouban.ui.MainActivity
+import io.gnosis.kouban.ui.SplashActivity
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
@@ -46,6 +46,12 @@ class BalancesWidgetProvider : AppWidgetProvider() {
                 val safe = addressManager.getSafeAddress()!!
                 val balances = safeRepository.loadTokenBalances(safe)
 
+                // Create an Intent to launch App
+                val pendingIntent: PendingIntent = Intent(this@UpdateService, SplashActivity::class.java)
+                    .let { intent ->
+                        PendingIntent.getActivity(this@UpdateService, 0, intent, 0)
+                    }
+
                 appWidgetIds?.forEach { appWidgetId ->
                     // Perform this loop procedure for each App Widget that belongs to this provider
 
@@ -53,14 +59,6 @@ class BalancesWidgetProvider : AppWidgetProvider() {
                     val token = balances.find { it.tokenInfo.address == tokenAddress }
 
                     token?.let { token ->
-
-                        // Create an Intent to launch App
-                        val pendingIntent: PendingIntent = Intent(this@UpdateService, MainActivity::class.java)
-                            .let { intent ->
-                                PendingIntent.getActivity(this@UpdateService, 0, intent, 0)
-                            }
-
-
                         // Get the layout for the App Widget and attach an on-click listener
                         // to the button
                         val views: RemoteViews = RemoteViews(

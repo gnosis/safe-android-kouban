@@ -33,7 +33,7 @@ import io.gnosis.kouban.data.repositories.SafeRepository
 import io.gnosis.kouban.data.utils.shiftedString
 import io.gnosis.kouban.databinding.ItemTokenBinding
 import io.gnosis.kouban.databinding.WidgetBalancesConfigureBinding
-import io.gnosis.kouban.ui.MainActivity
+import io.gnosis.kouban.ui.SplashActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -46,10 +46,12 @@ import pm.gnosis.svalinn.common.utils.snackbar
 
 class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnTokenClickedListener {
 
-    private val viewModel by currentScope.viewModel<BalancesViewModel>(this)
+    private val viewModel by currentScope.viewModel<BalancesViewModel>(this) { parametersOf(appWidgetId)}
     private val adapter by currentScope.inject<BaseAdapter<BalanceItemViewHolder, Balance>> { parametersOf(this) }
     private val picasso: Picasso by inject()
     private val binding by lazy { WidgetBalancesConfigureBinding.inflate(layoutInflater) }
+
+    private var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +62,7 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val appWidgetId = intent?.extras?.getInt(
+        appWidgetId = intent?.extras?.getInt(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
         ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
@@ -87,7 +89,7 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
             }
         }
 
-        viewModel.init(appWidgetId)
+        viewModel.init()
         viewModel.loadingEvents.observe(this, Observer {
             binding.swipeToRefresh.isRefreshing = it.isLoading
         })
@@ -126,7 +128,7 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
                     val appWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(this)
 
                     // Create an Intent to launch App
-                    val pendingIntent: PendingIntent = Intent(this, MainActivity::class.java)
+                    val pendingIntent: PendingIntent = Intent(this, SplashActivity::class.java)
                         .let { intent ->
                             PendingIntent.getActivity(this, 0, intent, 0)
                         }
@@ -209,18 +211,17 @@ class BalanceItemViewHolder(
 class BalancesViewModel(
     private val safeRepository: SafeRepository,
     private val addressManager: SafeAddressManager,
-    private val widgetPrefs: BalancesWidgetPrefs
+    private val widgetPrefs: BalancesWidgetPrefs,
+    private val widgetId: Int
 ) : ViewModel() {
 
     val events = MutableLiveData<ViewState>()
     val loadingEvents = MutableLiveData<Loading>()
 
-    private var widgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var safeAddress: Solidity.Address
     private var selectedToken: Balance? = null
 
-    fun init(widgetId: Int) {
-        this.widgetId = widgetId
+    fun init() {
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
                 safeAddress = addressManager.getSafeAddress()!!

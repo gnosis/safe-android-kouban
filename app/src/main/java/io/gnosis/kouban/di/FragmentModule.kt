@@ -76,7 +76,7 @@ val fragmentModule = module {
     }
 
     scope(named<BalancesWidgetConfigure>()) {
-        viewModel { BalancesViewModel(get(), get(), get()) }
+        viewModel { (widgetId: Int) -> BalancesViewModel(get(), get(), get(), widgetId) }
         factory { BalancesItemFactory(get(), get()) }
         factory { (onTokenClickedListener: BalancesItemFactory.OnTokenClickedListener) ->
             BaseAdapter(BalancesItemFactory(get(), onTokenClickedListener)) }
