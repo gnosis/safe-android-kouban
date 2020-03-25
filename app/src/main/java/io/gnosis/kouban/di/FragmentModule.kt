@@ -23,6 +23,7 @@ import io.gnosis.kouban.ui.transaction.details.TransactionDetailsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -78,7 +79,7 @@ val fragmentModule = module {
     scope(named<BalancesWidgetConfigure>()) {
         viewModel { (widgetId: Int) -> BalancesViewModel(get(), get(), get(), widgetId) }
         factory { BalancesItemFactory(get(), get()) }
-        factory { (onTokenClickedListener: BalancesItemFactory.OnTokenClickedListener) ->
+        factory { (onTokenClickedListener: WeakReference<BalancesItemFactory.OnTokenClickedListener>) ->
             BaseAdapter(BalancesItemFactory(get(), onTokenClickedListener)) }
     }
 }

@@ -43,11 +43,12 @@ import org.koin.core.parameter.parametersOf
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.snackbar
+import java.lang.ref.WeakReference
 
 class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnTokenClickedListener {
 
     private val viewModel by currentScope.viewModel<BalancesViewModel>(this) { parametersOf(appWidgetId)}
-    private val adapter by currentScope.inject<BaseAdapter<BalanceItemViewHolder, Balance>> { parametersOf(this) }
+    private val adapter by currentScope.inject<BaseAdapter<BalanceItemViewHolder, Balance>> { parametersOf(WeakReference(this)) }
     private val picasso: Picasso by inject()
     private val binding by lazy { WidgetBalancesConfigureBinding.inflate(layoutInflater) }
 
@@ -173,7 +174,7 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
 
 class BalancesItemFactory(
     private val picasso: Picasso,
-    private val tokenClickListener: OnTokenClickedListener
+    private val tokenClickListener: WeakReference<OnTokenClickedListener>
 ) : BaseFactory<BalanceItemViewHolder>() {
 
     interface OnTokenClickedListener {
@@ -190,7 +191,7 @@ class BalancesItemFactory(
 class BalanceItemViewHolder(
     private val binding: ItemTokenBinding,
     private val picasso: Picasso,
-    private val tokenClickListener: BalancesItemFactory.OnTokenClickedListener
+    private val tokenClickListener: WeakReference<BalancesItemFactory.OnTokenClickedListener>
 ) : BaseViewHolder<Balance>(binding) {
 
     override fun bind(item: Balance) {
@@ -201,7 +202,7 @@ class BalanceItemViewHolder(
 
             root.setOnClickListener {
                 tokenItemRadio.isChecked = !tokenItemRadio.isChecked
-                tokenClickListener.onTokenClicked(if (tokenItemRadio.isChecked) item else null)
+                tokenClickListener.get()?.onTokenClicked(if (tokenItemRadio.isChecked) item else null)
             }
         }
     }
