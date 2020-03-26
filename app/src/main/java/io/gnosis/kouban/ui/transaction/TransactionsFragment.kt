@@ -51,6 +51,11 @@ class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
     private fun setupToolbar() {
         with(binding) {
             blockiesHeader.setAddress(currentSafe)
+            blockiesHeader.setOnClickListener {
+                findNavController().navigate(
+                    TransactionsFragmentDirections.actionTransactionsFragmentToShareSafeFragment(navArgs.safeAddress)
+                )
+            }
             safeAddress.text = currentSafe.asEthereumAddressString().asMiddleEllipsized(4)
             toolbar.inflateMenu(R.menu.main)
             toolbar.setOnMenuItemClickListener {

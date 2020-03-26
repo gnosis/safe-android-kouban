@@ -31,6 +31,13 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right" />
+        <action
+            android:id="@+id/action_transactionsFragment_to_shareSafeFragment"
+            app:destination="@id/shareSafeFragment"
+            app:enterAnim="@anim/enter_from_bottom"
+            app:exitAnim="@anim/exit_to_top"
+            app:popEnterAnim="@anim/enter_from_top"
+            app:popExitAnim="@anim/exit_to_bottom" />
     </fragment>
     <fragment
         android:id="@+id/splashFragment"
@@ -114,6 +121,14 @@
         tools:layout="@layout/fragment_transaction_details">
         <argument
             android:name="transactionHash"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/shareSafeFragment"
+        android:name="io.gnosis.kouban.ui.safe.ShareSafeFragment"
+        android:label="ShareSafeFragment" >
+        <argument
+            android:name="safeAddress"
             app:argType="string" />
     </fragment>
 </navigation>
