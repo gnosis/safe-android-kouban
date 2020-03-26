@@ -142,7 +142,7 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
                         setOnClickPendingIntent(R.id.token_item_icon, pendingIntent)
                         setTextViewText(R.id.token_item_symbol, it.token.tokenInfo.symbol)
                         setTextViewText(R.id.safe_balance, it.token.balance.shiftedString(it.token.tokenInfo.decimals, 5))
-                        setTransactionIcon(R.id.token_item_icon, picasso, it.token.tokenInfo.icon, intArrayOf(appWidgetId))
+                        setTransactionIcon(R.id.token_item_icon, picasso, it.token.tokenInfo.icon)
                     }
                     // Tell the AppWidgetManager to perform an update on the current app widget
                     appWidgetManager?.updateAppWidget(appWidgetId, views)
@@ -207,7 +207,6 @@ class BalanceItemViewHolder(
         }
     }
 }
-
 
 class BalancesViewModel(
     private val safeRepository: SafeRepository,

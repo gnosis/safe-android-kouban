@@ -39,10 +39,10 @@ class BalancesWidgetProvider : AppWidgetProvider() {
 
         override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-            val appWidgetManager = AppWidgetManager.getInstance(this)
-            val appWidgetIds = intent?.getSerializableExtra(EXTRA_WIDGET_IDS) as IntArray
-
             runBlocking(Dispatchers.IO) {
+
+                val appWidgetManager = AppWidgetManager.getInstance(this@UpdateService)
+                val appWidgetIds = intent?.getSerializableExtra(EXTRA_WIDGET_IDS) as IntArray
 
                 val safe = addressManager.getSafeAddress()!!
                 val balances = safeRepository.loadTokenBalances(safe)
@@ -62,24 +62,23 @@ class BalancesWidgetProvider : AppWidgetProvider() {
                     token?.let { token ->
                         // Get the layout for the App Widget and attach an on-click listener
                         // to the button
-                        val views: RemoteViews = RemoteViews(
+                        val views = RemoteViews(
                             packageName,
                             R.layout.widget_balances
-                        ).apply {
+                        )
+
+                        views.apply {
                             setOnClickPendingIntent(R.id.token_item_icon, pendingIntent)
                             setTextViewText(R.id.token_item_symbol, token.tokenInfo.symbol)
                             setTextViewText(R.id.safe_balance, token.balance.shiftedString(token.tokenInfo.decimals, 5))
-                            setTransactionIcon(R.id.token_item_icon, picasso, token.tokenInfo.icon, appWidgetIds)
+                            setTransactionIcon(R.id.token_item_icon, picasso, token.tokenInfo.icon)
                         }
                         // Tell the AppWidgetManager to perform an update on the current app widget
                         appWidgetManager?.updateAppWidget(appWidgetId, views)
                     }
                 }
             }
-
-            // if the process is shut down, the Intent will be redelivered
-            // so that widget balance update can be resumed
-            return START_REDELIVER_INTENT
+            return START_NOT_STICKY
         }
 
         override fun onBind(intent: Intent?): IBinder? {
@@ -92,5 +91,4 @@ class BalancesWidgetProvider : AppWidgetProvider() {
         }
 
     }
-
 }

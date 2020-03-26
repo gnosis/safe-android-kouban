@@ -33,7 +33,7 @@ fun ImageView.setTransactionIcon(picasso: Picasso, icon: String?) {
     }
 }
 
-fun RemoteViews.setTransactionIcon(@IdRes imageViewId: Int, picasso: Picasso, icon: String?, appWidgetIds: IntArray) {
+fun RemoteViews.setTransactionIcon(@IdRes imageViewId: Int, picasso: Picasso, icon: String?) {
     setViewPadding(imageViewId, 0, 0, 0, 0)
     when {
         icon == "local::ethereum" -> {
@@ -42,16 +42,24 @@ fun RemoteViews.setTransactionIcon(@IdRes imageViewId: Int, picasso: Picasso, ic
         icon?.startsWith("local::") == true -> {
             setImageViewResource(imageViewId, R.drawable.circle_background)
         }
-        !icon.isNullOrBlank() ->
-            picasso
-                .load(icon)
-                .transform(CircleTransformation)
-                .into(this, imageViewId, appWidgetIds)
+        !icon.isNullOrBlank() -> {
+            kotlin.runCatching {
+                picasso
+                    .load(icon)
+                    .transform(CircleTransformation)
+                    .get()
+            }
+                .onSuccess {
+                    setImageViewBitmap(imageViewId, it)
+                }
+                .onFailure {
+                    setImageViewResource(imageViewId, R.drawable.circle_background)
+                }
+        }
         else ->
             setImageViewResource(imageViewId, R.drawable.circle_background)
     }
 }
-
 
 object CircleTransformation: Transformation {
     override fun key() = "Circle Transformation"
