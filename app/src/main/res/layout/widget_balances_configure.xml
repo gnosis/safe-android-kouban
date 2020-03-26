@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right|end"
         android:layout_margin="12dp"
-        android:tint="@color/white"
+        app:tint="@color/white"
         app:backgroundTint="@color/dark_grey"
         android:enabled="false"
         app:srcCompat="@drawable/ic_check_black_24dp" />

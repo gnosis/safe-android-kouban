@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -81,7 +80,6 @@ class BalancesWidgetConfigure : AppCompatActivity() {
                 viewModel.loadBalancesForCurrentSafe()
             }
 
-            fab.setColorFilter(getColorCompat(R.color.white), PorterDuff.Mode.SRC_IN)
             fab.setOnClickListener {
                 viewModel.onTokenSelectionSubmitted()
             }
