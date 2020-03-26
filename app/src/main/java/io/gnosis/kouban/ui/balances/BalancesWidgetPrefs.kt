@@ -17,18 +17,20 @@ class BalancesWidgetPrefs(context: Context) {
 
     fun saveTokenForWidget(token: Solidity.Address, appWidgetId: Int) {
         prefs.edit {
-            putString(KEY_WIDGET_TOKEN, "${appWidgetId}.${token.asEthereumAddressString()}")
+            putString("$KEY_WIDGET_TOKEN_$appWidgetId", token.asEthereumAddressString())
+            putInt("$KEY_WIDGET_ID_$appWidgetId", appWidgetId)
         }
     }
 
     fun loadTokenForWidget(appWidgetId: Int): Solidity.Address? {
-        return prefs.getString(KEY_WIDGET_TOKEN, null)?.split(".")?.get(1)?.asEthereumAddress()
+        return prefs.getString("$KEY_WIDGET_TOKEN_$appWidgetId", null)?.asEthereumAddress()
     }
 
     companion object {
 
         private val PREFS_WIDGET_BALANCES = "kouban_balances_widget_preferences"
 
-        private val KEY_WIDGET_TOKEN = "key_widget_token"
+        private val KEY_WIDGET_TOKEN_ = "key_widget_token_"
+        private val KEY_WIDGET_ID_ = "key_widget_id_"
     }
 }
