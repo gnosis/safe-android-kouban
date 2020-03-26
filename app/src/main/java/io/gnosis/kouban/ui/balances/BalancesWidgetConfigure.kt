@@ -47,12 +47,17 @@ import java.lang.ref.WeakReference
 
 class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnTokenClickedListener {
 
-    private val viewModel by currentScope.viewModel<BalancesViewModel>(this) { parametersOf(appWidgetId)}
+    private val viewModel by currentScope.viewModel<BalancesViewModel>(this) { parametersOf(appWidgetId) }
     private val adapter by currentScope.inject<BaseAdapter<BalanceItemViewHolder, Balance>> { parametersOf(WeakReference(this)) }
     private val picasso: Picasso by inject()
     private val binding by lazy { WidgetBalancesConfigureBinding.inflate(layoutInflater) }
 
-    private var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
+    private val appWidgetId by lazy {
+        intent?.extras?.getInt(
+            AppWidgetManager.EXTRA_APPWIDGET_ID,
+            AppWidgetManager.INVALID_APPWIDGET_ID
+        ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,11 +67,6 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        appWidgetId = intent?.extras?.getInt(
-            AppWidgetManager.EXTRA_APPWIDGET_ID,
-            AppWidgetManager.INVALID_APPWIDGET_ID
-        ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
 
         // Set the Activity result to RESULT_CANCELED, along with EXTRA_APPWIDGET_ID.
         // This way, if the user backs-out of the Activity before reaching the end,
