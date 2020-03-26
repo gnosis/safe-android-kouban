@@ -6,7 +6,7 @@ import io.gnosis.kouban.ui.address.capture.AddressCaptureFragment
 import io.gnosis.kouban.ui.address.capture.AddressCaptureViewModel
 import io.gnosis.kouban.ui.address.complete.AddressCompleteFragment
 import io.gnosis.kouban.ui.address.complete.AddressCompleteViewModel
-import io.gnosis.kouban.ui.balances.BalancesItemFactory
+import io.gnosis.kouban.ui.balances.BalancesAdapter
 import io.gnosis.kouban.ui.balances.BalancesViewModel
 import io.gnosis.kouban.ui.balances.BalancesWidgetConfigure
 import io.gnosis.kouban.ui.filter.transaction.TransactionFilterDialog
@@ -78,8 +78,7 @@ val fragmentModule = module {
 
     scope(named<BalancesWidgetConfigure>()) {
         viewModel { (widgetId: Int) -> BalancesViewModel(get(), get(), get(), widgetId) }
-        factory { BalancesItemFactory(get(), get()) }
-        factory { (onTokenClickedListener: WeakReference<BalancesItemFactory.OnTokenClickedListener>) ->
-            BaseAdapter(BalancesItemFactory(get(), onTokenClickedListener)) }
+        factory { (onTokenClickedListener: WeakReference<BalancesAdapter.OnTokenClickedListener>) ->
+            BalancesAdapter(get(), onTokenClickedListener) }
     }
 }

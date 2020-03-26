@@ -1,5 +1,6 @@
 package io.gnosis.kouban.ui.balances
 
+import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.appwidget.AppWidgetManager
@@ -44,6 +45,11 @@ class BalancesWidgetProvider : AppWidgetProvider() {
         private val prefs: BalancesWidgetPrefs by inject()
         private val safeRepository: SafeRepository by inject()
         private val picasso: Picasso by inject()
+
+        override fun onCreate() {
+            super.onCreate()
+            startForeground(0, Notification())
+        }
 
         override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 

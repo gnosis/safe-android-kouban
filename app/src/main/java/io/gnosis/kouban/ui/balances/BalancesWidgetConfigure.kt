@@ -17,13 +17,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.viewbinding.ViewBinding
+import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import io.gnosis.kouban.R
 import io.gnosis.kouban.core.managers.SafeAddressManager
-import io.gnosis.kouban.core.ui.adapter.BaseAdapter
-import io.gnosis.kouban.core.ui.adapter.BaseFactory
-import io.gnosis.kouban.core.ui.adapter.BaseViewHolder
 import io.gnosis.kouban.core.ui.base.Error
 import io.gnosis.kouban.core.ui.base.Loading
 import io.gnosis.kouban.core.ui.base.ViewState
@@ -48,7 +45,7 @@ import java.lang.ref.WeakReference
 class BalancesWidgetConfigure : AppCompatActivity() {
 
     private val viewModel by currentScope.viewModel<BalancesViewModel>(this) { parametersOf(appWidgetId) }
-    private val adapter by currentScope.inject<BaseAdapter<BalanceItemViewHolder, Balance>> { parametersOf(WeakReference(viewModel)) }
+    private val adapter by currentScope.inject<BalancesAdapter> { parametersOf(WeakReference(viewModel)) }
     private val picasso: Picasso by inject()
     private val binding by lazy { WidgetBalancesConfigureBinding.inflate(layoutInflater) }
 
@@ -116,10 +113,12 @@ class BalancesWidgetConfigure : AppCompatActivity() {
                         if (it.token != null) {
                             fab.isEnabled = true
                             fab.backgroundTintList = ColorStateList.valueOf(getColorCompat(R.color.colorPrimary))
+                            adapter.selectedItem = it.position
 
                         } else {
                             fab.isEnabled = false
                             fab.backgroundTintList = ColorStateList.valueOf(getColorCompat(R.color.dark_grey))
+                            adapter.selectedItem = -1
                         }
                     }
                 }
@@ -168,37 +167,65 @@ class BalancesWidgetConfigure : AppCompatActivity() {
         }
 }
 
-class BalancesItemFactory(
+class BalancesAdapter(
     private val picasso: Picasso,
     private val tokenClickListener: WeakReference<OnTokenClickedListener>
-) : BaseFactory<BalanceItemViewHolder>() {
+) : RecyclerView.Adapter<BalanceItemViewHolder>() {
+
+    private val items = mutableListOf<Balance>()
+
+    var selectedItem: Int = -1
+        set(value) {
+            field = value
+            notifyAllChanged()
+        }
 
     interface OnTokenClickedListener {
-        fun onTokenClicked(tokenBalance: Balance?)
+        fun onTokenClicked(tokenBalance: Balance?, position: Int)
     }
 
-    override fun newViewHolder(viewBinding: ViewBinding, viewType: Int) =
-        BalanceItemViewHolder(viewBinding as ItemTokenBinding, picasso, tokenClickListener)
+    @Deprecated("Unsafe")
+    fun setItemsUnsafe(items: List<Balance>) {
+        this.items.clear()
+        this.items.addAll(items)
+        notifyDataSetChanged()
+    }
 
-    override fun layout(layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int) =
-        ItemTokenBinding.inflate(layoutInflater, parent, false)
+    override fun onBindViewHolder(holder: BalanceItemViewHolder, position: Int) {
+        holder.bind(items[position], position == selectedItem, position)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BalanceItemViewHolder {
+        return BalanceItemViewHolder(
+            ItemTokenBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            picasso,
+            tokenClickListener
+        )
+    }
+
+    override fun getItemCount() = items.size
+
+    fun notifyAllChanged() {
+        notifyItemRangeChanged(0, items.size)
+    }
 }
 
-class BalanceItemViewHolder(
-    private val binding: ItemTokenBinding,
-    private val picasso: Picasso,
-    private val tokenClickListener: WeakReference<BalancesItemFactory.OnTokenClickedListener>
-) : BaseViewHolder<Balance>(binding) {
 
-    override fun bind(item: Balance) {
+class BalanceItemViewHolder(
+    val binding: ItemTokenBinding,
+    private val picasso: Picasso,
+    private val tokenClickListener: WeakReference<BalancesAdapter.OnTokenClickedListener>
+) : RecyclerView.ViewHolder(binding.root) {
+
+    fun bind(item: Balance, selected: Boolean, position: Int) {
         with(binding) {
             tokenItemSymbol.text = item.tokenInfo.symbol
             tokenItemInfo.text = item.balance.shiftedString(item.tokenInfo.decimals, 5)
             tokenItemIcon.setTransactionIcon(picasso, item.tokenInfo.icon)
+            tokenItemRadio.isChecked = selected
 
             root.setOnClickListener {
-                tokenItemRadio.isChecked = !tokenItemRadio.isChecked
-                tokenClickListener.get()?.onTokenClicked(if (tokenItemRadio.isChecked) item else null)
+                tokenClickListener.get()?.onTokenClicked(if (!selected) item else null, position)
             }
         }
     }
@@ -209,7 +236,7 @@ class BalancesViewModel(
     private val addressManager: SafeAddressManager,
     private val widgetPrefs: BalancesWidgetPrefs,
     private val widgetId: Int
-) : ViewModel(), BalancesItemFactory.OnTokenClickedListener {
+) : ViewModel(), BalancesAdapter.OnTokenClickedListener {
 
     val events = MutableLiveData<ViewState>()
     val loadingEvents = MutableLiveData<Loading>()
@@ -250,10 +277,10 @@ class BalancesViewModel(
         }
     }
 
-    override fun onTokenClicked(token: Balance?) {
+    override fun onTokenClicked(token: Balance?, position: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             selectedToken = token
-            events.postValue(TokenSelection(token))
+            events.postValue(TokenSelection(token, position))
         }
     }
 
@@ -276,7 +303,8 @@ data class TokenSelectionSubmitted(
 ) : ViewState()
 
 data class TokenSelection(
-    val token: Balance?
+    val token: Balance?,
+    val position: Int
 ) : ViewState()
 
 class NoSafeAddressSet : Throwable()
