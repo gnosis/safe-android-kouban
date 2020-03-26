@@ -45,10 +45,10 @@ import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.snackbar
 import java.lang.ref.WeakReference
 
-class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnTokenClickedListener {
+class BalancesWidgetConfigure : AppCompatActivity() {
 
     private val viewModel by currentScope.viewModel<BalancesViewModel>(this) { parametersOf(appWidgetId) }
-    private val adapter by currentScope.inject<BaseAdapter<BalanceItemViewHolder, Balance>> { parametersOf(WeakReference(this)) }
+    private val adapter by currentScope.inject<BaseAdapter<BalanceItemViewHolder, Balance>> { parametersOf(WeakReference(viewModel)) }
     private val picasso: Picasso by inject()
     private val binding by lazy { WidgetBalancesConfigureBinding.inflate(layoutInflater) }
 
@@ -166,10 +166,6 @@ class BalancesWidgetConfigure : AppCompatActivity(), BalancesItemFactory.OnToken
                 super.onOptionsItemSelected(item)
             }
         }
-
-    override fun onTokenClicked(token: Balance?) {
-        viewModel.onTokenSelected(token)
-    }
 }
 
 class BalancesItemFactory(
@@ -213,7 +209,7 @@ class BalancesViewModel(
     private val addressManager: SafeAddressManager,
     private val widgetPrefs: BalancesWidgetPrefs,
     private val widgetId: Int
-) : ViewModel() {
+) : ViewModel(), BalancesItemFactory.OnTokenClickedListener {
 
     val events = MutableLiveData<ViewState>()
     val loadingEvents = MutableLiveData<Loading>()
@@ -254,10 +250,10 @@ class BalancesViewModel(
         }
     }
 
-    fun onTokenSelected(tokenBalance: Balance?) {
+    override fun onTokenClicked(token: Balance?) {
         viewModelScope.launch(Dispatchers.IO) {
-            selectedToken = tokenBalance
-            events.postValue(TokenSelection(tokenBalance))
+            selectedToken = token
+            events.postValue(TokenSelection(token))
         }
     }
 
