@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.widget.RemoteViews
 import com.squareup.picasso.Picasso
@@ -24,10 +25,17 @@ class BalancesWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray?) {
         // To prevent any ANR timeouts, we perform the update in a service
-        context?.startService(
-            Intent(context, UpdateService::class.java)
-                .putExtra(UpdateService.EXTRA_WIDGET_IDS, appWidgetIds)
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context?.startForegroundService(
+                Intent(context, UpdateService::class.java)
+                    .putExtra(UpdateService.EXTRA_WIDGET_IDS, appWidgetIds)
+            )
+        } else {
+            context?.startService(
+                Intent(context, UpdateService::class.java)
+                    .putExtra(UpdateService.EXTRA_WIDGET_IDS, appWidgetIds)
+            )
+        }
     }
 
     class UpdateService : Service() {
