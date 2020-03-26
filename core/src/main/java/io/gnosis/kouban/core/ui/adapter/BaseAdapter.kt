@@ -5,14 +5,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 
-class BaseAdapter<VH>(
+class BaseAdapter<VH, T>(
     private val factory: BaseFactory<VH>
-) : RecyclerView.Adapter<VH>() where VH : BaseViewHolder<Any> {
+) : RecyclerView.Adapter<VH>() where VH : BaseViewHolder<T> {
 
-    private val items = mutableListOf<Any>()
+    private val items = mutableListOf<T>()
 
     @Deprecated("Unsafe")
-    fun setItemsUnsafe(items: List<Any>) {
+    fun setItemsUnsafe(items: List<T>) {
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()

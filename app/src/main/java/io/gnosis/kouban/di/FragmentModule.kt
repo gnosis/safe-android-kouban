@@ -6,6 +6,9 @@ import io.gnosis.kouban.ui.address.capture.AddressCaptureFragment
 import io.gnosis.kouban.ui.address.capture.AddressCaptureViewModel
 import io.gnosis.kouban.ui.address.complete.AddressCompleteFragment
 import io.gnosis.kouban.ui.address.complete.AddressCompleteViewModel
+import io.gnosis.kouban.ui.balances.BalancesAdapter
+import io.gnosis.kouban.ui.balances.BalancesViewModel
+import io.gnosis.kouban.ui.balances.BalancesWidgetConfigure
 import io.gnosis.kouban.ui.filter.transaction.TransactionFilterDialog
 import io.gnosis.kouban.ui.filter.transaction.TransactionFilterFactory
 import io.gnosis.kouban.ui.filter.transaction.TransactionFilterViewModel
@@ -20,6 +23,7 @@ import io.gnosis.kouban.ui.transaction.details.TransactionDetailsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -70,5 +74,11 @@ val fragmentModule = module {
             )
         }
         factory { BaseAdapter(TransactionDetailFactory()) }
+    }
+
+    scope(named<BalancesWidgetConfigure>()) {
+        viewModel { (widgetId: Int) -> BalancesViewModel(get(), get(), get(), widgetId) }
+        factory { (onTokenClickedListener: WeakReference<BalancesAdapter.OnTokenClickedListener>) ->
+            BalancesAdapter(get(), onTokenClickedListener) }
     }
 }

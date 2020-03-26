@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/widget_balances_background">
+
+    <ImageView
+        android:id="@+id/token_item_icon"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_alignParentLeft="true"
+        android:scaleType="centerInside"
+        tools:src="@drawable/ic_ether_symbol" />
+
+    <TextView
+        android:id="@+id/token_item_symbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/token_item_icon"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="2"
+        android:textColor="@color/blue"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        tools:text="ETH" />
+
+    <TextView
+        android:id="@+id/safe_balance"
+        style="@style/DarkText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_toRightOf="@id/token_item_symbol"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="end"
+        android:letterSpacing="-0.03"
+        android:maxLines="2"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        tools:text="3342434.23545" />
+
+</RelativeLayout>

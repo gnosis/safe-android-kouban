@@ -2,6 +2,8 @@ package io.gnosis.kouban.core.utils
 
 import android.graphics.*
 import android.widget.ImageView
+import android.widget.RemoteViews
+import androidx.annotation.IdRes
 import androidx.core.view.setPadding
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
@@ -28,6 +30,34 @@ fun ImageView.setTransactionIcon(picasso: Picasso, icon: String?) {
                 .into(this)
         else ->
             setImageResource(R.drawable.circle_background)
+    }
+}
+
+fun RemoteViews.setTransactionIcon(@IdRes imageViewId: Int, picasso: Picasso, icon: String?) {
+    setViewPadding(imageViewId, 0, 0, 0, 0)
+    when {
+        icon == "local::ethereum" -> {
+            setImageViewResource(imageViewId, R.drawable.ic_ethereum_logo)
+        }
+        icon?.startsWith("local::") == true -> {
+            setImageViewResource(imageViewId, R.drawable.circle_background)
+        }
+        !icon.isNullOrBlank() -> {
+            kotlin.runCatching {
+                picasso
+                    .load(icon)
+                    .transform(CircleTransformation)
+                    .get()
+            }
+                .onSuccess {
+                    setImageViewBitmap(imageViewId, it)
+                }
+                .onFailure {
+                    setImageViewResource(imageViewId, R.drawable.circle_background)
+                }
+        }
+        else ->
+            setImageViewResource(imageViewId, R.drawable.circle_background)
     }
 }
 

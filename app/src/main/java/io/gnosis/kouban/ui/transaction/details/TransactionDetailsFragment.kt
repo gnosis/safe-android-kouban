@@ -24,7 +24,7 @@ class TransactionDetailsFragment : BaseFragment<FragmentTransactionDetailsBindin
 
     private val navArgs by navArgs<TransactionDetailsFragmentArgs>()
     private val viewModel by currentScope.viewModel<TransactionDetailsViewModel>(this) { parametersOf(navArgs.transactionHash) }
-    private val adapter by currentScope.inject<BaseAdapter<BaseDetailViewHolder<Any>>>()
+    private val adapter by currentScope.inject<BaseAdapter<BaseDetailViewHolder<Any>, Any>>()
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionDetailsBinding =
         FragmentTransactionDetailsBinding.inflate(inflater, container, false)

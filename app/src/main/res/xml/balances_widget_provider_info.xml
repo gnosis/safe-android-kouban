@@ -1,0 +1,14 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="200dp"
+    android:minHeight="60dp"
+    android:minResizeWidth="80dp"
+    android:minResizeHeight="40dp"
+    android:updatePeriodMillis="600000"
+    android:initialLayout="@layout/widget_balances"
+    android:configure="io.gnosis.kouban.ui.balances.BalancesWidgetConfigure"
+    android:previewImage="@drawable/widget_balances_preview"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen">
+</appwidget-provider>
+
+

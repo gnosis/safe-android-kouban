@@ -7,6 +7,7 @@
 
     <color name="white">#ffffff</color>
     <color name="blue">#001e3b</color>
+    <color name="pale_grey">#e4e8f1</color>
     <color name="medium_grey">#b2b5b2</color>
     <color name="dark_grey">#5d6d74</color>
     <color name="tomato">#ff3b30</color>

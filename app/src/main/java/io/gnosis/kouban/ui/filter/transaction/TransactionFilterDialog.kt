@@ -17,7 +17,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class TransactionFilterDialog : BaseBottomSheetFragment<DialogTransactionFilterBinding>() {
 
     private val viewModel by currentScope.viewModel<TransactionFilterViewModel>(this)
-    private val adapter by currentScope.inject<BaseAdapter<BaseTransactionFilterViewHolder<Any>>>()
+    private val adapter by currentScope.inject<BaseAdapter<BaseTransactionFilterViewHolder<Any>, Any>>()
     var onDismissCallback: (() -> Unit)? = null
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): DialogTransactionFilterBinding =

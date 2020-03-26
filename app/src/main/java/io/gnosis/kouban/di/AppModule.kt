@@ -8,6 +8,7 @@ import io.gnosis.kouban.data.managers.SearchManager
 import io.gnosis.kouban.core.ui.helper.AddressHelper
 import io.gnosis.kouban.helpers.LocalNotificationManager
 import io.gnosis.kouban.push.PushServiceRepository
+import io.gnosis.kouban.ui.balances.BalancesWidgetPrefs
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -17,6 +18,7 @@ val appModule = module {
     single { SearchManager() }
     factory { SafeAddressManager(androidContext()) }
     single { PushPrefs(androidContext()) }
+    single { BalancesWidgetPrefs(androidContext()) }
     single { LocalNotificationManager(androidContext()) }
     single { PushServiceRepository(get(), get(), get(), get(), get()) }
     single { ConfigurationCompat.getLocales(androidContext().resources.configuration)[0] }

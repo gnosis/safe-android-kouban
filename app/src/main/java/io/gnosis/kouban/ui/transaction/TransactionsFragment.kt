@@ -26,7 +26,7 @@ import pm.gnosis.utils.asEthereumAddressString
 class TransactionsFragment : BaseFragment<FragmentTransactionsBinding>() {
 
     private val viewModel by currentScope.viewModel<TransactionsViewModel>(this)
-    private val adapter by currentScope.inject<BaseAdapter<BaseTransactionViewHolder<Any>>>()
+    private val adapter by currentScope.inject<BaseAdapter<BaseTransactionViewHolder<Any>, Any>>()
     private val navArgs by navArgs<TransactionsFragmentArgs>()
     private val currentSafe by lazy { navArgs.safeAddress.asEthereumAddress()!! }
 
